@@ -7,16 +7,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="icon" src="assets/img/image.png">
 </head>
 <body>
 
     <aside class="sidebar-sponsor left">
         <div class="sponsor-track">
-            <img src="logo-sasegur.png" alt="Sasegur">
-            <img src="logo-pintxaki.png" alt="Pintxaki">
+            <img src="logo3.png" alt="Pintxaki">
             <div class="your-brand-here"><a href="#contacto-empresas">TU MARCA AQUÍ</a></div>
-            <img src="logo-jorla.png" alt="Jorla">
-            <img src="logo-sasegur.png" alt="Sasegur">
+            <img src="logo1.png" alt="Jorla">
+            <img src="logo2.png" alt="Sasegur">
             <div class="your-brand-here"><a href="#contacto-empresas">PATROCÍNANOS</a></div>
         </div>
     </aside>
@@ -33,6 +33,15 @@
                     <li><a href="#eventos">Eventos</a></li>
                     <li><a href="#contacto-empresas">Colabora</a></li>
                     <li><a href="#nuestras-redes">Nuestras redes</a></li>
+                    <div style="display: flex; align-items: center; gap: 15px;"> <div class="search-trigger" id="search-trigger" title="Buscar en la web">
+                    <i class="fas fa-search"></i>
+                        </div>
+
+                        <div class="theme-toggle" id="theme-toggle" title="Cambiar tema">
+                            <i class="fas fa-moon"></i>
+                        </div>
+
+                    </div>
                 </ul>
             </div>
         </header>
@@ -178,7 +187,6 @@
             <img src="assets/img/logos/logo2.png" alt="Sasegur">
             <img src="assets/img/logos/logo3.png" alt="Pintxaki">
             <div class="your-brand-here"><a href="#contacto-empresas">ANÚNCIATE</a></div>
-            <img src="assets/img/logos/logo1.png" alt="Jorla">
         </div>
     </aside>
 
@@ -193,6 +201,15 @@
             <span style="color: yellow;">PATROCÍNANOS</span> • 
         </div>
     </div>
+    <div id="search-overlay" class="search-overlay">
+    <div class="search-content">
+        <span class="close-search" id="close-search">&times;</span>
+        <h2>¿QUÉ ESTÁS BUSCANDO?</h2>
+        <input type="text" id="search-input" placeholder="Escribe aquí (ej: Alicante, Senior, Horarios...)">
+        
+        <div id="search-results" class="search-results-container"></div>
+    </div>
+</div>
 
     <script src="assets/js/script.js"></script>
 </body>

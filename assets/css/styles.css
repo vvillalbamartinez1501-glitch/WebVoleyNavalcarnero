@@ -354,3 +354,132 @@ header {
     .nav-menu.active { display: flex; }
     .theme-toggle { position: absolute; top: 20px; right: 70px; margin: 0; } /* Ajuste botón tema en móvil */
 }
+
+/* =========================================
+   10. BUSCADOR (SEARCH OVERLAY)
+   ========================================= */
+
+/* Icono Lupa en el menú */
+.search-trigger {
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--text-inverse);
+    padding: 5px;
+    transition: transform 0.3s, color 0.3s;
+}
+
+.search-trigger:hover {
+    color: var(--color-rojo-club);
+    transform: scale(1.1);
+}
+
+/* Pantalla completa de búsqueda (Oculta por defecto) */
+.search-overlay {
+    display: none; /* Oculto */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(29, 53, 87, 0.95); /* Azul club muy oscuro y transparente */
+    z-index: 10000; /* Por encima de todo */
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 100px;
+    backdrop-filter: blur(5px);
+}
+
+/* Clase para mostrar el buscador */
+.search-overlay.active {
+    display: flex;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.search-content {
+    width: 90%;
+    max-width: 600px;
+    text-align: center;
+    position: relative;
+    color: white;
+}
+
+.close-search {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    font-size: 3rem;
+    cursor: pointer;
+    color: white;
+    transition: color 0.3s;
+}
+
+.close-search:hover { color: var(--color-rojo-club); }
+
+/* Campo de texto (Input) */
+#search-input {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.5rem;
+    border: none;
+    border-bottom: 3px solid var(--color-rojo-club);
+    background: transparent;
+    color: white;
+    outline: none;
+    font-family: 'Oswald', sans-serif;
+    text-align: center;
+}
+
+#search-input::placeholder { color: rgba(255,255,255,0.5); font-family: 'Roboto', sans-serif; font-size: 1.2rem; }
+
+/* Contenedor de resultados */
+.search-results-container {
+    margin-top: 30px;
+    max-height: 60vh;
+    overflow-y: auto;
+    text-align: left;
+}
+
+/* Tarjeta de cada resultado */
+.result-item {
+    background: white;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    border-left: 5px solid var(--color-rojo-club);
+}
+
+.result-item:hover {
+    transform: translateX(10px);
+    background: #f9f9f9;
+}
+
+.result-item h4 {
+    color: var(--color-azul-club);
+    margin-bottom: 5px;
+    font-family: 'Oswald', sans-serif;
+}
+
+.result-item p {
+    color: #555;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Animación de entrada */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Ajuste Modo Oscuro para los resultados */
+[data-theme="dark"] .result-item {
+    background: var(--bg-card);
+}
+[data-theme="dark"] .result-item h4 {
+    color: var(--text-main);
+}
+[data-theme="dark"] .result-item p {
+    color: var(--text-muted);
+}
