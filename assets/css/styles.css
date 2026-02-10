@@ -483,3 +483,54 @@ header {
 [data-theme="dark"] .result-item p {
     color: var(--text-muted);
 }
+
+/* --- ESTILOS EXTRA PARA TARJETAS DE EVENTOS --- */
+
+/* Enlace dentro del párrafo */
+.link-text {
+    color: var(--color-rojo-club);
+    font-weight: bold;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s;
+}
+
+.link-text:hover {
+    color: var(--color-azul-club);
+    border-bottom: 2px solid var(--color-azul-club);
+}
+
+/* Contenedor de botones dentro de la tarjeta */
+.card-actions {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color); /* Línea separadora sutil */
+    display: flex;
+    gap: 10px;
+}
+
+/* Botón pequeño (Mini CTA) */
+.btn-mini {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--nav-bg); /* Usa el azul del menú */
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.btn-mini:hover {
+    background-color: var(--color-rojo-club);
+    transform: translateY(-2px);
+    color: white;
+}
+
+/* Ajuste para modo oscuro (para que la línea separadora se vea bien) */
+[data-theme="dark"] .card-actions {
+    border-color: #444;
+}
