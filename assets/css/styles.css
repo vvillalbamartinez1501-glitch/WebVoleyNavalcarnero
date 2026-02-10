@@ -534,3 +534,82 @@ header {
 [data-theme="dark"] .card-actions {
     border-color: #444;
 }
+
+/* =========================================
+   5. SIDEBARS Y PATROCINADORES (CORREGIDO)
+   ========================================= */
+.sidebar-sponsor {
+    position: fixed;
+    top: 0;
+    width: var(--ancho-sidebar);
+    height: 100vh;
+    background-color: var(--color-azul-club);
+    z-index: 1;
+    overflow: hidden;
+    /* CENTRADO CLAVE: */
+    display: flex;
+    justify-content: center; /* Centra horizontalmente el track */
+    border-right: 2px solid var(--color-rojo-club);
+    border-left: 2px solid var(--color-rojo-club);
+}
+
+.sidebar-sponsor.left { left: 0; }
+.sidebar-sponsor.right { right: 0; }
+
+.sponsor-track {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* ESTO ES VITAL: Centra los elementos hijos (img y div) horizontalmente */
+    width: 100%; /* Asegura que el track ocupe todo el ancho disponible */
+    gap: 40px;
+    padding-top: 20px;
+    animation: scrollVertical 20s linear infinite;
+}
+
+/* Estilo para los enlaces que envuelven las imágenes */
+.sponsor-track a {
+    display: flex; /* Para que el enlace se comporte como contenedor flexible */
+    justify-content: center; /* Centra la imagen dentro del enlace */
+    width: 100%; /* Ocupa el ancho del padre */
+}
+
+.sidebar-sponsor img {
+    width: 80%; /* La imagen ocupa el 80% del ancho de la barra */
+    max-width: 100px; /* Límite para que no se pixelie si la barra es muy ancha */
+    object-fit: contain;
+    background: white;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    transition: transform 0.3s;
+    display: block; /* Evita espacios extra debajo de la imagen */
+    margin: 0 auto; /* Refuerzo de centrado */
+}
+
+.sidebar-sponsor img:hover {
+    transform: scale(1.1);
+}
+
+.your-brand-here {
+    background: var(--color-rojo-club);
+    width: 90%;
+    padding: 15px 5px;
+    text-align: center;
+    border-radius: 5px;
+    border: 2px dashed white;
+    animation: pulse 2s infinite;
+    /* Aseguramos que el texto dentro también se centre */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.your-brand-here a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.9rem;
+    display: block;
+    width: 100%;
+}
