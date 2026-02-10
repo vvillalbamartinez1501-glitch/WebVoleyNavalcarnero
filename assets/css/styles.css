@@ -5,7 +5,7 @@
     /* --- Colores de Identidad (No cambian) --- */
     --color-rojo-club: #c8102e;
     --color-azul-club: #1d3557;
-    --ancho-sidebar: 140px;
+    --ancho-sidebar: 140px; /* Ancho de las columnas de publicidad */
     
     /* --- Variables del TEMA CLARO (Por defecto) --- */
     --bg-body: #eee;
@@ -43,8 +43,9 @@ body {
     font-family: 'Roboto', sans-serif;
     background-color: var(--bg-body);
     color: var(--text-main);
-    overflow-x: hidden;
+    overflow-x: hidden; /* Evita scroll horizontal */
     transition: background-color 0.3s ease, color 0.3s ease;
+    padding-bottom: 60px; /* Espacio para la barra móvil fija */
 }
 
 h1, h2, h3 { font-family: 'Oswald', sans-serif; text-transform: uppercase; }
@@ -91,6 +92,8 @@ header {
     padding: 0 40px;
 }
 
+.logo { font-weight: bold; font-size: 1.2rem; }
+
 .nav-menu { display: flex; gap: 20px; }
 .nav-menu a { 
     color: var(--text-inverse); 
@@ -100,27 +103,23 @@ header {
 }
 .nav-menu a:hover { color: var(--color-rojo-club); }
 
-/* Botón Hamburguesa */
-.menu-toggle {
-    display: none;
-    font-size: 1.8rem;
+/* Botones del menú (Hamburguesa, Tema, Lupa) */
+.menu-toggle, .theme-toggle, .search-trigger {
     cursor: pointer;
     color: var(--text-inverse);
+    transition: transform 0.3s, color 0.3s;
+    padding: 5px;
 }
 
-/* Botón Dark Mode */
-.theme-toggle {
-    cursor: pointer;
-    font-size: 1.2rem;
-    color: var(--text-inverse);
-    margin-left: 20px;
-    padding: 5px;
-    transition: transform 0.3s;
-}
+.menu-toggle { display: none; font-size: 1.8rem; }
+.theme-toggle { font-size: 1.2rem; }
+.search-trigger { font-size: 1.2rem; }
+
 .theme-toggle:hover { transform: rotate(20deg); color: #f1c40f; }
+.search-trigger:hover { color: var(--color-rojo-club); transform: scale(1.1); }
 
 /* =========================================
-   5. SIDEBARS Y PATROCINADORES
+   5. SIDEBARS Y PATROCINADORES (PC)
    ========================================= */
 .sidebar-sponsor {
     position: fixed;
@@ -139,35 +138,50 @@ header {
 .sidebar-sponsor.right { right: 0; }
 
 .sponsor-track {
-    display: flex; flex-direction: column; align-items: center; gap: 40px; padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 40px;
+    padding-top: 20px;
     animation: scrollVertical 20s linear infinite;
 }
 
+.sponsor-track a {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
 .sidebar-sponsor img {
-    width: 80%; object-fit: contain; background: white; padding: 5px;
-    border-radius: 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: transform 0.3s;
+    width: 80%;
+    max-width: 100px;
+    object-fit: contain;
+    background: white;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    transition: transform 0.3s;
+    display: block;
+    margin: 0 auto;
 }
 .sidebar-sponsor img:hover { transform: scale(1.1); }
 
 .your-brand-here {
-    background: var(--color-rojo-club); width: 90%; padding: 15px 5px;
-    text-align: center; border-radius: 5px; border: 2px dashed white;
+    background: var(--color-rojo-club);
+    width: 90%;
+    padding: 15px 5px;
+    text-align: center;
+    border-radius: 5px;
+    border: 2px dashed white;
     animation: pulse 2s infinite;
-}
-.your-brand-here a { 
-    color: white; font-weight: bold; font-family: 'Oswald', sans-serif; font-size: 0.9rem; display: block; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-/* Barra Móvil */
-.mobile-sponsor-bar {
-    display: none; position: fixed; bottom: 0; left: 0; width: 100%;
-    background: var(--color-azul-club); color: white; padding: 10px 0;
-    z-index: 9999; overflow: hidden; white-space: nowrap; border-top: 3px solid var(--color-rojo-club);
-}
-.mobile-track {
-    display: inline-block; padding-left: 100%;
-    animation: scrollHorizontal 15s linear infinite;
-    font-family: 'Oswald', sans-serif; font-size: 1.2rem;
+.your-brand-here a { 
+    color: white; font-weight: bold; font-family: 'Oswald', sans-serif; font-size: 0.9rem; display: block; width: 100%;
 }
 
 /* =========================================
@@ -175,8 +189,9 @@ header {
    ========================================= */
 .btn-cta { 
     background: var(--color-rojo-club); color: white; padding: 10px 20px; 
-    font-weight: bold; display: inline-block; margin-top: 10px; border-radius: 4px; 
+    font-weight: bold; display: inline-block; margin-top: 10px; border-radius: 4px; transition: background 0.3s;
 }
+.btn-cta:hover { background: #a00d25; }
 .btn-white { background: white; color: var(--color-azul-club); }
 
 /* Tarjetas de Eventos */
@@ -185,7 +200,7 @@ header {
     gap: 30px; margin-top: 30px;
 }
 .event-card {
-    background: var(--bg-card); /* Variable para modo oscuro */
+    background: var(--bg-card);
     border-radius: 10px; overflow: hidden;
     box-shadow: 0 5px 15px var(--shadow-color);
     transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s;
@@ -206,86 +221,52 @@ header {
 
 .card-content { padding: 20px; }
 .card-content h3 { color: var(--color-azul-club); margin-bottom: 10px; font-size: 1.5rem; }
-/* En modo oscuro el azul oscuro a veces no se lee bien, ajustamos si es necesario */
 [data-theme="dark"] .card-content h3 { color: #5dade2; } 
-
 .card-content p { font-size: 0.95rem; color: var(--text-muted); }
+
+/* Enlaces y Botones en Tarjetas */
+.link-text {
+    color: var(--color-rojo-club); font-weight: bold; text-decoration: none;
+    border-bottom: 2px solid transparent; transition: all 0.3s;
+}
+.link-text:hover { color: var(--color-azul-club); border-bottom: 2px solid var(--color-azul-club); }
+
+.card-actions {
+    margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);
+    display: flex; gap: 10px; flex-wrap: wrap;
+}
+.btn-mini {
+    display: inline-flex; align-items: center; gap: 8px;
+    background-color: var(--nav-bg); color: white; padding: 8px 12px;
+    border-radius: 4px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase;
+    transition: background 0.3s, transform 0.2s;
+}
+.btn-mini:hover { background-color: var(--color-rojo-club); transform: translateY(-2px); color: white; }
 
 /* =========================================
    7. SECCIONES ESPECÍFICAS
    ========================================= */
-/* --- HERO SECTION (CARRUSEL) --- */
+/* Hero Carrusel */
 .hero {
-    position: relative;
-    height: 80vh; /* Altura del hero (80% de la pantalla) */
-    display: flex;
-    align-items: center; /* Centra verticalmente */
-    justify-content: center; /* Centra horizontalmente */
-    overflow: hidden;
-    color: white;
-    /* Quitamos el padding para que la imagen llegue al borde */
-    padding: 0; 
+    position: relative; height: 80vh; display: flex; align-items: center; justify-content: center;
+    overflow: hidden; color: white; padding: 0; 
 }
-
-/* El contenedor de imágenes ocupa todo el hero por detrás */
-.hero-carousel {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0; /* Al fondo */
-}
-
-/* Estilo de cada foto del carrusel */
+.hero-carousel { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
 .hero-slide {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Recorta la foto para llenar sin deformar */
-    opacity: 0; /* Invisibles por defecto */
-    transition: opacity 2s ease-in-out; /* Transición suave "lentita" */
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    object-fit: cover; opacity: 0; transition: opacity 2s ease-in-out;
 }
-
-/* La clase .active hace visible la foto */
-.hero-slide.active {
-    opacity: 1;
-}
-
-/* Capa oscura sobre las fotos para que el texto resalte (Opcional pero recomendado) */
+.hero-slide.active { opacity: 1; }
 .hero-carousel::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.3); /* Un poco de oscuridad general */
-    z-index: 1;
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.3); z-index: 1;
 }
-
-/* --- TEXTO CON FONDO SEMITRANSPARENTE --- */
 .hero-content {
-    position: relative;
-    z-index: 2; /* Por encima de las fotos */
-    width: 100%; /* Ocupa todo el ancho (franja horizontal) */
-    background: rgba(29, 53, 87, 0.85); /* Azul del club al 85% de opacidad */
-    padding: 40px 20px;
-    text-align: center;
-    backdrop-filter: blur(4px); /* Efecto borroso elegante tras el texto */
+    position: relative; z-index: 2; width: 100%; background: rgba(29, 53, 87, 0.85);
+    padding: 40px 20px; text-align: center; backdrop-filter: blur(4px);
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
-
-.hero-content h1 {
-    font-size: 3rem;
-    margin-bottom: 10px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-}
-
-/* Ajuste para móvil del texto */
-@media (max-width: 768px) {
-    .hero-content h1 { font-size: 2rem; }
-    .hero { height: 60vh; } /* Hero un poco más bajo en móvil */
-}
+.hero-content h1 { font-size: 3rem; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
 
 /* Redes Sociales */
 .social-highlight { background-color: var(--bg-container); padding: 60px 20px; transition: background-color 0.3s; }
@@ -297,11 +278,10 @@ header {
     transition: all 0.3s ease; border: 2px solid transparent;
 }
 .social-btn:hover { transform: translateY(-5px); box-shadow: 0 5px 15px var(--shadow-color); }
-/* Colores hover */
 .social-btn.instagram:hover { color: #E1306C; border-color: #E1306C; background: var(--bg-card); }
-.social-btn.twitter:hover { color: var(--text-main); border-color: var(--text-main); background: var(--bg-card); }
+.social-btn.twitter:hover { color: #000000; border-color: #000000; background: var(--bg-card); }
 .social-btn.twitch:hover { color: #9146FF; border-color: #9146FF; background: var(--bg-card); }
-.social-btn.tiktok:hover { color: var(--text-main); border-color: #00f2ea; background: var(--bg-card); }
+.social-btn.tiktok:hover { color: #000000; border-color: #00f2ea; background: var(--bg-card); }
 
 /* Footer */
 .main-footer {
@@ -331,13 +311,63 @@ header {
 @keyframes scrollVertical { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 @keyframes scrollHorizontal { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 /* =========================================
-   9. RESPONSIVE
+   9. RESPONSIVE Y BARRA MÓVIL
    ========================================= */
+/* Barra Móvil de Patrocinadores (Ticker) */
+.mobile-sponsor-bar {
+    display: none; /* Oculto en PC por defecto */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: var(--color-azul-club);
+    color: white;
+    padding: 5px 0; /* Reduce el padding */
+    z-index: 9999;
+    overflow: hidden;
+    white-space: nowrap;
+    border-top: 3px solid var(--color-rojo-club);
+    height: 60px; /* Altura fija para la barra */
+    line-height: 50px; /* Alineación vertical del texto */
+}
+
+.mobile-track {
+    display: inline-block;
+    padding-left: 100%;
+    animation: scrollHorizontal 15s linear infinite;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.2rem;
+}
+
+/* --- CORRECCIÓN CLAVE PARA IMÁGENES EN MÓVIL --- */
+.mobile-track a {
+    display: inline-block;
+    vertical-align: middle; /* Alinea verticalmente con el texto */
+}
+
+.mobile-track img {
+    height: 40px; /* Altura fija para los logos en móvil */
+    width: auto; /* Mantiene la proporción */
+    vertical-align: middle; /* Alinea la imagen */
+    margin: 0 10px; /* Espacio alrededor de los logos */
+    background: white;
+    padding: 2px;
+    border-radius: 4px;
+}
+
+.mobile-track span, 
+.mobile-track .your-brand-here {
+     vertical-align: middle; /* Alinea el texto y la caja "TU LOGO" */
+     display: inline-block;
+}
+/* -------------------------------------------------- */
+
 @media (max-width: 1300px) {
-    .sidebar-sponsor { display: none; }
-    .mobile-sponsor-bar { display: block; }
+    .sidebar-sponsor { display: none; } /* Ocultar laterales */
+    .mobile-sponsor-bar { display: block; } /* Mostrar barra inferior */
     .main-content { margin-left: 0; margin-right: 0; width: 100%; }
 }
 
@@ -352,264 +382,39 @@ header {
     }
     .nav-menu li { margin: 15px 0; }
     .nav-menu.active { display: flex; }
-    .theme-toggle { position: absolute; top: 20px; right: 70px; margin: 0; } /* Ajuste botón tema en móvil */
+    .hero-content h1 { font-size: 2rem; }
+    .hero { height: 60vh; }
 }
 
 /* =========================================
    10. BUSCADOR (SEARCH OVERLAY)
    ========================================= */
-
-/* Icono Lupa en el menú */
-.search-trigger {
-    cursor: pointer;
-    font-size: 1.2rem;
-    color: var(--text-inverse);
-    padding: 5px;
-    transition: transform 0.3s, color 0.3s;
-}
-
-.search-trigger:hover {
-    color: var(--color-rojo-club);
-    transform: scale(1.1);
-}
-
-/* Pantalla completa de búsqueda (Oculta por defecto) */
 .search-overlay {
-    display: none; /* Oculto */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(29, 53, 87, 0.95); /* Azul club muy oscuro y transparente */
-    z-index: 10000; /* Por encima de todo */
-    align-items: flex-start;
-    justify-content: center;
-    padding-top: 100px;
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(29, 53, 87, 0.95); z-index: 10000;
+    align-items: flex-start; justify-content: center; padding-top: 100px;
     backdrop-filter: blur(5px);
 }
-
-/* Clase para mostrar el buscador */
-.search-overlay.active {
-    display: flex;
-    animation: fadeIn 0.3s ease-out;
-}
-
-.search-content {
-    width: 90%;
-    max-width: 600px;
-    text-align: center;
-    position: relative;
-    color: white;
-}
-
+.search-overlay.active { display: flex; animation: fadeIn 0.3s ease-out; }
+.search-content { width: 90%; max-width: 600px; text-align: center; position: relative; color: white; }
 .close-search {
-    position: absolute;
-    top: -40px;
-    right: 0;
-    font-size: 3rem;
-    cursor: pointer;
-    color: white;
-    transition: color 0.3s;
+    position: absolute; top: -40px; right: 0; font-size: 3rem; cursor: pointer; color: white; transition: color 0.3s;
 }
-
 .close-search:hover { color: var(--color-rojo-club); }
-
-/* Campo de texto (Input) */
 #search-input {
-    width: 100%;
-    padding: 15px;
-    font-size: 1.5rem;
-    border: none;
-    border-bottom: 3px solid var(--color-rojo-club);
-    background: transparent;
-    color: white;
-    outline: none;
-    font-family: 'Oswald', sans-serif;
-    text-align: center;
+    width: 100%; padding: 15px; font-size: 1.5rem; border: none;
+    border-bottom: 3px solid var(--color-rojo-club); background: transparent;
+    color: white; outline: none; font-family: 'Oswald', sans-serif; text-align: center;
 }
-
 #search-input::placeholder { color: rgba(255,255,255,0.5); font-family: 'Roboto', sans-serif; font-size: 1.2rem; }
-
-/* Contenedor de resultados */
-.search-results-container {
-    margin-top: 30px;
-    max-height: 60vh;
-    overflow-y: auto;
-    text-align: left;
-}
-
-/* Tarjeta de cada resultado */
+.search-results-container { margin-top: 30px; max-height: 60vh; overflow-y: auto; text-align: left; }
 .result-item {
-    background: white;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: transform 0.2s;
-    border-left: 5px solid var(--color-rojo-club);
+    background: white; padding: 15px; margin-bottom: 10px; border-radius: 5px;
+    cursor: pointer; transition: transform 0.2s; border-left: 5px solid var(--color-rojo-club);
 }
-
-.result-item:hover {
-    transform: translateX(10px);
-    background: #f9f9f9;
-}
-
-.result-item h4 {
-    color: var(--color-azul-club);
-    margin-bottom: 5px;
-    font-family: 'Oswald', sans-serif;
-}
-
-.result-item p {
-    color: #555;
-    font-size: 0.9rem;
-    margin: 0;
-}
-
-/* Animación de entrada */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* Ajuste Modo Oscuro para los resultados */
-[data-theme="dark"] .result-item {
-    background: var(--bg-card);
-}
-[data-theme="dark"] .result-item h4 {
-    color: var(--text-main);
-}
-[data-theme="dark"] .result-item p {
-    color: var(--text-muted);
-}
-
-/* --- ESTILOS EXTRA PARA TARJETAS DE EVENTOS --- */
-
-/* Enlace dentro del párrafo */
-.link-text {
-    color: var(--color-rojo-club);
-    font-weight: bold;
-    text-decoration: none;
-    border-bottom: 2px solid transparent;
-    transition: all 0.3s;
-}
-
-.link-text:hover {
-    color: var(--color-azul-club);
-    border-bottom: 2px solid var(--color-azul-club);
-}
-
-/* Contenedor de botones dentro de la tarjeta */
-.card-actions {
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px solid var(--border-color); /* Línea separadora sutil */
-    display: flex;
-    gap: 10px;
-}
-
-/* Botón pequeño (Mini CTA) */
-.btn-mini {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background-color: var(--nav-bg); /* Usa el azul del menú */
-    color: white;
-    padding: 8px 12px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    transition: background 0.3s, transform 0.2s;
-}
-
-.btn-mini:hover {
-    background-color: var(--color-rojo-club);
-    transform: translateY(-2px);
-    color: white;
-}
-
-/* Ajuste para modo oscuro (para que la línea separadora se vea bien) */
-[data-theme="dark"] .card-actions {
-    border-color: #444;
-}
-
-/* =========================================
-   5. SIDEBARS Y PATROCINADORES (CORREGIDO)
-   ========================================= */
-.sidebar-sponsor {
-    position: fixed;
-    top: 0;
-    width: var(--ancho-sidebar);
-    height: 100vh;
-    background-color: var(--color-azul-club);
-    z-index: 1;
-    overflow: hidden;
-    /* CENTRADO CLAVE: */
-    display: flex;
-    justify-content: center; /* Centra horizontalmente el track */
-    border-right: 2px solid var(--color-rojo-club);
-    border-left: 2px solid var(--color-rojo-club);
-}
-
-.sidebar-sponsor.left { left: 0; }
-.sidebar-sponsor.right { right: 0; }
-
-.sponsor-track {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* ESTO ES VITAL: Centra los elementos hijos (img y div) horizontalmente */
-    width: 100%; /* Asegura que el track ocupe todo el ancho disponible */
-    gap: 40px;
-    padding-top: 20px;
-    animation: scrollVertical 20s linear infinite;
-}
-
-/* Estilo para los enlaces que envuelven las imágenes */
-.sponsor-track a {
-    display: flex; /* Para que el enlace se comporte como contenedor flexible */
-    justify-content: center; /* Centra la imagen dentro del enlace */
-    width: 100%; /* Ocupa el ancho del padre */
-}
-
-.sidebar-sponsor img {
-    width: 80%; /* La imagen ocupa el 80% del ancho de la barra */
-    max-width: 100px; /* Límite para que no se pixelie si la barra es muy ancha */
-    object-fit: contain;
-    background: white;
-    padding: 5px;
-    border-radius: 5px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    transition: transform 0.3s;
-    display: block; /* Evita espacios extra debajo de la imagen */
-    margin: 0 auto; /* Refuerzo de centrado */
-}
-
-.sidebar-sponsor img:hover {
-    transform: scale(1.1);
-}
-
-.your-brand-here {
-    background: var(--color-rojo-club);
-    width: 90%;
-    padding: 15px 5px;
-    text-align: center;
-    border-radius: 5px;
-    border: 2px dashed white;
-    animation: pulse 2s infinite;
-    /* Aseguramos que el texto dentro también se centre */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.your-brand-here a {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    font-family: 'Oswald', sans-serif;
-    font-size: 0.9rem;
-    display: block;
-    width: 100%;
-}
+.result-item:hover { transform: translateX(10px); background: #f9f9f9; }
+.result-item h4 { color: var(--color-azul-club); margin-bottom: 5px; font-family: 'Oswald', sans-serif; }
+.result-item p { color: #555; font-size: 0.9rem; margin: 0; }
+[data-theme="dark"] .result-item { background: var(--bg-card); }
+[data-theme="dark"] .result-item h4 { color: var(--text-main); }
+[data-theme="dark"] .result-item p { color: var(--text-muted); }
