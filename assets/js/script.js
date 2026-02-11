@@ -56,25 +56,56 @@ document.addEventListener('DOMContentLoaded', () => {
         const content = track.innerHTML;
         track.innerHTML = content + content + content;
     });
-
 // ==========================================
-    // 4. CARRUSEL HERO (BUCLE INFINITO)
+    // 4. CARRUSEL HERO (PAUSA Y DESLIZAMIENTO)
     // ==========================================
-    const carouselTrack = document.querySelector('.hero-carousel');
-    
-    if (carouselTrack) {
-        // 1. Eliminamos cualquier clase 'active' residual del HTML
-        const slides = carouselTrack.querySelectorAll('.hero-slide');
-        slides.forEach(slide => slide.classList.remove('active'));
+    const track = document.querySelector('.hero-carousel');
+    const slides = document.querySelectorAll('.hero-slide');
 
-        // 2. Duplicamos las imágenes para crear la ilusión de infinito
-        // Clonamos todo el contenido actual del carrusel
-        const carouselContent = carouselTrack.innerHTML;
-        // Lo añadimos al final. Ahora tenemos: [Grupo A] + [Grupo A]
-        carouselTrack.innerHTML = carouselContent + carouselContent;
+    if (track && slides.length > 0) {
+        // --- CONFIGURACIÓN ---
+        const intervalTime = 5000; // Tiempo de PAUSA (5 segundos parada)
+        
+        // 1. Clonar la primera imagen y ponerla al final (para el bucle infinito)
+        const firstClone = slides[0].cloneNode(true);
+        firstClone.id = 'first-clone';
+        track.appendChild(firstClone);
 
-        // NOTA: La animación se controla 100% desde CSS (scrollHorizontalHero)
-        // No necesitamos setInterval aquí.
+        // 2. Variables de control
+        let currentSlide = 0;
+        const totalSlides = document.querySelectorAll('.hero-slide').length; // Contamos de nuevo con el clon
+        let slideInterval;
+
+        // 3. Función para mover al siguiente slide
+        const moveToNextSlide = () => {
+            currentSlide++;
+            track.style.transition = 'transform 1.5s cubic-bezier(0.25, 1, 0.5, 1)'; // Asegurar que hay animación
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+        };
+
+        // 4. Detectar cuando termina la transición para comprobar si hay que reiniciar (Bucle)
+        track.addEventListener('transitionend', () => {
+            // Si estamos en la imagen clonada (la última visualmente, que es igual a la primera)
+            if (currentSlide === totalSlides - 1) {
+                track.style.transition = 'none'; // Quitamos animación para el salto instantáneo
+                currentSlide = 0; // Volvemos al índice 0
+                track.style.transform = `translateX(0)`; // Movemos el track al principio
+            }
+        });
+
+        // 5. Iniciar el bucle automático
+        const startSlideShow = () => {
+            slideInterval = setInterval(moveToNextSlide, intervalTime);
+        };
+
+        // Arrancar
+        startSlideShow();
+
+        // Opcional: Pausar si el usuario pasa el ratón por encima (puedes borrar esto si no lo quieres)
+        /*
+        track.addEventListener('mouseenter', () => { clearInterval(slideInterval); });
+        track.addEventListener('mouseleave', startSlideShow);
+        */
     }
 
     // ==========================================

@@ -260,8 +260,9 @@ header {
 /* =========================================
    5. SECCIONES ESPECÍFICAS
    ========================================= */
-
-/* --- A. HERO (Tren Infinito) --- */
+/* =========================================
+   HERO: CARRUSEL PASO A PASO (Con Pausa)
+   ========================================= */
 .hero {
     position: relative;
     height: 100vh;
@@ -272,23 +273,25 @@ header {
 }
 
 .hero-carousel {
-    display: flex; /* Fila */
+    display: flex;
     height: 100%;
-    width: max-content; /* Ancho dinámico */
-    animation: trenInfinito 40s linear infinite;
-    will-change: transform;
-    position: absolute; top: 0; left: 0; z-index: 0;
+    width: 100%; /* Ahora ocupará el 100% y JS lo moverá */
+    /* Esta transición controla la velocidad del deslizamiento (1.5s = lento y suave) */
+    transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .hero-slide {
     height: 100%;
-    width: 100vw; /* Pantalla completa */
+    /* IMPORTANTE: Cada foto debe ocupar el 100% del ancho para estar centrada */
+    min-width: 100%; 
+    width: 100%;
     object-fit: cover;
-    flex-shrink: 0;
     display: block;
+    /* Filtro oscuro para que se lea el texto */
     filter: brightness(0.6);
 }
 
+/* El texto sigue igual */
 .hero-content {
     position: absolute;
     top: 50%; left: 50%;
@@ -298,8 +301,9 @@ header {
     text-align: center;
     color: white;
     text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    pointer-events: none; /* Permite hacer clic en la foto si fuera necesario */
 }
-.hero-content h1 { font-size: 3rem; margin-bottom: 10px; }
+.hero-content a { pointer-events: auto; } /* Reactiva el botón */
 
 /* --- B. NOTICIAS (Control de Widgets) --- */
 /* Por defecto (Claro): Oculta dark, muestra light */
