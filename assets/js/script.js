@@ -57,19 +57,24 @@ document.addEventListener('DOMContentLoaded', () => {
         track.innerHTML = content + content + content;
     });
 
+// ==========================================
+    // 4. CARRUSEL HERO (BUCLE INFINITO)
     // ==========================================
-    // 4. CARRUSEL HERO (FONDO CAMBIANTE)
-    // ==========================================
-    const slides = document.querySelectorAll('.hero-slide');
-    let currentSlide = 0;
-    const slideInterval = 5000; 
+    const carouselTrack = document.querySelector('.hero-carousel');
+    
+    if (carouselTrack) {
+        // 1. Eliminamos cualquier clase 'active' residual del HTML
+        const slides = carouselTrack.querySelectorAll('.hero-slide');
+        slides.forEach(slide => slide.classList.remove('active'));
 
-    if (slides.length > 0) {
-        setInterval(() => {
-            slides[currentSlide].classList.remove('active');
-            currentSlide = (currentSlide + 1) % slides.length;
-            slides[currentSlide].classList.add('active');
-        }, slideInterval);
+        // 2. Duplicamos las imágenes para crear la ilusión de infinito
+        // Clonamos todo el contenido actual del carrusel
+        const carouselContent = carouselTrack.innerHTML;
+        // Lo añadimos al final. Ahora tenemos: [Grupo A] + [Grupo A]
+        carouselTrack.innerHTML = carouselContent + carouselContent;
+
+        // NOTA: La animación se controla 100% desde CSS (scrollHorizontalHero)
+        // No necesitamos setInterval aquí.
     }
 
     // ==========================================

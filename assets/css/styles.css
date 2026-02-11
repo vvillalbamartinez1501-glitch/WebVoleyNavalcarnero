@@ -246,27 +246,66 @@ header {
 /* =========================================
    7. SECCIONES ESPECÍFICAS
    ========================================= */
-/* Hero Carrusel */
+/* =========================================
+   SECCIÓN HERO (CARRUSEL INFINITO)
+   ========================================= */
 .hero {
-    position: relative; height: 100vh; display: flex; align-items: center; justify-content: center;
-    overflow: hidden; color: white; padding: 0; 
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Oculta lo que se salga de la pantalla */
+    padding: 0;
+    background-color: #000; /* Fondo negro por si tarda en cargar */
 }
-.hero-carousel { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+
+.hero-carousel {
+    display: flex; /* Pone las imágenes en fila */
+    width: max-content; /* El ancho se ajusta al contenido total */
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    /* Ajusta '40s' para cambiar la velocidad (más bajo = más rápido) */
+    animation: scrollHorizontalHero 40s linear infinite;
+}
+
 .hero-slide {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    object-fit: cover; opacity: 0; transition: opacity 2s ease-in-out;
+    position: relative; /* Ya no es absolute */
+    height: 100%;       /* Altura completa de la pantalla */
+    width: 100vw;       /* Ancho completo de la pantalla por imagen */
+    object-fit: cover;  /* La imagen cubre todo sin deformarse */
+    opacity: 1;         /* Siempre visibles */
+    flex-shrink: 0;     /* Evita que las imágenes se encojan */
+    /* Un pequeño filtro para que el texto se lea mejor encima */
+    filter: brightness(0.7); 
 }
-.hero-slide.active { opacity: 1; }
-.hero-carousel::after {
-    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.3); z-index: 1;
-}
+
+/* El contenido (Texto) sigue igual encima */
 .hero-content {
-    position: relative; z-index: 2; width: 100%; background: rgba(29, 53, 87, 0.85);
-    padding: 40px 20px; text-align: center; backdrop-filter: blur(4px);
+    position: relative; 
+    z-index: 2; 
+    width: 100%; 
+    background: rgba(29, 53, 87, 0.7); /* Un poco más transparente */
+    padding: 40px 20px; 
+    text-align: center; 
+    backdrop-filter: blur(4px);
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
-.hero-content h1 { font-size: 3rem; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+
+/* --- ANIMACIÓN --- */
+/* Mueve las imágenes de Derecha a Izquierda (Efecto estándar de carrusel) */
+@keyframes scrollHorizontalHero {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        /* Se mueve la mitad del total (porque duplicaremos las imágenes en JS) */
+        transform: translateX(-50%); 
+    }
+}
 
 /* Redes Sociales */
 .social-highlight { background-color: var(--bg-container); padding: 60px 20px; transition: background-color 0.3s; }
