@@ -63,49 +63,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const slides = document.querySelectorAll('.hero-slide');
 
     if (track && slides.length > 0) {
-        // --- CONFIGURACIÓN ---
-        const intervalTime = 5000; // Tiempo de PAUSA (5 segundos parada)
+        const intervalTime = 5000; // Tiempo de espera
         
-        // 1. Clonar la primera imagen y ponerla al final (para el bucle infinito)
+        // Clonar primera imagen para bucle
         const firstClone = slides[0].cloneNode(true);
-        firstClone.id = 'first-clone';
         track.appendChild(firstClone);
 
-        // 2. Variables de control
         let currentSlide = 0;
-        const totalSlides = document.querySelectorAll('.hero-slide').length; // Contamos de nuevo con el clon
-        let slideInterval;
+        // Importante: volver a contar slides después de clonar
+        const totalSlides = track.querySelectorAll('.hero-slide').length; 
 
-        // 3. Función para mover al siguiente slide
         const moveToNextSlide = () => {
             currentSlide++;
-            track.style.transition = 'transform 1.5s cubic-bezier(0.25, 1, 0.5, 1)'; // Asegurar que hay animación
+            track.style.transition = 'transform 1.5s cubic-bezier(0.25, 1, 0.5, 1)';
             track.style.transform = `translateX(-${currentSlide * 100}%)`;
         };
 
-        // 4. Detectar cuando termina la transición para comprobar si hay que reiniciar (Bucle)
         track.addEventListener('transitionend', () => {
-            // Si estamos en la imagen clonada (la última visualmente, que es igual a la primera)
-            if (currentSlide === totalSlides - 1) {
-                track.style.transition = 'none'; // Quitamos animación para el salto instantáneo
-                currentSlide = 0; // Volvemos al índice 0
-                track.style.transform = `translateX(0)`; // Movemos el track al principio
+            if (currentSlide >= totalSlides - 1) {
+                track.style.transition = 'none';
+                currentSlide = 0;
+                track.style.transform = `translateX(0)`;
             }
         });
 
-        // 5. Iniciar el bucle automático
-        const startSlideShow = () => {
-            slideInterval = setInterval(moveToNextSlide, intervalTime);
-        };
-
-        // Arrancar
-        startSlideShow();
-
-        // Opcional: Pausar si el usuario pasa el ratón por encima (puedes borrar esto si no lo quieres)
-        /*
-        track.addEventListener('mouseenter', () => { clearInterval(slideInterval); });
-        track.addEventListener('mouseleave', startSlideShow);
-        */
+        setInterval(moveToNextSlide, intervalTime);
     }
 
     // ==========================================
