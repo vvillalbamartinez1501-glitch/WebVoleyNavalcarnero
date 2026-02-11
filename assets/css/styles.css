@@ -423,6 +423,10 @@ header {
     margin-bottom: 10px; 
 }
 
+.category-desc{
+    margin-bottom:10px;
+}
+
 .category-tag {
     background: var(--nav-bg); 
     color: white;
@@ -587,4 +591,69 @@ header {
     }
     
     .hero-content h1 { font-size: 1.8rem; }
+}
+
+/* --- NUEVA: SECCIÓN COMPETICIÓN (Banner) --- */
+.competition-section {
+    padding: 40px 20px;
+    background-color: var(--bg-body); /* Fondo gris claro de la web */
+}
+
+.competition-banner {
+    background: linear-gradient(135deg, var(--color-azul-club) 0%, #14243b 100%);
+    border-radius: 15px;
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    border-left: 5px solid var(--color-rojo-club);
+    color: white;
+}
+
+.comp-icon {
+    font-size: 3.5rem;
+    color: var(--color-rojo-club);
+    background: rgba(255,255,255,0.1);
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    flex-shrink: 0; /* Evita que el icono se aplaste */
+}
+
+.comp-info {
+    flex: 1; /* Ocupa todo el espacio disponible en el centro */
+}
+
+.comp-action {
+    flex-shrink: 0;
+}
+
+/* RESPONSIVE PARA EL BANNER DE COMPETICIÓN */
+@media (max-width: 900px) {
+    .competition-banner {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+    }
+
+    .comp-info {
+        text-align: center;
+    }
+    
+    /* Forzamos alineación centro en móvil porque en el HTML pusimos left inline */
+    .comp-info h2, .comp-info p {
+        text-align: center !important;
+    }
+    
+    .btn-cta {
+        width: 100%; /* Botón ancho en móvil para facilitar el clic */
+        text-align: center;
+    }
 }
