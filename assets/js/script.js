@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     
     // ==========================================
-    // 1. LÓGICA DEL MENÚ MÓVIL (HAMBURGUESA)
+    // 1. MENÚ MÓVIL (HAMBURGUESA)
     // ==========================================
     const menuToggle = document.getElementById('mobile-menu');
     const navMenu = document.querySelector('.nav-menu');
@@ -12,30 +12,30 @@ document.addEventListener('DOMContentLoaded', () => {
             navMenu.classList.toggle('active');
         });
 
+        // Cerrar menú al hacer clic en un enlace
         navLinks.forEach(link => {
             link.addEventListener('click', () => {
-                if(navMenu.classList.contains('active')) {
-                    navMenu.classList.remove('active');
-                }
+                navMenu.classList.remove('active');
             });
         });
     }
 
     // ==========================================
-    // 2. ANIMACIÓN DE SECCIONES (SCROLL)
+    // 2. ANIMACIÓN DE SECCIONES (FADE IN AL SCROLL)
     // ==========================================
     const sections = document.querySelectorAll('section');
 
     const observerOptions = {
-        threshold: 0.15 
+        threshold: 0.15,
+        rootMargin: "0px 0px -50px 0px"
     };
 
-    const observer = new IntersectionObserver((entries, observer) => {
+    const sectionObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.style.opacity = '1';
                 entry.target.style.transform = 'translateY(0)';
-                observer.unobserve(entry.target); 
+                observer.unobserve(entry.target); // Dejar de observar una vez animado
             }
         });
     }, observerOptions);
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
         section.style.opacity = '0';
         section.style.transform = 'translateY(30px)';
         section.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
-        observer.observe(section);
+        sectionObserver.observe(section);
     });
 
     // ==========================================
@@ -53,81 +53,76 @@ document.addEventListener('DOMContentLoaded', () => {
     const tracks = document.querySelectorAll('.sponsor-track');
     
     tracks.forEach(track => {
+        // Duplicamos el contenido para asegurar que el scroll CSS sea continuo
         const content = track.innerHTML;
         track.innerHTML = content + content + content;
     });
-// ==========================================
-    // 4. CARRUSEL HERO (PAUSA Y DESLIZAMIENTO)
-    // ==========================================
-    const track = document.querySelector('.hero-carousel');
-    const slides = document.querySelectorAll('.hero-slide');
 
-    if (track && slides.length > 0) {
-        const intervalTime = 5000; // Tiempo de espera
+    // ==========================================
+    // 4. CARRUSEL HERO (LOGICA DE BUCLE Y PAUSA)
+    // ==========================================
+    const heroTrack = document.querySelector('.hero-carousel');
+    const heroSlides = document.querySelectorAll('.hero-slide');
+
+    if (heroTrack && heroSlides.length > 0) {
+        const intervalTime = 5000; // 5 segundos de pausa
         
-        // Clonar primera imagen para bucle
-        const firstClone = slides[0].cloneNode(true);
-        track.appendChild(firstClone);
+        // Clonamos la primera imagen y la ponemos al final
+        const firstClone = heroSlides[0].cloneNode(true);
+        heroTrack.appendChild(firstClone);
 
         let currentSlide = 0;
-        // Importante: volver a contar slides después de clonar
-        const totalSlides = track.querySelectorAll('.hero-slide').length; 
+        // Contamos slides de nuevo incluyendo el clon
+        const totalSlides = document.querySelectorAll('.hero-slide').length; 
 
         const moveToNextSlide = () => {
             currentSlide++;
-            track.style.transition = 'transform 1.5s cubic-bezier(0.25, 1, 0.5, 1)';
-            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            heroTrack.style.transition = 'transform 1.5s cubic-bezier(0.25, 1, 0.5, 1)';
+            heroTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
         };
 
-        track.addEventListener('transitionend', () => {
+        // Detectar fin de transición para reiniciar el bucle sin que se note
+        heroTrack.addEventListener('transitionend', () => {
             if (currentSlide >= totalSlides - 1) {
-                track.style.transition = 'none';
-                currentSlide = 0;
-                track.style.transform = `translateX(0)`;
+                heroTrack.style.transition = 'none'; // Quitamos animación
+                currentSlide = 0; // Volvemos al principio
+                heroTrack.style.transform = `translateX(0)`; // Movemos posición
             }
         });
 
+        // Iniciar el bucle
         setInterval(moveToNextSlide, intervalTime);
     }
 
     // ==========================================
-    // 5. MODO OSCURO (ESTA ES LA PARTE QUE FALTABA)
+    // 5. MODO OSCURO
     // ==========================================
     const themeToggle = document.getElementById('theme-toggle');
     
     if (themeToggle) {
         const icon = themeToggle.querySelector('i');
         
-        // A. Comprobar si ya había un tema guardado de antes
+        // A. Cargar tema guardado
         const currentTheme = localStorage.getItem('theme');
         if (currentTheme === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
             if(icon) {
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
+                icon.classList.replace('fa-moon', 'fa-sun');
             }
         }
 
-        // B. Al hacer clic en el botón
+        // B. Alternar tema al hacer clic
         themeToggle.addEventListener('click', () => {
-            let theme = document.documentElement.getAttribute('data-theme');
-
-            if (theme === 'dark') {
-                // Cambiar a Claro
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            
+            if (isDark) {
                 document.documentElement.setAttribute('data-theme', 'light');
                 localStorage.setItem('theme', 'light');
-                if(icon) {
-                    icon.classList.remove('fa-sun');
-                    icon.classList.add('fa-moon');
-                }
+                if(icon) icon.classList.replace('fa-sun', 'fa-moon');
             } else {
-                // Cambiar a Oscuro
                 document.documentElement.setAttribute('data-theme', 'dark');
                 localStorage.setItem('theme', 'dark');
-                if(icon) {
-                    icon.classList.remove('fa-moon');
-                    icon.classList.add('fa-sun');
-                }
+                if(icon) icon.classList.replace('fa-moon', 'fa-sun');
             }
         });
     }
@@ -141,39 +136,42 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('search-input');
     const resultsContainer = document.getElementById('search-results');
 
-    if(searchTrigger) {
+    // Abrir buscador
+    if(searchTrigger && searchOverlay) {
         searchTrigger.addEventListener('click', () => {
             searchOverlay.classList.add('active');
             if(searchInput) searchInput.focus();
-            document.body.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden'; // Evitar scroll
         });
     }
 
-    function closeSearchModal() {
+    // Función cerrar buscador
+    const closeSearchModal = () => {
         if(searchOverlay) searchOverlay.classList.remove('active');
         if(searchInput) searchInput.value = '';
         if(resultsContainer) resultsContainer.innerHTML = '';
-        document.body.style.overflow = 'auto';
-    }
+        document.body.style.overflow = 'auto'; // Permitir scroll
+    };
 
-    if(closeSearch) {
-        closeSearch.addEventListener('click', closeSearchModal);
-    }
+    if(closeSearch) closeSearch.addEventListener('click', closeSearchModal);
 
+    // Cerrar con tecla ESC
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && searchOverlay && searchOverlay.classList.contains('active')) {
+        if (e.key === 'Escape' && searchOverlay?.classList.contains('active')) {
             closeSearchModal();
         }
     });
 
-    if(searchInput) {
+    // Lógica de búsqueda
+    if(searchInput && resultsContainer) {
         searchInput.addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase().trim();
             resultsContainer.innerHTML = ''; 
 
             if (searchTerm.length < 2) return; 
 
-            const searchableElements = document.querySelectorAll('.main-content h1, .main-content h2, .main-content h3, .main-content p, .event-card h3, .event-card p');
+            // Elementos donde buscar texto
+            const searchableElements = document.querySelectorAll('.main-content h1, .main-content h2, .main-content h3, .main-content p, .event-card h3, .event-card p, .team-card h3');
             let foundCount = 0;
 
             searchableElements.forEach(el => {
@@ -182,14 +180,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     foundCount++;
                     const resultDiv = document.createElement('div');
                     resultDiv.classList.add('result-item');
+                    // Recortar texto si es muy largo
                     const snippet = text.length > 100 ? text.substring(0, 100) + '...' : text;
 
-                    resultDiv.innerHTML = `<h4>Encontrado en: ${el.tagName}</h4><p>${snippet}</p>`;
+                    resultDiv.innerHTML = `<h4>${el.tagName === 'P' ? 'Texto' : 'Título'}:</h4><p>${snippet}</p>`;
 
+                    // Ir al elemento al hacer clic
                     resultDiv.addEventListener('click', () => {
                         closeSearchModal();
                         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        el.style.transition = 'background 0.5s';
+                        // Efecto de resaltado temporal
+                        el.style.transition = 'background-color 0.5s';
                         el.style.backgroundColor = 'rgba(255, 255, 0, 0.3)'; 
                         setTimeout(() => { el.style.backgroundColor = 'transparent'; }, 1500);
                     });
@@ -204,5 +205,57 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    console.log("Web CV Navalcarnero: Todos los sistemas cargados.");
+    // ==========================================
+    // 7. ÍNDICE DE CONTENIDOS (TOC) - HIGHLIGHT
+    // ==========================================
+    const tocLinks = document.querySelectorAll('.toc-link');
+    
+    if (tocLinks.length > 0 && sections.length > 0) {
+        
+        const tocObserverOptions = {
+            root: null,
+            // Ajustamos el margen para que detecte la sección un poco antes de llegar al centro
+            rootMargin: '-20% 0px -60% 0px', 
+            threshold: 0
+        };
+
+        const tocObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    
+                    if (id) {
+                        tocLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === `#${id}`) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                }
+            });
+        }, tocObserverOptions);
+
+        sections.forEach(section => {
+            tocObserver.observe(section);
+        });
+
+        // Scroll suave al hacer clic en el índice
+        tocLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetSection = document.getElementById(targetId);
+                
+                if(targetSection){
+                    window.scrollTo({
+                        top: targetSection.offsetTop - 80, // Compensar header fijo
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    }
+
+    console.log("Web CV Navalcarnero: Todos los sistemas cargados correctamente.");
 });

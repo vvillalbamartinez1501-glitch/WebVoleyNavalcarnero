@@ -5,15 +5,16 @@
    3. LAYOUT GENERAL (Header, Main, Footer)
    4. COMPONENTES UI (Botones, Tarjetas, Buscador)
    5. SECCIONES ESPECÍFICAS
-      - Hero (Carrusel)
+      - Hero (Diseño Split: Carrusel Arriba / Texto Abajo)
       - Noticias (Widgets)
       - Eventos
       - Equipos (Flexbox 3+2)
       - Competición (Banner)
       - Redes Sociales
    6. PUBLICIDAD Y SPONSORS (Sidebar y Móvil)
-   7. ANIMACIONES
-   8. MEDIA QUERIES (Responsive)
+   7. SIDEBAR IZQUIERDO (Índice de Contenidos)
+   8. ANIMACIONES
+   9. MEDIA QUERIES (Responsive)
    ========================================================================== */
 
 /* =========================================
@@ -284,69 +285,89 @@ header {
    5. SECCIONES ESPECÍFICAS
    ========================================= */
 
-/* --- A. HERO: CARRUSEL CON MARGEN, FONDO AZUL Y FRANJA TEXTO --- */
+/* --- A. HERO: DISEÑO "SPLIT" (FOTO ARRIBA / TEXTO ABAJO) --- */
 .hero {
     position: relative;
-    height: 100vh;
+    height: 100vh;           /* Ocupa toda la pantalla */
     width: 100%;
     overflow: hidden;
     padding: 0;
-    /* Usamos el azul corporativo como marco */
-    background-color: var(--nav-bg); 
+    
+    /* CAMBIO CLAVE: Usamos Flex Column para poner uno debajo del otro */
+    display: flex;
+    flex-direction: column;
 }
 
+/* 1. EL CARRUSEL (Parte superior) */
 .hero-carousel {
     display: flex;
-    height: 100%;
     width: 100%;
+    
+    /* CAMBIO: Define la altura que quieres que ocupen las fotos */
+    height: 70%; 
+    
+    background-color: #000; /* Fondo negro por si la imagen no carga */
     transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .hero-slide {
     height: 100%;
-    /* flex: 0 0 100% asegura que la imagen tenga ancho total y NO se aplaste */
-    flex: 0 0 100%; 
+    flex: 0 0 100%; /* Ancho total */
     width: 100%;
     
-    /* Muestra la imagen entera (sin recortar nada) */
-    object-fit: contain;
-    
-    /* Margen interno (marco) */
-    padding: 40px; 
-    box-sizing: border-box; 
+    /* Ajuste de imagen: 'contain' evita cortes, 'cover' llena el espacio */
+    object-fit: contain; 
+    padding: 0;
     
     display: block;
-    /* Sin filtro para máxima claridad */
-    filter: none; 
+    filter: none;
 }
 
+/* 2. EL TEXTO (Parte inferior) */
 .hero-content {
-    position: absolute;
-    top: 50%; 
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 2;
+    /* Ya no es absolute, ahora es un bloque normal debajo */
+    position: relative; 
+    width: 100%;
+    max-width: none; /* Quitamos límites de ancho */
     
-    /* ANCHO DE LA FRANJA */
-    width: 90%;          /* Ocupa casi todo el ancho en móviles */
-    max-width: 800px;    /* No se hace gigante en PC */
+    /* CAMBIO: Altura restante (el carrusel tiene 70%) */
+    height: 30%; 
     
-    /* --- FRANJA SEMITRANSPARENTE --- */
-    background-color: rgba(0, 0, 0, 0.6); /* Fondo negro al 60% de opacidad */
-    backdrop-filter: blur(8px);           /* Efecto "cristal esmerilado" */
-    padding: 40px;                        /* Espacio interno */
-    border-radius: 15px;                  /* Bordes redondeados */
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
-    
-    /* ALINEACIÓN DE TEXTO */
-    text-align: center;
+    /* Estilos del fondo del texto */
+    background-color: var(--nav-bg); /* Azul oscuro corporativo */
     color: white;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
     
-    pointer-events: none; /* Permite ver a través */
+    /* Centrado del contenido */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    
+    /* Borde estético superior */
+    border-top: 4px solid var(--color-rojo-club);
+    
+    /* Importante: asegurarnos de que está por encima si hubiera solapamiento */
+    z-index: 5; 
 }
-.hero-content h1 { font-size: 3rem; margin-bottom: 10px; }
-.hero-content a { pointer-events: auto; } /* Reactiva el botón */
+
+.hero-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.hero-content p {
+    font-size: 1.1rem;
+    color: #ddd;
+    margin-bottom: 15px;
+    max-width: 800px;
+}
+
+.hero-content a {
+    pointer-events: auto;
+}
 
 /* --- B. NOTICIAS (Control de Widgets) --- */
 .widget-dark { display: none !important; }
@@ -547,7 +568,91 @@ header {
 }
 
 /* =========================================
-   7. ANIMACIONES
+   7. SIDEBAR IZQUIERDO: ÍNDICE DE CONTENIDOS (TOC)
+   ========================================= */
+
+/* El contenedor principal fijo a la izquierda */
+.sidebar-left.toc-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--ancho-sidebar);
+    height: 100vh;
+    background-color: #ffffff; /* Fondo limpio */
+    border-right: 1px solid #e0e0e0;
+    z-index: 100; /* Por debajo del header pero encima del contenido */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centrado vertical */
+    padding: 20px 15px;
+}
+
+/* Título pequeño "ÍNDICE" */
+.toc-title {
+    display: block;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.8rem;
+    color: #999;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding-left: 10px; /* Alineado con los enlaces */
+}
+
+/* La lista de enlaces */
+.toc-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.toc-nav li {
+    margin-bottom: 8px;
+}
+
+/* Estilo de los enlaces */
+.toc-link {
+    display: block;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 5px 10px;
+    border-left: 3px solid transparent; /* Borde invisible por defecto */
+    transition: all 0.3s ease;
+}
+
+/* Efecto Hover (Ratón por encima) */
+.toc-link:hover {
+    color: var(--color-azul-club);
+    background-color: rgba(0,0,0,0.03);
+    border-radius: 0 5px 5px 0;
+}
+
+/* --- CLASE ACTIVE (LA MAGIA) --- */
+/* Así se verá la sección en la que estás actualmente */
+.toc-link.active {
+    color: var(--color-rojo-club);     /* Texto Rojo */
+    font-weight: bold;                 /* Texto en negrita */
+    border-left: 3px solid var(--color-rojo-club); /* Barrita roja a la izquierda */
+    background-color: rgba(200, 16, 46, 0.05); /* Fondo rojo muy suave */
+    border-radius: 0 5px 5px 0;
+}
+
+/* --- MODO OSCURO (TOC) --- */
+[data-theme="dark"] .sidebar-left.toc-container {
+    background-color: #1a1a1a;
+    border-right: 1px solid #333;
+}
+[data-theme="dark"] .toc-link { color: #888; }
+[data-theme="dark"] .toc-link:hover { color: white; background-color: rgba(255,255,255,0.05); }
+[data-theme="dark"] .toc-link.active {
+    color: var(--color-rojo-club);
+    background-color: rgba(200, 16, 46, 0.1);
+}
+
+/* =========================================
+   8. ANIMACIONES
    ========================================= */
 @keyframes trenInfinito {
     0% { transform: translateX(0); }
@@ -559,12 +664,13 @@ header {
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 /* =========================================
-   8. MEDIA QUERIES (RESPONSIVE)
+   9. MEDIA QUERIES (RESPONSIVE)
    ========================================= */
 
 /* --- Laptops y Tablets Grandes (Breakpoint: 1300px) --- */
 @media (max-width: 1300px) {
     .sidebar-sponsor { display: none; }
+    .sidebar-left.toc-container { display: none; } /* Ocultar el índice lateral */
     .mobile-sponsor-bar { display: block; }
     .main-content { margin-left: 0; margin-right: 0; width: 100%; }
 
@@ -601,7 +707,7 @@ header {
     .btn-cta { width: 100%; text-align: center; }
 }
 
-/* --- Móviles Pequeños (Breakpoint: 768px/700px) --- */
+/* --- Móviles Pequeños (Breakpoint: 768px) --- */
 @media (max-width: 768px) {
     .menu-toggle { display: block; }
     .nav-container { padding: 0 20px; }
@@ -615,12 +721,13 @@ header {
     .nav-menu li { margin: 15px 0; }
     .nav-menu.active { display: flex; }
     
-    /* Hero */
-    .hero {
-        height: 50vh; 
-        min-height: 300px; 
+    /* Hero (Adaptación Split) */
+    .hero-carousel {
+        height: 60%; /* Imagen un poco más pequeña en móvil */
     }
-    .hero-slide { padding: 20px; }
+    .hero-content {
+        height: 40%; /* Más espacio para texto */
+    }
     .hero-content h1 { font-size: 1.8rem; }
     
     /* Equipos (1 columna) */
