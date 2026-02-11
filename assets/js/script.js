@@ -39,14 +39,22 @@ document.addEventListener('DOMContentLoaded', () => {
         sectionObserver.observe(section);
     });
 
-    // ==========================================
-    // 3. PATROCINADORES
+// ==========================================
+    // 3. PATROCINADORES (SCROLL INFINITO)
     // ==========================================
     const tracks = document.querySelectorAll('.sponsor-track');
     tracks.forEach(track => {
         const content = track.innerHTML;
         track.innerHTML = content + content + content;
     });
+
+    // --- NUEVO: LÓGICA PARA LA BARRA MÓVIL HORIZONTAL ---
+    const mobileTrack = document.querySelector('.mobile-track');
+    if (mobileTrack) {
+        const mobileContent = mobileTrack.innerHTML;
+        // Duplicamos el contenido para crear el bucle infinito
+        mobileTrack.innerHTML = mobileContent + mobileContent;
+    }
 
     // ==========================================
     // 4. CARRUSEL HERO (CORREGIDO)

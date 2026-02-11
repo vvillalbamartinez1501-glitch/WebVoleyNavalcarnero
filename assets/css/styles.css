@@ -356,26 +356,39 @@ header {
 
 /* --- MÓVIL (Barra Inferior) --- */
 .mobile-sponsor-bar {
-    display: none; position: fixed; bottom: 0; left: 0; width: 100%;
+    display: none; /* PC: Oculto */
+    position: fixed; bottom: 0; left: 0; width: 100%;
     background: var(--color-azul-club); color: white;
     padding: 5px 0; z-index: 9999;
     overflow: hidden; white-space: nowrap;
     border-top: 3px solid var(--color-rojo-club);
     height: 60px; line-height: 50px;
 }
-.mobile-track { display: inline-block; padding-left: 100%; animation: scrollHorizontal 15s linear infinite; font-family: 'Oswald', sans-serif; font-size: 1.2rem; }
-.mobile-track a, .mobile-track span, .mobile-track .your-brand-here { display: inline-block; vertical-align: middle; }
-.mobile-track img { height: 40px; width: auto; vertical-align: middle; margin: 0 10px; background: white; padding: 2px; border-radius: 4px; }
 
-/* --- AJUSTE "TU LOGO" MÓVIL (CORREGIDO) --- */
-.mobile-track .your-brand-here {
-    display: inline-flex !important; 
-    align-items: center; justify-content: center;
-    width: auto !important; height: 40px; padding: 0 15px;              
-    font-size: 0.8rem; vertical-align: middle; margin: 0 10px;
-    transform: translateY(-2px); /* Subimos un pelín para alinear ópticamente */
+.mobile-track {
+    /* Usamos flex para que los elementos (original + copia) se pongan en fila */
+    display: flex; 
+    /* El ancho se adapta al contenido duplicado */
+    width: max-content; 
+    /* Eliminamos el padding-left: 100% que tenías antes */
+    padding-left: 0;
+    /* Animación continua */
+    animation: scrollHorizontal 20s linear infinite;
 }
-.mobile-track .your-brand-here a { display: block; line-height: normal; }
+
+/* Elementos dentro de la pista */
+.mobile-track a, .mobile-track span, .mobile-track .your-brand-here {
+    display: inline-flex; 
+    align-items: center;
+    vertical-align: middle;
+    /* Añadimos un poco de espacio lateral para que no se peguen al repetir */
+    margin-right: 15px; 
+}
+
+.mobile-track img {
+    height: 40px; width: auto; vertical-align: middle;
+    margin: 0 10px; background: white; padding: 2px; border-radius: 4px;
+}
 
 /* =========================================
    7. SIDEBAR IZQUIERDO: ÍNDICE DE CONTENIDOS (TOC)
@@ -415,7 +428,7 @@ header {
    ========================================= */
 @keyframes trenInfinito { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 @keyframes scrollVertical { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
-@keyframes scrollHorizontal { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
@@ -594,4 +607,11 @@ header {
 /* Color específico para el icono de LinkedIn al hacer hover */
 .contact-list li a.map-link:hover i.fa-linkedin {
     color: #0077b5; /* Azul oficial de LinkedIn */
+}
+
+@keyframes scrollHorizontal { 
+    0% { transform: translateX(0); }
+    /* Al llegar al 50%, hemos mostrado todo el primer bloque y
+       estamos al principio del bloque duplicado. Reiniciamos instantáneamente a 0. */
+    100% { transform: translateX(-50%); } 
 }
