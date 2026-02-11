@@ -5,7 +5,7 @@
    3. LAYOUT GENERAL (Header, Main, Footer)
    4. COMPONENTES UI (Botones, Tarjetas, Buscador)
    5. SECCIONES ESPECÍFICAS
-      - Hero (Carrusel con MARGEN, SIN RECORTE y FONDO AZUL)
+      - Hero (Carrusel con MARGEN, SIN RECORTE y FONDO AZUL + FRANJA TEXTO)
       - Noticias (Widgets)
       - Eventos
       - Equipos
@@ -162,8 +162,28 @@ header {
 
 .footer-col a:hover { color: var(--color-rojo-club); padding-left: 5px; }
 
-.contact-list li { display: flex; gap: 15px; align-items: center; margin-bottom: 12px; }
-.contact-list i { color: var(--color-rojo-club); font-size: 1.2rem; }
+/* Estilos para la lista de contactos */
+.contact-list li { margin-bottom: 12px; }
+
+/* Estilos especiales para el enlace del mapa y email en el footer */
+.contact-list li a.map-link {
+    display: flex;          /* Para alinear icono y texto horizontalmente */
+    gap: 15px;              /* Espacio entre el icono y el texto */
+    align-items: center;    /* Centrado vertical */
+    width: 100%;            /* Ocupa todo el espacio disponible */
+    color: #bbb;            /* Mantiene el color gris original del footer */
+    transition: color 0.3s, transform 0.3s; 
+}
+
+.contact-list li a.map-link:hover {
+    color: var(--color-rojo-club);
+    transform: translateX(5px);
+}
+
+.contact-list i { 
+    color: var(--color-rojo-club); 
+    font-size: 1.2rem; 
+}
 
 .footer-bottom {
     background-color: #111;
@@ -261,7 +281,7 @@ header {
    5. SECCIONES ESPECÍFICAS
    ========================================= */
 
-/* --- A. HERO: CARRUSEL CON MARGEN Y FONDO CORPORATIVO --- */
+/* --- A. HERO: CARRUSEL CON MARGEN, FONDO AZUL Y FRANJA TEXTO --- */
 .hero {
     position: relative;
     height: 100vh;
@@ -281,8 +301,6 @@ header {
 
 .hero-slide {
     height: 100%;
-    
-    /* CORRECCIÓN VITAL: */
     /* flex: 0 0 100% asegura que la imagen tenga ancho total y NO se aplaste */
     flex: 0 0 100%; 
     width: 100%;
@@ -295,25 +313,37 @@ header {
     box-sizing: border-box; 
     
     display: block;
-    
     /* Sin filtro para máxima claridad */
     filter: none; 
 }
 
 .hero-content {
     position: absolute;
-    top: 50%; left: 50%;
+    top: 50%; 
+    left: 50%;
     transform: translate(-50%, -50%);
     z-index: 2;
-    width: 80%; max-width: 800px;
+    
+    /* ANCHO DE LA FRANJA */
+    width: 90%;          /* Ocupa casi todo el ancho en móviles */
+    max-width: 800px;    /* No se hace gigante en PC */
+    
+    /* --- FRANJA SEMITRANSPARENTE --- */
+    background-color: rgba(0, 0, 0, 0.6); /* Fondo negro al 60% de opacidad */
+    backdrop-filter: blur(8px);           /* Efecto "cristal esmerilado" */
+    padding: 40px;                        /* Espacio interno */
+    border-radius: 15px;                  /* Bordes redondeados */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
+    
+    /* ALINEACIÓN DE TEXTO */
     text-align: center;
     color: white;
-    /* Sombra fuerte para leer texto sobre cualquier fondo */
-    text-shadow: 0 2px 10px rgba(0,0,0,0.9);
-    pointer-events: none;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    
+    pointer-events: none; /* Permite ver a través */
 }
 .hero-content h1 { font-size: 3rem; margin-bottom: 10px; }
-.hero-content a { pointer-events: auto; }
+.hero-content a { pointer-events: auto; } /* Reactiva el botón */
 
 /* --- B. NOTICIAS (Control de Widgets) --- */
 .widget-dark { display: none !important; }
