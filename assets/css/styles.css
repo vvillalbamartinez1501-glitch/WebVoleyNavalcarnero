@@ -5,14 +5,14 @@
    3. LAYOUT GENERAL (Header, Main, Footer)
    4. COMPONENTES UI (Botones, Tarjetas, Buscador)
    5. SECCIONES ESPECÍFICAS
-      - Hero (Diseño Split: Carrusel Arriba / Texto Abajo)
+      - Hero (Diseño Híbrido: PC Lado a Lado / Móvil Arriba y Abajo)
       - Noticias (Widgets)
       - Eventos
       - Equipos (Flexbox 3+2)
       - Competición (Banner)
       - Redes Sociales
    6. PUBLICIDAD Y SPONSORS (Sidebar y Móvil)
-   7. SIDEBAR IZQUIERDO (Índice de Contenidos)
+   7. SIDEBAR IZQUIERDO (Índice de Contenidos + Logos)
    8. ANIMACIONES
    9. MEDIA QUERIES (Responsive)
    ========================================================================== */
@@ -107,6 +107,14 @@ header {
 .nav-menu { display: flex; gap: 20px; }
 .nav-menu a { color: var(--text-inverse); font-weight: bold; font-size: 1rem; }
 .nav-menu a:hover { color: var(--color-rojo-club); }
+
+/* --- Estado Activo del Menú Superior --- */
+.nav-menu a.active {
+    color: var(--color-rojo-club);
+    border-bottom: 2px solid var(--color-rojo-club);
+    padding-bottom: 2px;
+    transition: all 0.3s ease;
+}
 
 /* Controles del menú (Hamburguesa, Tema, Lupa) */
 .menu-toggle, .theme-toggle, .search-trigger {
@@ -285,7 +293,7 @@ header {
    5. SECCIONES ESPECÍFICAS
    ========================================= */
 
-/* --- A. HERO: DISEÑO "SPLIT" (FOTO ARRIBA / TEXTO ABAJO) --- */
+/* --- A. HERO: DISEÑO HÍBRIDO (PC: Lado a Lado / MÓVIL: Arriba y Abajo) --- */
 .hero {
     position: relative;
     height: 100vh;           /* Ocupa toda la pantalla */
@@ -293,76 +301,70 @@ header {
     overflow: hidden;
     padding: 0;
     
-    /* CAMBIO CLAVE: Usamos Flex Column para poner uno debajo del otro */
+    /* EN PC: Ponemos los elementos en FILA (Uno al lado del otro) */
     display: flex;
-    flex-direction: column;
+    flex-direction: row; 
+    background-color: var(--nav-bg); 
 }
 
-/* 1. EL CARRUSEL (Parte superior) */
+/* 1. EL CARRUSEL (En PC a la izquierda) */
 .hero-carousel {
     display: flex;
-    width: 100%;
     
-    /* CAMBIO: Define la altura que quieres que ocupen las fotos */
-    height: 70%; 
+    /* EN PC: Ocupa el 70% del ancho y TODA la altura */
+    width: 70%;
+    height: 100%;
     
-    background-color: #000; /* Fondo negro por si la imagen no carga */
+    background-color: #000;
     transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .hero-slide {
     height: 100%;
-    flex: 0 0 100%; /* Ancho total */
+    flex: 0 0 100%; /* El slide ocupa el 100% del hueco del carrusel */
     width: 100%;
-    
-    /* Ajuste de imagen: 'contain' evita cortes, 'cover' llena el espacio */
-    object-fit: contain; 
+    object-fit: cover; /* Cover queda mejor en este diseño */
     padding: 0;
-    
     display: block;
     filter: none;
 }
 
-/* 2. EL TEXTO (Parte inferior) */
+/* 2. EL TEXTO (En PC a la derecha) */
 .hero-content {
-    /* Ya no es absolute, ahora es un bloque normal debajo */
-    position: relative; 
-    width: 100%;
-    max-width: none; /* Quitamos límites de ancho */
+    position: relative;
     
-    /* CAMBIO: Altura restante (el carrusel tiene 70%) */
-    height: 30%; 
+    /* EN PC: Ocupa el 30% restante del ancho */
+    width: 30%;
+    height: 100%;
     
-    /* Estilos del fondo del texto */
-    background-color: var(--nav-bg); /* Azul oscuro corporativo */
+    /* Estilos del bloque de texto */
+    background-color: var(--nav-bg);
     color: white;
-    
-    /* Centrado del contenido */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 20px;
+    padding: 30px;
     
-    /* Borde estético superior */
-    border-top: 4px solid var(--color-rojo-club);
+    /* Borde a la izquierda para separar de la foto */
+    border-left: 5px solid var(--color-rojo-club);
+    border-top: none; 
     
-    /* Importante: asegurarnos de que está por encima si hubiera solapamiento */
     z-index: 5; 
 }
 
 .hero-content h1 {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
+    font-size: 2.5rem; /* Título grande en PC */
+    margin-bottom: 20px;
     color: white;
+    line-height: 1.1;
 }
 
 .hero-content p {
     font-size: 1.1rem;
     color: #ddd;
-    margin-bottom: 15px;
-    max-width: 800px;
+    margin-bottom: 30px;
 }
 
 .hero-content a {
@@ -567,6 +569,22 @@ header {
     margin: 0 10px; background: white; padding: 2px; border-radius: 4px;
 }
 
+/* Ajustes específicos "TU LOGO" en móvil */
+.mobile-track .your-brand-here {
+    width: auto !important;       
+    height: 40px;                 
+    padding: 0 15px;              
+    font-size: 0.8rem;            
+    line-height: 36px;            
+    vertical-align: middle;       
+    display: inline-block;
+    margin: 0 10px;
+}
+
+.mobile-track .your-brand-here a {
+    display: inline;              
+}
+
 /* =========================================
    7. SIDEBAR IZQUIERDO: ÍNDICE DE CONTENIDOS (TOC)
    ========================================= */
@@ -578,13 +596,33 @@ header {
     left: 0;
     width: var(--ancho-sidebar);
     height: 100vh;
-    background-color: #ffffff; /* Fondo limpio */
+    background-color: #ffffff; 
     border-right: 1px solid #e0e0e0;
-    z-index: 100; /* Por debajo del header pero encima del contenido */
+    z-index: 100;
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Centrado vertical */
-    padding: 20px 15px;
+    justify-content: space-between; /* Distribución arriba-centro-abajo */
+    padding: 30px 15px;
+}
+
+/* Logos en el sidebar (Arriba y Abajo) */
+.toc-sponsor {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.toc-sponsor img {
+    max-width: 80px;      
+    height: auto;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.toc-sponsor img:hover {
+    transform: scale(1.1); 
 }
 
 /* Título pequeño "ÍNDICE" */
@@ -600,6 +638,13 @@ header {
 }
 
 /* La lista de enlaces */
+.toc-nav {
+    flex-grow: 1; /* Ocupa el espacio central */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 .toc-nav ul {
     list-style: none;
     padding: 0;
@@ -618,24 +663,23 @@ header {
     color: var(--text-muted);
     text-decoration: none;
     padding: 5px 10px;
-    border-left: 3px solid transparent; /* Borde invisible por defecto */
+    border-left: 3px solid transparent; 
     transition: all 0.3s ease;
 }
 
-/* Efecto Hover (Ratón por encima) */
+/* Efecto Hover */
 .toc-link:hover {
     color: var(--color-azul-club);
     background-color: rgba(0,0,0,0.03);
     border-radius: 0 5px 5px 0;
 }
 
-/* --- CLASE ACTIVE (LA MAGIA) --- */
-/* Así se verá la sección en la que estás actualmente */
+/* --- CLASE ACTIVE --- */
 .toc-link.active {
-    color: var(--color-rojo-club);     /* Texto Rojo */
-    font-weight: bold;                 /* Texto en negrita */
-    border-left: 3px solid var(--color-rojo-club); /* Barrita roja a la izquierda */
-    background-color: rgba(200, 16, 46, 0.05); /* Fondo rojo muy suave */
+    color: var(--color-rojo-club);     
+    font-weight: bold;                 
+    border-left: 3px solid var(--color-rojo-club); 
+    background-color: rgba(200, 16, 46, 0.05); 
     border-radius: 0 5px 5px 0;
 }
 
@@ -695,7 +739,35 @@ header {
 }
 
 /* --- Móviles (Breakpoint: 900px) --- */
+/* AQUÍ SE HACE EL CAMBIO DE HERO HÍBRIDO (Lado a Lado -> Arriba/Abajo) */
 @media (max-width: 900px) {
+    .hero {
+        flex-direction: column;
+    }
+
+    .hero-carousel {
+        width: 100%;
+        height: 60%;
+    }
+
+    .hero-content {
+        width: 100%;
+        height: 40%;
+        border-left: none; 
+        border-top: 5px solid var(--color-rojo-club); 
+        padding: 20px;
+    }
+
+    .hero-content h1 {
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+    }
+    
+    .hero-content p {
+        margin-bottom: 15px;
+        font-size: 1rem;
+    }
+
     /* Banner Competición */
     .competition-banner {
         flex-direction: column;
@@ -720,15 +792,6 @@ header {
     }
     .nav-menu li { margin: 15px 0; }
     .nav-menu.active { display: flex; }
-    
-    /* Hero (Adaptación Split) */
-    .hero-carousel {
-        height: 60%; /* Imagen un poco más pequeña en móvil */
-    }
-    .hero-content {
-        height: 40%; /* Más espacio para texto */
-    }
-    .hero-content h1 { font-size: 1.8rem; }
     
     /* Equipos (1 columna) */
     .team-card {

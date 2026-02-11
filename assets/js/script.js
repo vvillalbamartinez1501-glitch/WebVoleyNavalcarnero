@@ -204,58 +204,75 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
+// ==========================================
+    // 7. HIGHLIGHT AUTOMÁTICO (MENÚ LATERAL Y SUPERIOR)
     // ==========================================
-    // 7. ÍNDICE DE CONTENIDOS (TOC) - HIGHLIGHT
-    // ==========================================
-    const tocLinks = document.querySelectorAll('.toc-link');
     
-    if (tocLinks.length > 0 && sections.length > 0) {
-        
-        const tocObserverOptions = {
-            root: null,
-            // Ajustamos el margen para que detecte la sección un poco antes de llegar al centro
-            rootMargin: '-20% 0px -60% 0px', 
-            threshold: 0
-        };
+    // 1. Seleccionamos las secciones y TODOS los enlaces (lateral y arriba)
+    const sections = document.querySelectorAll('section');
+    // AQUÍ ESTÁ EL CAMBIO CLAVE: Seleccionamos ambos tipos de enlaces
+    const allLinks = document.querySelectorAll('.toc-link, .nav-menu a');
 
-        const tocObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const id = entry.target.getAttribute('id');
-                    
-                    if (id) {
-                        tocLinks.forEach(link => {
-                            link.classList.remove('active');
-                            if (link.getAttribute('href') === `#${id}`) {
-                                link.classList.add('active');
-                            }
-                        });
-                    }
+    // 2. Opciones del observador
+    const observerOptions = {
+        root: null,
+        // Esto define la "línea de lectura". Se activa cuando la sección
+        // pasa por el 30% superior de la pantalla.
+        rootMargin: '-30% 0px -70% 0px', 
+        threshold: 0
+    };
+
+    // 3. Creamos el observador
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Obtenemos el ID de la sección visible
+                const id = entry.target.getAttribute('id');
+
+                if (id) {
+                    // Recorremos TODOS los enlaces (arriba y lado)
+                    allLinks.forEach(link => {
+                        // Quitamos la clase active de todos
+                        link.classList.remove('active');
+                        
+                        // Si el href del enlace coincide con el ID de la sección (#inicio == #inicio)
+                        if (link.getAttribute('href') === `#${id}`) {
+                            link.classList.add('active');
+                        }
+                    });
                 }
-            });
-        }, tocObserverOptions);
-
-        sections.forEach(section => {
-            tocObserver.observe(section);
+            }
         });
+    }, observerOptions);
 
-        // Scroll suave al hacer clic en el índice
-        tocLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
+    // 4. Activamos el observador en cada sección
+    sections.forEach(section => {
+        observer.observe(section);
+    });
+
+    // 5. Scroll suave para todos los enlaces
+    allLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            // Solo aplicamos scroll suave si es un enlace interno (empieza por #)
+            const href = link.getAttribute('href');
+            if (href && href.startsWith('#')) {
                 e.preventDefault();
-                const targetId = link.getAttribute('href').substring(1);
+                const targetId = href.substring(1);
                 const targetSection = document.getElementById(targetId);
                 
                 if(targetSection){
                     window.scrollTo({
-                        top: targetSection.offsetTop - 80, // Compensar header fijo
+                        top: targetSection.offsetTop - 80, // Compensar la altura del header fijo
                         behavior: 'smooth'
                     });
+                    
+                    // Si estamos en móvil y pulsamos un enlace del menú, lo cerramos
+                    const navMenu = document.querySelector('.nav-menu');
+                    if (navMenu && navMenu.classList.contains('active')) {
+                        navMenu.classList.remove('active');
+                    }
                 }
-            });
+            }
         });
-    }
-
-    console.log("Web CV Navalcarnero: Todos los sistemas cargados correctamente.");
+    });
 });
