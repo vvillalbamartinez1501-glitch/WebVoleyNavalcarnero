@@ -430,6 +430,7 @@ header {
     border-radius: 20px;
     font-size: 0.8rem; 
     font-weight: bold;
+    margin:0.5rem;
 }
 
 /* AJUSTES RESPONSIVE PARA EQUIPOS */
