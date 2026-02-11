@@ -5,14 +5,14 @@
    3. LAYOUT GENERAL (Header, Main, Footer)
    4. COMPONENTES UI (Botones, Tarjetas, Buscador)
    5. SECCIONES ESPECÍFICAS
-      - Hero (Diseño Híbrido: PC Lado a Lado / Móvil Arriba y Abajo)
+      - Hero (Diseño Híbrido: Window/Track)
       - Noticias (Widgets)
       - Eventos
       - Equipos (Flexbox 3+2)
       - Competición (Banner)
       - Redes Sociales
    6. PUBLICIDAD Y SPONSORS (Sidebar y Móvil)
-   7. SIDEBAR IZQUIERDO (Índice de Contenidos + Logos)
+   7. SIDEBAR IZQUIERDO (Índice + Logos Arriba/Abajo)
    8. ANIMACIONES
    9. MEDIA QUERIES (Responsive)
    ========================================================================== */
@@ -64,9 +64,7 @@ body {
     color: var(--text-main);
     overflow-x: hidden;
     transition: background-color 0.3s ease, color 0.3s ease;
-    
-    /* POR DEFECTO: 0 padding para que el footer toque el final en PC */
-    padding-bottom: 0; 
+    padding-bottom: 0; /* Footer toca el final por defecto */
 }
 
 h1, h2, h3, h4 { font-family: 'Oswald', sans-serif; text-transform: uppercase; }
@@ -177,13 +175,12 @@ header {
 /* Estilos para la lista de contactos */
 .contact-list li { margin-bottom: 12px; }
 
-/* Estilos especiales para el enlace del mapa y email en el footer */
 .contact-list li a.map-link {
-    display: flex;          /* Para alinear icono y texto horizontalmente */
-    gap: 15px;              /* Espacio entre el icono y el texto */
-    align-items: center;    /* Centrado vertical */
-    width: 100%;            /* Ocupa todo el espacio disponible */
-    color: #bbb;            /* Mantiene el color gris original del footer */
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    width: 100%;
+    color: #bbb;
     transition: color 0.3s, transform 0.3s; 
 }
 
@@ -296,7 +293,7 @@ header {
 /* --- A. HERO: DISEÑO HÍBRIDO (PC: Lado a Lado / MÓVIL: Arriba y Abajo) --- */
 .hero {
     position: relative;
-    height: 100vh;           /* Ocupa toda la pantalla */
+    height: 100vh;
     width: 100%;
     overflow: hidden;
     padding: 0;
@@ -307,37 +304,44 @@ header {
     background-color: var(--nav-bg); 
 }
 
-/* 1. EL CARRUSEL (En PC a la izquierda) */
-.hero-carousel {
-    display: flex;
-    
+/* 1. EL MARCO (La ventana fija) */
+.hero-carousel-window {
     /* EN PC: Ocupa el 70% del ancho y TODA la altura */
     width: 70%;
     height: 100%;
-    
+    overflow: hidden; /* Oculta lo que se sale del marco */
+    position: relative;
     background-color: #000;
-    transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
+/* 2. LA PISTA (Lo que se mueve dentro de la ventana) */
+.hero-track {
+    display: flex;    /* Pone las fotos en fila */
+    height: 100%;
+    width: 100%;      /* El ancho real se expandirá según los hijos */
+    will-change: transform;
+}
+
+/* 3. LAS FOTOS */
 .hero-slide {
     height: 100%;
-    flex: 0 0 100%; /* El slide ocupa el 100% del hueco del carrusel */
+    /* CADA FOTO DEBE OCUPAR EL 100% DEL ANCHO DE LA VENTANA (No del track) */
+    min-width: 100%; 
     width: 100%;
-    object-fit: cover; /* Cover queda mejor en este diseño */
-    padding: 0;
+    
+    object-fit: cover; 
     display: block;
     filter: none;
+    padding: 0;
+    flex-shrink: 0; /* Vital para que no se aplasten */
 }
 
-/* 2. EL TEXTO (En PC a la derecha) */
+/* 4. EL TEXTO (En PC a la derecha) */
 .hero-content {
     position: relative;
-    
-    /* EN PC: Ocupa el 30% restante del ancho */
     width: 30%;
     height: 100%;
     
-    /* Estilos del bloque de texto */
     background-color: var(--nav-bg);
     color: white;
     display: flex;
@@ -347,15 +351,13 @@ header {
     text-align: center;
     padding: 30px;
     
-    /* Borde a la izquierda para separar de la foto */
     border-left: 5px solid var(--color-rojo-club);
     border-top: none; 
-    
     z-index: 5; 
 }
 
 .hero-content h1 {
-    font-size: 2.5rem; /* Título grande en PC */
+    font-size: 2.5rem; 
     margin-bottom: 20px;
     color: white;
     line-height: 1.1;
@@ -407,10 +409,10 @@ header {
 .teams-grid {
     display: flex;              /* Usamos Flexbox en lugar de Grid */
     flex-wrap: wrap;            /* Permite que bajen a la siguiente línea */
-    justify-content: center;    /* CENTRA los elementos (clave para la fila de 2) */
-    gap: 30px;                  /* Espacio entre tarjetas */
+    justify-content: center;    /* CENTRA los elementos */
+    gap: 30px;                  
     margin-top: 30px;
-    max-width: 1200px;          /* Ancho máximo para que no se estiren demasiado */
+    max-width: 1200px;          
     margin-left: auto;
     margin-right: auto;
 }
@@ -424,17 +426,12 @@ header {
     padding: 30px;
     transition: transform 0.3s;
     
-    /* CÁLCULO DE ANCHO PARA PC (3 por fila): */
-    /* 33.33% del espacio menos el hueco del gap */
+    /* PC: 3 por fila */
     flex: 0 1 calc(33.333% - 30px); 
-    
-    /* Asegura un ancho mínimo para que no se aplasten */
     min-width: 300px; 
 }
 
-.team-card:hover { 
-    transform: translateY(-5px); 
-}
+.team-card:hover { transform: translateY(-5px); }
 
 .team-icon { 
     font-size: 2.5rem; 
@@ -462,7 +459,7 @@ header {
 /* --- E. COMPETICIÓN (Banner) --- */
 .competition-section {
     padding: 40px 20px;
-    background-color: var(--bg-body); /* Fondo gris claro de la web */
+    background-color: var(--bg-body);
 }
 
 .competition-banner {
@@ -490,7 +487,7 @@ header {
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    flex-shrink: 0; /* Evita que el icono se aplaste */
+    flex-shrink: 0;
 }
 
 .comp-info { flex: 1; }
@@ -514,7 +511,7 @@ header {
 /* =========================================
    6. PUBLICIDAD Y SPONSORS
    ========================================= */
-/* --- PC (Lateral) --- */
+/* --- PC (Lateral Derecho) --- */
 .sidebar-sponsor {
     position: fixed; top: 0; width: var(--ancho-sidebar); height: 100vh;
     background-color: var(--color-azul-club); z-index: 1;
@@ -538,6 +535,7 @@ header {
 }
 .sidebar-sponsor img:hover { transform: scale(1.1); }
 
+/* Estilos de la caja roja "TU LOGO" en sidebar vertical */
 .your-brand-here {
     background: var(--color-rojo-club); width: 90%; padding: 15px 5px;
     text-align: center; border-radius: 5px; border: 2px dashed white;
@@ -569,20 +567,23 @@ header {
     margin: 0 10px; background: white; padding: 2px; border-radius: 4px;
 }
 
-/* Ajustes específicos "TU LOGO" en móvil */
+/* --- AJUSTE ESPECÍFICO "TU LOGO" EN MÓVIL --- */
 .mobile-track .your-brand-here {
-    width: auto !important;       
-    height: 40px;                 
+    display: inline-flex !important; /* Flexbox para centrar contenido */
+    align-items: center;
+    justify-content: center;
+    width: auto !important;          /* Ancho automático, no el 90% */
+    height: 40px;                    /* Misma altura que logos */
     padding: 0 15px;              
     font-size: 0.8rem;            
-    line-height: 36px;            
     vertical-align: middle;       
-    display: inline-block;
     margin: 0 10px;
+    transform: translateY(-2px);     /* Ajuste fino */
 }
 
 .mobile-track .your-brand-here a {
-    display: inline;              
+    display: block; 
+    line-height: normal;
 }
 
 /* =========================================
@@ -613,8 +614,16 @@ header {
     padding: 10px 0;
 }
 
+/* Grupo de logos abajo */
+.toc-sponsor.bottom-group {
+    display: flex;
+    flex-direction: column; /* Apilados verticalmente */
+    gap: 15px;
+    align-items: center;
+}
+
 .toc-sponsor img {
-    max-width: 80px;      
+    max-width: 90px;      
     height: auto;
     object-fit: contain;
     transition: transform 0.3s ease;
@@ -634,7 +643,7 @@ header {
     margin-bottom: 15px;
     letter-spacing: 1px;
     text-transform: uppercase;
-    padding-left: 10px; /* Alineado con los enlaces */
+    padding-left: 10px; 
 }
 
 /* La lista de enlaces */
@@ -745,7 +754,7 @@ header {
         flex-direction: column;
     }
 
-    .hero-carousel {
+    .hero-carousel-window {
         width: 100%;
         height: 60%;
     }

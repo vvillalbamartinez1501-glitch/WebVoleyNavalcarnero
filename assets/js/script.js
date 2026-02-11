@@ -58,39 +58,39 @@ document.addEventListener('DOMContentLoaded', () => {
         track.innerHTML = content + content + content;
     });
 
+// ==========================================
+    // 4. CARRUSEL HERO (CORREGIDO PARA NUEVA ESTRUCTURA)
     // ==========================================
-    // 4. CARRUSEL HERO (LOGICA DE BUCLE Y PAUSA)
-    // ==========================================
-    const heroTrack = document.querySelector('.hero-carousel');
-    const heroSlides = document.querySelectorAll('.hero-slide');
+    // Seleccionamos la "pista" que es lo que realmente se mueve
+    const track = document.querySelector('.hero-track');
+    const slides = document.querySelectorAll('.hero-slide');
 
-    if (heroTrack && heroSlides.length > 0) {
-        const intervalTime = 5000; // 5 segundos de pausa
+    if (track && slides.length > 0) {
+        const intervalTime = 5000; 
         
         // Clonamos la primera imagen y la ponemos al final
-        const firstClone = heroSlides[0].cloneNode(true);
-        heroTrack.appendChild(firstClone);
+        const firstClone = slides[0].cloneNode(true);
+        track.appendChild(firstClone);
 
         let currentSlide = 0;
-        // Contamos slides de nuevo incluyendo el clon
-        const totalSlides = document.querySelectorAll('.hero-slide').length; 
+        // Re-contamos slides incluyendo el clon
+        const totalSlides = track.querySelectorAll('.hero-slide').length; 
 
         const moveToNextSlide = () => {
             currentSlide++;
-            heroTrack.style.transition = 'transform 1.5s cubic-bezier(0.25, 1, 0.5, 1)';
-            heroTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
+            track.style.transition = 'transform 1.5s cubic-bezier(0.25, 1, 0.5, 1)';
+            // Movemos el track, no el contenedor
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
         };
 
-        // Detectar fin de transición para reiniciar el bucle sin que se note
-        heroTrack.addEventListener('transitionend', () => {
+        track.addEventListener('transitionend', () => {
             if (currentSlide >= totalSlides - 1) {
-                heroTrack.style.transition = 'none'; // Quitamos animación
-                currentSlide = 0; // Volvemos al principio
-                heroTrack.style.transform = `translateX(0)`; // Movemos posición
+                track.style.transition = 'none';
+                currentSlide = 0;
+                track.style.transform = `translateX(0)`;
             }
         });
 
-        // Iniciar el bucle
         setInterval(moveToNextSlide, intervalTime);
     }
 
