@@ -461,3 +461,132 @@ header {
     .nav-menu.active { display: flex; }
     .team-card { flex: 0 1 100%; }
 }
+
+/* =========================================
+   SECCIÓN DETALLE PATROCINADORES
+   ========================================= */
+
+.sponsors-grid-details {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    margin: 40px auto;
+    max-width: 1200px;
+}
+
+.sponsor-detail-card {
+    background: var(--bg-card);
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    width: 300px; /* Ancho fijo para uniformidad */
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.sponsor-detail-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* Zona del Logo (Enlace) */
+.sponsor-logo-link {
+    display: block;
+    padding: 30px;
+    background-color: #fff; /* Fondo blanco para que el logo destaque */
+    border-bottom: 1px solid #eee;
+    text-align: center;
+    height: 150px; /* Altura fija para alinear tarjetas */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sponsor-logo-link img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s;
+}
+
+.sponsor-logo-link:hover img {
+    transform: scale(1.1);
+}
+
+/* Cuerpo de la tarjeta */
+.sponsor-body {
+    padding: 20px;
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sponsor-body h3 {
+    color: var(--color-azul-club);
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+/* Botón Desplegable */
+.btn-toggle-services {
+    background: transparent;
+    border: 2px solid var(--color-rojo-club);
+    color: var(--color-rojo-club);
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: 'Roboto', sans-serif;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-toggle-services:hover {
+    background: var(--color-rojo-club);
+    color: white;
+}
+
+.btn-toggle-services i {
+    transition: transform 0.3s ease;
+}
+
+/* Clase activa para girar la flecha */
+.btn-toggle-services.active i {
+    transform: rotate(180deg);
+}
+
+/* Contenedor del texto oculto (Acordeón) */
+.sponsor-description {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-out;
+    text-align: left;
+    width: 100%;
+}
+
+.sponsor-description p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    padding-top: 15px;
+    line-height: 1.5;
+    border-top: 1px dashed #ddd;
+    margin-top: 15px;
+}
+
+/* Contenedor CTA final */
+.join-cta-container {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    width: 100%;
+}
+
+/* MODO OSCURO */
+[data-theme="dark"] .sponsor-logo-link { background-color: #fff; } /* Logos siempre en blanco */
+[data-theme="dark"] .sponsor-description p { color: #ccc; }

@@ -212,3 +212,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+// ==========================================
+    // 8. ACORDEÓN PATROCINADORES (Ver Servicios)
+    // ==========================================
+    const sponsorButtons = document.querySelectorAll('.btn-toggle-services');
+
+    sponsorButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // 1. Alternar clase activa en el botón (para girar flecha)
+            btn.classList.toggle('active');
+
+            // 2. Seleccionar el panel de descripción siguiente
+            const description = btn.nextElementSibling;
+
+            // 3. Lógica de altura (max-height) para animación suave
+            if (description.style.maxHeight) {
+                // Si está abierto, lo cerramos
+                description.style.maxHeight = null;
+                btn.querySelector('span').textContent = "Ver Servicios";
+            } else {
+                // Si está cerrado, lo abrimos calculando su altura real
+                description.style.maxHeight = description.scrollHeight + "px";
+                btn.querySelector('span').textContent = "Cerrar Info";
+            }
+        });
+    });
