@@ -467,3 +467,75 @@ header {
     /* Ajuste de altura del Hero en móvil */
     .hero { height: 60vh; } 
 }
+
+/* =========================================
+   HERO: CARRUSEL CON PAUSA
+   ========================================= */
+.hero {
+    position: relative;
+    /* EN PC: Ocupa toda la pantalla */
+    height: 100vh; 
+    width: 100%;
+    overflow: hidden;
+    padding: 0;
+    background-color: #000;
+}
+
+.hero-carousel {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    transition: transform 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.hero-slide {
+    height: 100%;
+    min-width: 100%;
+    width: 100%;
+    
+    /* CAMBIO 1: COVER PERO CENTRADO */
+    /* Mantiene la proporción sin deformar, recortando lo necesario */
+    object-fit: cover; 
+    
+    /* Asegura que el centro de la foto (el equipo) sea la prioridad */
+    object-position: center center; 
+    
+    display: block;
+    filter: brightness(0.6);
+}
+
+/* =========================================
+   AJUSTES RESPONSIVE (SOLUCIÓN AL RECORTE)
+   ========================================= */
+
+/* Para Pantallas Medianas (Tablets / Laptops pequeños) */
+@media (max-width: 1024px) {
+    .hero {
+        /* Reducimos un poco la altura para que no haga tanto zoom */
+        height: 70vh; 
+        min-height: 500px;
+    }
+}
+
+/* Para Móviles (El cambio más importante) */
+@media (max-width: 768px) {
+    .hero {
+        /* SOLUCIÓN: En móvil, la sección es más bajita.
+           Al ser más bajita, la imagen (que es horizontal)
+           encaja mejor y NO se recorta tanto a los lados. */
+        height: 50vh; 
+        min-height: 300px; /* Evita que sea demasiado pequeña */
+    }
+
+    .hero-slide {
+        /* Opcional: Si aún se corta mucho, cambia 'cover' por 'contain'
+           pero aparecerán bandas negras arriba y abajo. 
+           Recomiendo dejarlo en 'cover' con la altura reducida de arriba. */
+        object-fit: cover;
+        object-position: top center; /* Prioriza las cabezas si es foto de equipo */
+    }
+
+    .hero-content h1 {
+        font-size: 1.8rem; /* Texto más pequeño para que quepa bien */
+    }
+}
