@@ -768,7 +768,6 @@ header {
     font-size: 4rem;
     margin-bottom: 20px;
     background: -webkit-linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
-    -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -792,4 +791,18 @@ header {
 
 /* Cuando se aceptan las cookies */
 body.cookies-accepted .cookie-overlay { display: none; }
-body.cookies-accepted .cookie-blocked-container { min-height: auto; background: transparent; border: none; }
+body.cookies-accepted .cookie-blocked-container { 
+    min-height: 500px; /* Mantiene el tamaño para que el widget respire */
+    background: transparent; 
+    border: none; 
+}
+
+/* Además, fuerza a que el wrapper del widget ocupe todo el ancho */
+.widget-wrapper {
+    width: 100%;
+    display: block;
+}
+
+.elfsight-app-a7094e92-32d6-490a-a275-1ce1e090db4d {
+    min-height: 600px; /* Ajusta este valor según cuántas fotos muestres */
+}
