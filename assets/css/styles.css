@@ -806,3 +806,34 @@ body.cookies-accepted .cookie-blocked-container {
 .elfsight-app-a7094e92-32d6-490a-a275-1ce1e090db4d {
     min-height: 600px; /* Ajusta este valor según cuántas fotos muestres */
 }
+/* --- ENLACES DE INTERÉS FOOTER --- */
+.interest-links {
+    font-size: 0.85rem;
+    line-height: 1.8;
+    list-style: none;
+    padding: 0;
+}
+
+.interest-links li {
+    margin-bottom: 5px;
+}
+
+.interest-links a {
+    color: #ccc;
+    text-decoration: none;
+    transition: color 0.3s ease, transform 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.interest-links a i {
+    margin-right: 8px;
+    color: var(--color-rojo-club);
+    width: 20px; /* Alinea los iconos verticalmente */
+    text-align: center;
+}
+
+.interest-links a:hover {
+    color: white;
+    transform: translateX(5px); /* Pequeño efecto de desplazamiento */
+}

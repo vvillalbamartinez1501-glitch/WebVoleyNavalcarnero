@@ -314,3 +314,17 @@ function activateCookies() {
 // Asignar al objeto window para asegurar que el HTML los encuentre
 window.acceptAllCookies = acceptAllCookies;
 window.rejectCookies = rejectCookies;
+
+// Gestión de efectos en enlaces de interés del footer
+document.addEventListener('DOMContentLoaded', () => {
+    const footerLinks = document.querySelectorAll('.interest-links a');
+    
+    footerLinks.forEach(link => {
+        link.addEventListener('mouseenter', () => {
+            link.style.color = 'white';
+        });
+        link.addEventListener('mouseleave', () => {
+            link.style.color = '#ccc';
+        });
+    });
+});
