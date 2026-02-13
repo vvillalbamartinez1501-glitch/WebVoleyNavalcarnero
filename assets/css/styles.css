@@ -842,3 +842,108 @@ header {
 @keyframes scrollVertical { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 @keyframes scrollHorizontal { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* =========================================
+   SECCIÓN RESEÑAS
+   ========================================= */
+.reviews-section {
+    background-color: var(--bg-body); /* Mismo fondo que el resto */
+    padding-bottom: 80px;
+}
+
+.reviews-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 40px auto;
+}
+
+.review-card {
+    background: var(--bg-card);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 5px 20px var(--shadow-color);
+    flex: 1 1 300px; /* Responsive: mínimo 300px de ancho */
+    max-width: 350px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.3s ease;
+    border-top: 5px solid #f1c40f; /* Borde amarillo arriba */
+}
+
+.review-card:hover {
+    transform: translateY(-5px);
+}
+
+.stars {
+    color: #f1c40f; /* Color dorado */
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+.review-text {
+    font-style: italic;
+    color: var(--text-muted);
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+/* Para resaltar las Keywords SEO dentro del texto */
+.review-text strong {
+    color: var(--color-azul-club);
+    font-weight: bold;
+}
+
+.review-author {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 15px;
+}
+
+.review-author img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #ddd;
+}
+
+.review-author h4 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--text-main);
+}
+
+.review-author span {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+/* Botón Google */
+.google-review-cta {
+    margin-top: 40px;
+}
+
+.btn-google {
+    background: white;
+    color: #4285F4; /* Azul Google */
+    border: 2px solid #4285F4;
+    transition: all 0.3s ease;
+}
+
+.btn-google:hover {
+    background: #4285F4;
+    color: white;
+}
+
+/* MODO OSCURO para Reseñas */
+[data-theme="dark"] .review-author img {
+    opacity: 0.8;
+}
+[data-theme="dark"] .review-text strong {
+    color: #5dade2;
+}
