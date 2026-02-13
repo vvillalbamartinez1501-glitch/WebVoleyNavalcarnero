@@ -8,12 +8,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const navLinks = document.querySelectorAll('.nav-menu a');
 
     if (menuToggle && navMenu) {
-        // Abrir / Cerrar menú al tocar el icono
         menuToggle.addEventListener('click', () => {
             navMenu.classList.toggle('active');
         });
 
-        // Cerrar menú automáticamente al hacer clic en un enlace
         navLinks.forEach(link => {
             link.addEventListener('click', () => {
                 navMenu.classList.remove('active');
@@ -45,15 +43,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // 3. PATROCINADORES (SCROLL INFINITO)
     // ==========================================
-    // Sidebar Vertical (PC)
     const tracks = document.querySelectorAll('.sponsor-track');
     tracks.forEach(track => {
         const content = track.innerHTML;
-        // Triplicamos contenido para asegurar scroll fluido sin cortes
         track.innerHTML = content + content + content;
     });
 
-    // Barra Horizontal (Móvil)
     const mobileTrack = document.querySelector('.mobile-track');
     if (mobileTrack) {
         const mobileContent = mobileTrack.innerHTML;
@@ -68,8 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (heroTrack && heroSlides.length > 0) {
         const intervalTime = 5000;
-        
-        // Clonar primera imagen para efecto infinito
         const firstClone = heroSlides[0].cloneNode(true);
         heroTrack.appendChild(firstClone);
 
@@ -83,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         heroTrack.addEventListener('transitionend', () => {
-            // Si llega al clon (último slide), volver al primero sin animación
             if (currentSlide >= totalSlides - 1) {
                 heroTrack.style.transition = 'none';
                 currentSlide = 0;
@@ -95,24 +87,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 5. MODO OSCURO (DARK MODE)
+    // 5. MODO OSCURO
     // ==========================================
     const themeToggle = document.querySelector('.theme-toggle') || document.getElementById('theme-toggle');
     
     if (themeToggle) {
         const icon = themeToggle.querySelector('i');
-        const htmlElement = document.documentElement; // Usamos <html> para data-theme
+        const htmlElement = document.documentElement;
 
-        // Recuperar tema guardado
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'dark') {
-            document.body.setAttribute('data-theme', 'dark'); // A veces se usa body
-            htmlElement.setAttribute('data-theme', 'dark');   // A veces html
+            document.body.setAttribute('data-theme', 'dark');
+            htmlElement.setAttribute('data-theme', 'dark');
             if(icon) icon.classList.replace('fa-moon', 'fa-sun');
         }
 
         themeToggle.addEventListener('click', () => {
-            // Chequeamos atributo en html o body
             const isDark = htmlElement.getAttribute('data-theme') === 'dark' || document.body.getAttribute('data-theme') === 'dark';
             
             if (isDark) {
@@ -132,11 +122,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // 6. BUSCADOR INTERACTIVO
     // ==========================================
-    const searchTrigger = document.getElementById('search-trigger') || document.querySelector('.search-trigger');
-    const searchOverlay = document.getElementById('search-overlay') || document.querySelector('.search-overlay');
-    const closeSearch = document.getElementById('close-search') || document.querySelector('.close-search');
+    const searchTrigger = document.getElementById('search-trigger');
+    const searchOverlay = document.getElementById('search-overlay');
+    const closeSearch = document.getElementById('close-search');
     const searchInput = document.getElementById('search-input');
-    const resultsContainer = document.getElementById('search-results') || document.querySelector('.search-results-container');
+    const resultsContainer = document.getElementById('search-results');
 
     const closeSearchModal = () => {
         if(searchOverlay) searchOverlay.classList.remove('active');
@@ -168,7 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (searchTerm.length < 2) return; 
 
-            // Elementos donde buscar
             const searchableElements = document.querySelectorAll('.main-content h1, .main-content h2, .main-content h3, .main-content p, .team-card h3');
             let foundCount = 0;
 
@@ -200,25 +189,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 7. HIGHLIGHT ACTIVO (NAV SUPERIOR + SIDEBAR)
+    // 7. HIGHLIGHT ACTIVO
     // ==========================================
     const sectionsSpy = document.querySelectorAll('section');
-    
-    // Seleccionamos TODOS los enlaces: los del Sidebar (.toc-link) Y los del Nav Superior (.nav-menu a)
     const allSpyLinks = document.querySelectorAll('.toc-link, .nav-menu a');
 
     if (allSpyLinks.length > 0) {
         const spyObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    // Obtenemos el ID de la sección que se ve en pantalla
                     const id = entry.target.getAttribute('id');
-                    
                     if (id) {
-                        // Recorremos TODOS los enlaces para actualizar su estado
                         allSpyLinks.forEach(link => {
-                            // Quitamos la clase active de todos primero (o verificamos uno a uno)
-                            // Verificamos si este link apunta a la sección actual
                             if (link.getAttribute('href') === `#${id}`) {
                                 link.classList.add('active');
                             } else {
@@ -228,11 +210,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             });
-        }, { rootMargin: '-30% 0px -70% 0px' }); // Ajuste para que detecte la sección al medio de la pantalla
+        }, { rootMargin: '-30% 0px -70% 0px' });
 
         sectionsSpy.forEach(section => spyObserver.observe(section));
         
-        // Suavizar scroll al hacer click en cualquiera de estos links
         allSpyLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 const href = link.getAttribute('href');
@@ -241,7 +222,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     const targetId = href.substring(1);
                     const targetSection = document.getElementById(targetId);
                     if(targetSection){
-                        // Descontamos la altura del header (aprox 80px)
                         window.scrollTo({ top: targetSection.offsetTop - 80, behavior: 'smooth' });
                     }
                 }
@@ -271,4 +251,66 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // ==========================================
+    // 9. LÓGICA DE COOKIES (NUEVO)
+    // ==========================================
+    const cookieConsent = localStorage.getItem('cookieConsent');
+    
+    if (cookieConsent === 'accepted') {
+        activateCookies(); 
+    } else if (cookieConsent === 'rejected') {
+        // No hacemos nada, se quedan bloqueados
+    } else {
+        // Mostrar Banner
+        setTimeout(() => {
+            const banner = document.getElementById('cookie-banner');
+            if(banner) banner.classList.add('show');
+        }, 1000);
+    }
 });
+
+// FUNCIONES GLOBALES PARA COOKIES (Fuera del DOMContentLoaded)
+// Así funcionan con onclick="..." en el HTML
+
+function acceptAllCookies() {
+    localStorage.setItem('cookieConsent', 'accepted');
+    const banner = document.getElementById('cookie-banner');
+    if(banner) banner.classList.remove('show');
+    activateCookies();
+}
+
+function rejectCookies() {
+    localStorage.setItem('cookieConsent', 'rejected');
+    const banner = document.getElementById('cookie-banner');
+    if(banner) banner.classList.remove('show');
+}
+
+function activateCookies() {
+    // 1. Quitar las capas oscuras (overlay)
+    document.body.classList.add('cookies-accepted');
+
+    // 2. Activar IFRAMES (Mapas)
+    const lazyIframes = document.querySelectorAll('.lazy-iframe');
+    lazyIframes.forEach(iframe => {
+        if (iframe.dataset.src) {
+            iframe.src = iframe.dataset.src; 
+        }
+    });
+
+    // 3. Activar SCRIPTS (Instagram/Elfsight)
+    const lazyScripts = document.querySelectorAll('.lazy-script');
+    lazyScripts.forEach(oldScript => {
+        // Creamos un script nuevo y ejecutable
+        const newScript = document.createElement('script');
+        newScript.src = oldScript.dataset.src; 
+        newScript.type = 'text/javascript'; // Ahora sí se ejecuta
+        newScript.async = true;
+        
+        // Lo insertamos y borramos el viejo
+        oldScript.parentNode.insertBefore(newScript, oldScript);
+        oldScript.remove();
+    });
+}
+// Asignar al objeto window para asegurar que el HTML los encuentre
+window.acceptAllCookies = acceptAllCookies;
+window.rejectCookies = rejectCookies;

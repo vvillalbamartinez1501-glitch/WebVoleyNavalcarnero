@@ -15,6 +15,7 @@
    11. FOOTER (Nuevo diseño estético)
    12. ANIMACIONES
    13. MEDIA QUERIES (Responsive)
+   14. SISTEMA DE COOKIES Y PRIVACIDAD (NUEVO)
    ========================================================================== */
 
 /* =========================================
@@ -639,132 +640,156 @@ header {
         justify-content: center;
     }
 }
+
 /* =========================================
    AJUSTES FINALES MODO OSCURO
    ========================================= */
 
 [data-theme="dark"] {
-    /* Forzamos que los títulos de sección sean blancos/grises */
     .section-title { color: var(--text-main); }
     
-    /* Títulos de tarjetas: Cambiar azul oscuro por azul claro luminoso */
+    /* Títulos luminosos */
     .team-card h3, 
     .card-content h3, 
     .sponsor-body h3,
     .result-item h4 { 
-        color: #5dade2; 
+        color: #ff334b !important; 
     }
 
-    /* Textos secundarios y descripciones */
-    .hero-subtitle, 
-    .category-desc,
-    .sponsor-description,
-    .review-text {
-        color: #cccccc;
-    }
+    .hero-subtitle, .category-desc, .sponsor-description, .review-text { color: #cccccc; }
+    #search-input { color: white; border-bottom-color: #ff334b; }
 
-    /* Inputs y formularios */
-    #search-input { 
-        color: white; 
-        border-bottom-color: var(--color-rojo-club); 
-    }
-
-    /* Sidebar Izquierdo (Índice) */
-    .sidebar-left {
-        background-color: var(--bg-container);
-        border-right: 1px solid var(--border-color);
-    }
+    /* Sidebars */
+    .sidebar-left { background-color: var(--bg-container); border-right: 1px solid var(--border-color); }
     .toc-link { color: #aaa; }
     .toc-link:hover { color: white; background: rgba(255,255,255,0.05); }
 
-    /* Menú Móvil desplegable */
-    .nav-menu {
-        background-color: var(--nav-bg);
-        border-top: 1px solid rgba(255,255,255,0.1);
-    }
+    .nav-menu { background-color: var(--nav-bg); border-top: 1px solid rgba(255,255,255,0.1); }
     
-    /* Mantener logos de patrocinadores con fondo blanco para que se vean */
-    .sponsor-logo-link, 
-    .sponsor-track img, 
-    .mobile-track img,
-    .toc-sponsor img {
-        background-color: #ffffff;
-        filter: none; /* Opcional: si quisieras invertir colores, se haría aquí */
-    }
-
-    /* Sombras más sutiles en modo oscuro */
-    .team-card, .event-card, .review-card {
-        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        border: 1px solid #333;
-    }
-}
-/* =========================================
-   MODO OSCURO: TRANSFORMACIÓN A ROJO/NEGRO
-   ========================================= */
-
-[data-theme="dark"] {
-    /* 1. CAMBIO DE VARIABLES PRINCIPALES */
-    /* Engañamos al sistema: donde antes pedía Azul, ahora le damos Rojo */
+    /* Logos y variables */
+    .sponsor-logo-link, .sponsor-track img, .mobile-track img, .toc-sponsor img { background-color: #ffffff; filter: none; }
+    .team-card, .event-card, .review-card { box-shadow: 0 4px 10px rgba(0,0,0,0.5); border: 1px solid #333; }
+    
+    /* Variables redefinidas para dark mode */
     --color-azul-club: #c8102e; 
-    
-    /* El fondo del menú (nav) pasa de azul noche a un rojo vino casi negro */
     --nav-bg: #1a0205; 
-    
-    /* El footer también pierde el tono azulado */
     --color-azul-oscuro: #0f0102;
 
-    /* 2. TEXTOS Y TÍTULOS */
-    /* Los títulos de las tarjetas ahora usan un rojo brillante para leerse bien sobre negro */
-    .team-card h3, 
-    .card-content h3, 
-    .sponsor-body h3,
-    .result-item h4 { 
-        color: #ff334b !important; /* Rojo luminoso (tipo neón) para contraste */
-    }
+    .section-title { color: #ffffff; }
+    .section-title::after { background: #c8102e; }
 
-    /* Títulos de sección generales */
-    .section-title { 
-        color: #ffffff; /* Blanco para máxima legibilidad */
-    }
-    .section-title::after {
-        background: #c8102e; /* Subrayado rojo */
-    }
+    .social-btn { color: #c8102e; }
+    .social-btn:hover { background: #c8102e; color: white; }
 
-    /* 3. ELEMENTOS DE UI */
-    /* Iconos sociales y bordes */
-    .social-btn {
-        color: #c8102e; /* Iconos rojos */
-    }
-    .social-btn:hover {
-        background: #c8102e;
-        color: white;
-    }
-
-    /* Bordes de inputs */
-    #search-input {
-        color: white;
-        border-bottom-color: #ff334b;
-    }
-
-    /* 4. SIDEBARS (Barras laterales) */
-    .sidebar-sponsor {
-        background-color: #0a0a0a; /* Fondo negro en lugar de azul */
-        border-left: 2px solid #c8102e;
-        border-right: 2px solid #c8102e;
-    }
+    .sidebar-sponsor { background-color: #0a0a0a; border-left: 2px solid #c8102e; border-right: 2px solid #c8102e; }
     
-    /* Sidebar izquierdo */
     .toc-link:hover, .toc-link.active {
         color: #ff334b;
         border-left-color: #ff334b;
         background: linear-gradient(90deg, rgba(200, 16, 46, 0.1) 0%, transparent 100%);
     }
-
-    /* Logos de patrocinadores: Mantener fondo blanco para que se vean los logos originales */
-    .sponsor-logo-link, 
-    .sponsor-track img,
-    .toc-sponsor img {
-        background-color: #ffffff;
-        border: 1px solid #333;
-    }
 }
+
+/* =========================================
+   14. SISTEMA DE COOKIES Y PRIVACIDAD (NUEVO)
+   ========================================= */
+
+/* Banner Inferior (Fijo) */
+.cookie-banner {
+    position: fixed;
+    bottom: -100%; /* Oculto inicialmente */
+    left: 0;
+    width: 100%;
+    background: #111;
+    color: white;
+    padding: 20px;
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.3);
+    z-index: 10001; /* Por encima de todo */
+    transition: bottom 0.5s ease;
+    border-top: 3px solid var(--color-rojo-club);
+}
+
+.cookie-banner.show { bottom: 0; }
+
+.cookie-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.cookie-buttons button {
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+#btn-accept { background: var(--color-rojo-club); color: white; }
+#btn-reject { background: #555; color: #fff; }
+
+.cookie-link { color: #ccc; text-decoration: underline; font-size: 0.9rem; }
+
+/* Contenedor de Bloqueo (Widgets) */
+.cookie-blocked-container {
+    position: relative;
+    min-height: 500px;
+    background-color: #f0f0f0;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cookie-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(20, 36, 59, 0.95);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+}
+
+.cookie-msg-content { max-width: 400px; color: white; animation: fadeIn 0.5s ease-out; }
+
+.icon-bloqueo {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    background: -webkit-linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.cookie-msg-content h3 { font-family: 'Oswald', sans-serif; font-size: 1.5rem; margin-bottom: 10px; }
+.cookie-msg-content p { font-family: 'Roboto', sans-serif; font-size: 1rem; margin-bottom: 25px; color: #ddd; }
+
+.btn-cookie-accept {
+    background-color: var(--color-rojo-club); color: white;
+    border: none; padding: 12px 25px; font-size: 1rem;
+    font-weight: bold; font-family: 'Oswald', sans-serif;
+    border-radius: 50px; cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex; align-items: center; gap: 10px;
+}
+
+.btn-cookie-accept:hover { background-color: white; color: var(--color-rojo-club); transform: translateY(-2px); }
+
+/* Ajustes Dark Mode y Estados */
+[data-theme="dark"] .cookie-blocked-container { background-color: var(--bg-card); border-color: #333; }
+[data-theme="dark"] .cookie-overlay { background: rgba(0, 0, 0, 0.9); }
+
+/* Cuando se aceptan las cookies */
+body.cookies-accepted .cookie-overlay { display: none; }
+body.cookies-accepted .cookie-blocked-container { min-height: auto; background: transparent; border: none; }
