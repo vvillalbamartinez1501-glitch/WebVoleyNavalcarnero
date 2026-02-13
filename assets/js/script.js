@@ -410,3 +410,43 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // 1. Capturamos el botón y el cuerpo
+    const themeToggle = document.querySelector('.theme-toggle');
+    const body = document.body;
+    
+    // 2. Comprobamos si el usuario ya tenía una preferencia guardada
+    const savedTheme = localStorage.getItem('theme');
+    
+    // Si había guardado 'dark', lo activamos directamente
+    if (savedTheme === 'dark') {
+        body.setAttribute('data-theme', 'dark');
+        // Opcional: Cambiar el icono si usas FontAwesome
+        if(themeToggle) themeToggle.classList.replace('fa-moon', 'fa-sun');
+    }
+
+    // 3. Función al hacer clic en el botón
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            
+            // Comprobamos si está activo actualmente
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            
+            if (isDark) {
+                // Desactivar modo oscuro
+                body.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+                // Cambiar icono a Luna
+                themeToggle.classList.replace('fa-sun', 'fa-moon');
+            } else {
+                // Activar modo oscuro
+                body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                // Cambiar icono a Sol
+                themeToggle.classList.replace('fa-moon', 'fa-sun');
+            }
+        });
+    }
+});
