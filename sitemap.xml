@@ -4,4 +4,16 @@
     <loc>https://voley-navalcarnero.vercel.app/</loc>
     <priority>1.0</priority>
   </url>
+    <url>
+    <loc>https://voley-navalcarnero.vercel.app/#eventos</loc>
+    <priority>0.8</priority>
+  </url>
+    <url>
+    <loc>https://voley-navalcarnero.vercel.app/#equipos</loc>
+    <priority>0.8</priority>
+  </url>
+    <url>
+    <loc>https://voley-navalcarnero.vercel.app/#competicion</loc>
+    <priority>0.8</priority>
+  </url>
   </urlset>
