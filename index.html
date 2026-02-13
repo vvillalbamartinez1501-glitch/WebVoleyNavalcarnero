@@ -150,6 +150,7 @@
             <div class="elfsight-app-a7094e92-32d6-490a-a275-1ce1e090db4d widget-light" data-elfsight-app-lazy></div>
             <div class="elfsight-app-e33f5193-9498-41d9-9cb1-2d66728ec8cd widget-dark" data-elfsight-app-lazy></div>
         </div>
+
     </div>
 </section>
         
@@ -463,16 +464,46 @@
             <h3>SÍGUENOS</h3>
             <div class="social-icons-container" style="justify-content: flex-start; margin-top: 10px; flex-wrap: wrap;">
                 <a href="https://www.instagram.com/clubvoleibolnavalcarnero/" target="_blank" class="social-btn-mini"><i class="fab fa-instagram"></i></a>
-                <a href="https://twitter.com/CVNavalcarnero" target="_blank" class="social-btn-mini"><i class="fab fa-x-twitter"></i></a>
+                <a href="https://twitter.com/CVNavalcarnero" target="_blank" class="social-btn-mini"><i class="fab fa-x-twitter">X</i></a>
                 <a href="https://www.twitch.tv/voleibolnavalcarnero" target="_blank" class="social-btn-mini"><i class="fab fa-twitch"></i></a>
                 <a href="https://www.tiktok.com/@clubvoleibolnavalcarnero" target="_blank" class="social-btn-mini"><i class="fab fa-tiktok"></i></a>
-                <a href="https://www.facebook.com/..." target="_blank" class="social-btn-mini"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.facebook.com/p/Club-Voleibol-Navalcarnero-100085594282506/" target="_blank" class="social-btn-mini"><i class="fab fa-facebook-f"></i></a>
             </div>
             
             <h3 style="margin-top: 20px; font-size: 0.9rem;">ENLACES DE INTERÉS</h3>
-            <div style="font-size: 0.85rem; line-height: 1.6;">
-                <a href="https://fmvoley.com/" target="_blank" rel="noopener noreferrer" style="color: #ccc; text-decoration: none;">Federación de Madrid (FMVB)</a><br>
-                <a href="https://www.navalcarnero.es/concejalia-deportes" target="_blank" rel="noopener noreferrer" style="color: #ccc; text-decoration: none;">Deportes Navalcarnero</a>
+<ul style="font-size: 0.85rem; line-height: 1.8; list-style: none; padding: 0;">
+    
+    <li>
+        <a href="https://www.navalcarnero.es/concejalia-deportes" target="_blank" style="color: #ccc; text-decoration: none; transition: color 0.3s;">
+            <i class="fas fa-building" style="margin-right: 5px; color: var(--color-rojo-club);"></i> Deportes Navalcarnero
+        </a>
+    </li>
+
+    <li>
+        <a href="https://www.comunidad.madrid/servicios/deportes/deporte-infantil" target="_blank" style="color: #ccc; text-decoration: none; transition: color 0.3s;">
+            <i class="fas fa-running" style="margin-right: 5px; color: var(--color-rojo-club);"></i> Deporte Infantil Madrid
+        </a>
+    </li>
+
+    <li>
+        <a href="https://turismo-navalcarnero.com/" target="_blank" style="color: #ccc; text-decoration: none; transition: color 0.3s;">
+            <i class="fas fa-map-marked-alt" style="margin-right: 5px; color: var(--color-rojo-club);"></i> Turismo Navalcarnero
+        </a>
+    </li>
+
+    <li>
+        <a href="https://es.wikipedia.org/wiki/Voleibol#Reglas_básicas" target="_blank" style="color: #ccc; text-decoration: none; transition: color 0.3s;">
+            <i class="fas fa-book-open" style="margin-right: 5px; color: var(--color-rojo-club);"></i> Reglamento Básico
+        </a>
+    </li>
+</ul>
+
+<script>
+    document.querySelectorAll('.footer-col ul li a').forEach(link => {
+        link.addEventListener('mouseenter', () => link.style.color = 'white');
+        link.addEventListener('mouseleave', () => link.style.color = '#ccc');
+    });
+</script>
             </div>
         </div>
     </div>
@@ -536,30 +567,7 @@
             <div id="search-results" class="search-results-container"></div>
         </div>
     </div>
-<section id="noticias" class="instagram-feed">
-    <h2 class="section-title">ACTUALIDAD DEL VOLEY EN NAVALCARNERO</h2>
-    
-    <div class="cookie-blocked-container">
-        
-        <div class="cookie-overlay">
-            <div class="cookie-msg-content">
-                <i class="fab fa-instagram icon-bloqueo"></i>
-                <h3>Contenido Bloqueado</h3>
-                <p>Para ver las últimas fotos y resultados de Instagram, necesitas aceptar las cookies de terceros.</p>
-                <button onclick="acceptAllCookies()" class="btn-cookie-accept">
-                    <i class="fas fa-check"></i> Aceptar y Ver Fotos
-                </button>
-            </div>
-        </div>
 
-        <script type="text/plain" class="lazy-script" data-src="https://elfsightcdn.com/platform.js"></script>
-        
-        <div class="widget-wrapper">
-            <div class="elfsight-app-a7094e92-32d6-490a-a275-1ce1e090db4d widget-light" data-elfsight-app-lazy></div>
-            <div class="elfsight-app-e33f5193-9498-41d9-9cb1-2d66728ec8cd widget-dark" data-elfsight-app-lazy></div>
-        </div>
-    </div>
-</section>
     <script src="assets/js/script.js"></script>
 </body>
 </html>
