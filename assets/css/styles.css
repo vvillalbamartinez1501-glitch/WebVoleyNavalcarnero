@@ -1632,3 +1632,62 @@ header {
 }
 
 @keyframes scrollHoriz { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+/* =========================================
+   AJUSTE DE BOTONES REDES SOCIALES (RRSS)
+   ========================================= */
+
+.social-icons-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap; /* Permite que bajen de línea si no caben */
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centra el texto e icono dentro del botón */
+    gap: 15px; /* Más espacio entre el icono y el texto */
+    
+    /* AUMENTO DE TAMAÑO: */
+    padding: 18px 40px; /* Más relleno: 18px arriba/abajo, 40px lados */
+    min-width: 240px;   /* Ancho mínimo garantizado para que quepa el texto */
+    font-size: 1.2rem;  /* Texto más grande y legible */
+    
+    white-space: nowrap; /* IMPORTANTE: Prohíbe que el texto se parta en dos líneas */
+    border-radius: 50px;
+    font-weight: bold;
+    font-family: 'Oswald', sans-serif;
+    color: var(--color-azul-club);
+    background: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border: 2px solid transparent; /* Prepara el borde para el hover */
+}
+
+.social-btn i {
+    font-size: 1.5rem; /* Icono más grande proporcionalmente */
+}
+
+/* Efectos Hover (Mantener igual o ajustar colores) */
+.social-btn:hover { 
+    transform: translateY(-5px); 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+.social-btn.instagram:hover { color: #E1306C; border-color: #E1306C; }
+.social-btn.twitter:hover { color: #000000; border-color: #000000; }
+.social-btn.twitch:hover { color: #9146FF; border-color: #9146FF; }
+.social-btn.tiktok:hover { color: #000000; border-color: #00f2ea; }
+
+/* =========================================
+   RESPONSIVE PARA MÓVIL (MUY IMPORTANTE)
+   ========================================= */
+@media (max-width: 768px) {
+    .social-btn {
+        width: 100%; /* En móvil ocupan todo el ancho */
+        min-width: auto; /* Reseteamos el min-width para que no se salgan de la pantalla */
+        padding: 15px 20px; /* Un poco menos de padding lateral en móvil */
+        justify-content: center;
+    }
+}
