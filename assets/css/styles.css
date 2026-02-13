@@ -639,3 +639,62 @@ header {
         justify-content: center;
     }
 }
+/* =========================================
+   AJUSTES FINALES MODO OSCURO
+   ========================================= */
+
+[data-theme="dark"] {
+    /* Forzamos que los títulos de sección sean blancos/grises */
+    .section-title { color: var(--text-main); }
+    
+    /* Títulos de tarjetas: Cambiar azul oscuro por azul claro luminoso */
+    .team-card h3, 
+    .card-content h3, 
+    .sponsor-body h3,
+    .result-item h4 { 
+        color: #5dade2; 
+    }
+
+    /* Textos secundarios y descripciones */
+    .hero-subtitle, 
+    .category-desc,
+    .sponsor-description,
+    .review-text {
+        color: #cccccc;
+    }
+
+    /* Inputs y formularios */
+    #search-input { 
+        color: white; 
+        border-bottom-color: var(--color-rojo-club); 
+    }
+
+    /* Sidebar Izquierdo (Índice) */
+    .sidebar-left {
+        background-color: var(--bg-container);
+        border-right: 1px solid var(--border-color);
+    }
+    .toc-link { color: #aaa; }
+    .toc-link:hover { color: white; background: rgba(255,255,255,0.05); }
+
+    /* Menú Móvil desplegable */
+    .nav-menu {
+        background-color: var(--nav-bg);
+        border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    /* Mantener logos de patrocinadores con fondo blanco para que se vean */
+    .sponsor-logo-link, 
+    .sponsor-track img, 
+    .mobile-track img,
+    .toc-sponsor img {
+        background-color: #ffffff;
+        filter: none; /* Opcional: si quisieras invertir colores, se haría aquí */
+    }
+
+    /* Sombras más sutiles en modo oscuro */
+    .team-card, .event-card, .review-card {
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        border: 1px solid #333;
+    }
+}
