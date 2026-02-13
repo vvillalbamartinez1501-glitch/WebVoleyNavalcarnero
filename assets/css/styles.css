@@ -321,7 +321,7 @@ header {
     max-width: 1200px; margin: 0 auto;
     box-shadow: 0 10px 20px rgba(0,0,0,0.15); border-left: 6px solid var(--color-rojo-club); color: white;
 }
-.comp-icon { font-size: 3.5rem; color: var(--color-azul-oscuro); background: rgba(255,255,255,0.1); width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border-radius: 50%; flex-shrink: 0; }
+.comp-icon { font-size: 3.5rem; color: var(--color-azul-oscuro); background: rgb(148, 140, 240); width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border-radius: 50%; flex-shrink: 0; }
 .comp-info { flex: 1; text-align: left; }
 .comp-action { flex-shrink: 0; }
 
