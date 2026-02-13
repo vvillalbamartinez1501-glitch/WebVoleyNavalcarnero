@@ -698,3 +698,73 @@ header {
         border: 1px solid #333;
     }
 }
+/* =========================================
+   MODO OSCURO: TRANSFORMACIÓN A ROJO/NEGRO
+   ========================================= */
+
+[data-theme="dark"] {
+    /* 1. CAMBIO DE VARIABLES PRINCIPALES */
+    /* Engañamos al sistema: donde antes pedía Azul, ahora le damos Rojo */
+    --color-azul-club: #c8102e; 
+    
+    /* El fondo del menú (nav) pasa de azul noche a un rojo vino casi negro */
+    --nav-bg: #1a0205; 
+    
+    /* El footer también pierde el tono azulado */
+    --color-azul-oscuro: #0f0102;
+
+    /* 2. TEXTOS Y TÍTULOS */
+    /* Los títulos de las tarjetas ahora usan un rojo brillante para leerse bien sobre negro */
+    .team-card h3, 
+    .card-content h3, 
+    .sponsor-body h3,
+    .result-item h4 { 
+        color: #ff334b !important; /* Rojo luminoso (tipo neón) para contraste */
+    }
+
+    /* Títulos de sección generales */
+    .section-title { 
+        color: #ffffff; /* Blanco para máxima legibilidad */
+    }
+    .section-title::after {
+        background: #c8102e; /* Subrayado rojo */
+    }
+
+    /* 3. ELEMENTOS DE UI */
+    /* Iconos sociales y bordes */
+    .social-btn {
+        color: #c8102e; /* Iconos rojos */
+    }
+    .social-btn:hover {
+        background: #c8102e;
+        color: white;
+    }
+
+    /* Bordes de inputs */
+    #search-input {
+        color: white;
+        border-bottom-color: #ff334b;
+    }
+
+    /* 4. SIDEBARS (Barras laterales) */
+    .sidebar-sponsor {
+        background-color: #0a0a0a; /* Fondo negro en lugar de azul */
+        border-left: 2px solid #c8102e;
+        border-right: 2px solid #c8102e;
+    }
+    
+    /* Sidebar izquierdo */
+    .toc-link:hover, .toc-link.active {
+        color: #ff334b;
+        border-left-color: #ff334b;
+        background: linear-gradient(90deg, rgba(200, 16, 46, 0.1) 0%, transparent 100%);
+    }
+
+    /* Logos de patrocinadores: Mantener fondo blanco para que se vean los logos originales */
+    .sponsor-logo-link, 
+    .sponsor-track img,
+    .toc-sponsor img {
+        background-color: #ffffff;
+        border: 1px solid #333;
+    }
+}
