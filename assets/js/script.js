@@ -246,3 +246,167 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    document.addEventListener('DOMContentLoaded', () => {
+    
+    // --- 1. MENÚ MÓVIL ---
+    const menuToggle = document.getElementById('mobile-menu');
+    const navMenu = document.querySelector('.nav-menu');
+    const navLinks = document.querySelectorAll('.nav-menu a');
+
+    if (menuToggle && navMenu) {
+        menuToggle.addEventListener('click', () => navMenu.classList.toggle('active'));
+        // Cerrar menú al hacer clic en un enlace
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => navMenu.classList.remove('active'));
+        });
+    }
+
+    // --- 2. CARRUSEL HERO INFINITO ---
+    const track = document.querySelector('.hero-track');
+    const slides = document.querySelectorAll('.hero-slide');
+    
+    if (track && slides.length > 0) {
+        const firstClone = slides[0].cloneNode(true);
+        track.appendChild(firstClone); // Clonamos la primera imagen al final
+        
+        let i = 0;
+        const totalSlides = track.children.length; 
+        
+        setInterval(() => {
+            i++;
+            track.style.transition = 'transform 1s ease-in-out';
+            track.style.transform = `translateX(-${i * 100}%)`;
+
+            // Cuando llegamos al clon, reseteamos instantáneamente al principio
+            track.addEventListener('transitionend', () => {
+                if (i >= totalSlides - 1) {
+                    track.style.transition = 'none';
+                    i = 0;
+                    track.style.transform = `translateX(0)`;
+                }
+            }, { once: true });
+        }, 4000); // Cambia cada 4 segundos
+    }
+
+    // --- 3. ACORDEÓN PATROCINADORES ---
+    const buttons = document.querySelectorAll('.btn-toggle-services');
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            btn.classList.toggle('active');
+            const content = btn.nextElementSibling;
+            
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+                btn.querySelector('span').textContent = 'Ver Servicios';
+            } else {
+                content.style.maxHeight = content.scrollHeight + 'px';
+                btn.querySelector('span').textContent = 'Ocultar';
+            }
+        });
+    });
+
+    // --- 4. SCROLL INFINITO SPONSORS ---
+    const sTracks = document.querySelectorAll('.sponsor-track, .mobile-track');
+    sTracks.forEach(t => {
+        t.innerHTML += t.innerHTML; // Duplicar contenido para efecto infinito
+    });
+
+    // --- 5. BUSCADOR INTERACTIVO ---
+    const searchBtn = document.getElementById('search-trigger');
+    const overlay = document.getElementById('search-overlay');
+    const closeBtn = document.getElementById('close-search');
+    const input = document.getElementById('search-input');
+    const results = document.getElementById('search-results');
+
+    if (searchBtn && overlay) {
+        searchBtn.addEventListener('click', () => {
+            overlay.classList.add('active');
+            input.focus();
+            document.body.style.overflow = 'hidden';
+        });
+
+        const closeSearch = () => {
+            overlay.classList.remove('active');
+            input.value = '';
+            results.innerHTML = '';
+            document.body.style.overflow = 'auto';
+        };
+
+        closeBtn.addEventListener('click', closeSearch);
+        
+        // Buscar texto en la página
+        input.addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase();
+            results.innerHTML = '';
+            if (val.length < 2) return;
+
+            // Buscamos en títulos y párrafos
+            const targets = document.querySelectorAll('h1, h2, h3, p');
+            let found = false;
+
+            targets.forEach(el => {
+                if (el.textContent.toLowerCase().includes(val)) {
+                    found = true;
+                    const div = document.createElement('div');
+                    div.className = 'result-item';
+                    div.innerText = `Encontrado: ${el.textContent.substring(0, 50)}...`;
+                    div.onclick = () => {
+                        closeSearch();
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        el.style.backgroundColor = '#ffeb3b'; // Highlight temporal
+                        setTimeout(() => el.style.backgroundColor = 'transparent', 1500);
+                    };
+                    results.appendChild(div);
+                }
+            });
+
+            if (!found) results.innerHTML = '<p>No hay resultados</p>';
+        });
+    }
+
+    // --- 6. MODO OSCURO ---
+    const themeBtn = document.getElementById('theme-toggle');
+    const savedTheme = localStorage.getItem('theme');
+    
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        if (savedTheme === 'dark') themeBtn.querySelector('i').classList.replace('fa-moon', 'fa-sun');
+    }
+
+    themeBtn.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme');
+        const newTheme = current === 'dark' ? 'light' : 'dark';
+        
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        
+        const icon = themeBtn.querySelector('i');
+        if (newTheme === 'dark') {
+            icon.classList.replace('fa-moon', 'fa-sun');
+        } else {
+            icon.classList.replace('fa-sun', 'fa-moon');
+        }
+    });
+
+    // --- 7. ÍNDICE LATERAL ACTIVO (Scroll Spy) ---
+    const sections = document.querySelectorAll('section');
+    const navLinksToc = document.querySelectorAll('.toc-link');
+
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (pageYOffset >= sectionTop - 150) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        navLinksToc.forEach(li => {
+            li.classList.remove('active');
+            if (li.getAttribute('href').includes(current)) {
+                li.classList.add('active');
+            }
+        });
+    });
+});

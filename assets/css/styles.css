@@ -615,3 +615,230 @@ header {
        estamos al principio del bloque duplicado. Reiniciamos instantáneamente a 0. */
     100% { transform: translateX(-50%); } 
 }
+/* =========================================
+   1. VARIABLES Y TEMA
+   ========================================= */
+:root {
+    --color-rojo-club: #c8102e;
+    --color-azul-club: #1d3557;
+    --ancho-sidebar: 140px;
+    --bg-body: #eee;
+    --bg-container: #ffffff;
+    --bg-card: #ffffff;
+    --bg-input: #f4f4f4;
+    --text-main: #333333;
+    --text-muted: #555555;
+    --text-inverse: #ffffff;
+    --nav-bg: #1d3557;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] {
+    --bg-body: #121212;
+    --bg-container: #1e1e1e;
+    --bg-card: #252525;
+    --bg-input: #333;
+    --text-main: #f4f4f4;
+    --text-muted: #bbbbbb;
+    --text-inverse: #ffffff;
+    --border-color: #444;
+    --shadow-color: rgba(0, 0, 0, 0.5);
+    --nav-bg: #0f1c2e;
+}
+
+/* =========================================
+   2. RESET Y ESTILOS BASE
+   ========================================= */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    overflow-x: hidden;
+    transition: background-color 0.3s ease;
+}
+
+h1, h2, h3, h4 { font-family: 'Oswald', sans-serif; text-transform: uppercase; }
+a { text-decoration: none; color: inherit; transition: color 0.3s; }
+ul { list-style: none; }
+img { max-width: 100%; display: block; }
+
+section { padding: 60px 20px; text-align: center; }
+.section-title { margin-bottom: 30px; font-size: 2rem; color: var(--color-azul-club); }
+[data-theme="dark"] .section-title { color: var(--text-main); }
+
+/* =========================================
+   3. LAYOUT GENERAL
+   ========================================= */
+header {
+    background: var(--nav-bg);
+    padding: 1rem 0;
+    color: var(--text-inverse);
+    position: sticky; top: 0; z-index: 1000;
+    box-shadow: 0 2px 5px var(--shadow-color);
+}
+
+.nav-container {
+    width: 100%; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 40px;
+}
+.logo { font-weight: bold; font-size: 1.2rem; font-family: 'Oswald', sans-serif; }
+
+.nav-menu { display: flex; gap: 20px; align-items: center; }
+.nav-menu a { font-weight: bold; font-size: 0.9rem; text-transform: uppercase; }
+.nav-menu a:hover, .nav-menu a.active { color: var(--color-rojo-club); }
+
+.menu-toggle { display: none; font-size: 1.8rem; cursor: pointer; }
+.theme-toggle, .search-trigger { cursor: pointer; font-size: 1.2rem; padding: 5px; transition: transform 0.3s; }
+.theme-toggle:hover { color: #f1c40f; transform: rotate(20deg); }
+
+.main-content {
+    margin: 0 var(--ancho-sidebar);
+    background: var(--bg-container);
+    position: relative; z-index: 2;
+    box-shadow: 0 0 20px var(--shadow-color);
+    min-height: 100vh;
+}
+
+/* =========================================
+   4. HERO SECTION (HÍBRIDO)
+   ========================================= */
+.hero {
+    position: relative; height: 90vh; width: 100%;
+    padding: 0; display: flex; flex-direction: row; 
+    background-color: var(--nav-bg); 
+}
+
+.hero-carousel-window { width: 65%; height: 100%; overflow: hidden; position: relative; }
+.hero-track { display: flex; height: 100%; width: 100%; }
+.hero-slide { min-width: 100%; width: 100%; height: 100%; object-fit: cover; }
+
+.hero-content {
+    width: 35%; height: 100%;
+    background-color: var(--nav-bg); color: white;
+    display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+    text-align: left; padding: 40px;
+    border-left: 5px solid var(--color-rojo-club);
+}
+
+.hero-content h1 { 
+    font-size: 3rem; margin-bottom: 10px; line-height: 1; color: white;
+}
+.hero-subtitle {
+    font-size: 1.5rem; color: #ddd; margin-bottom: 20px; font-weight: 400; font-family: 'Oswald', sans-serif;
+}
+.hero-content p { color: #aaa; margin-bottom: 30px; font-size: 1rem; }
+
+/* =========================================
+   5. COMPONENTES UI
+   ========================================= */
+.btn-cta {
+    background: var(--color-rojo-club); color: white; padding: 12px 25px; 
+    font-weight: bold; border-radius: 4px; display: inline-block;
+}
+.btn-cta:hover { background: #a00d25; }
+.btn-white { background: white; color: var(--color-azul-club); }
+
+/* Tarjetas Generales */
+.event-card, .team-card {
+    background: var(--bg-card); border-radius: 10px; overflow: hidden;
+    box-shadow: 0 5px 15px var(--shadow-color); transition: transform 0.3s;
+    text-align: left;
+}
+.event-card:hover, .team-card:hover { transform: translateY(-5px); }
+
+/* Equipos */
+.teams-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
+.team-card { flex: 1 1 250px; padding: 30px; border-bottom: 4px solid var(--color-rojo-club); }
+.team-icon { font-size: 2rem; color: var(--color-azul-club); margin-bottom: 15px; }
+.category-tag { background: var(--nav-bg); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
+
+/* Eventos */
+.events-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+.card-image { position: relative; height: 200px; overflow: hidden; }
+.card-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+.card-image:hover img { transform: scale(1.1); }
+.event-date { position: absolute; top: 10px; right: 10px; background: var(--color-rojo-club); color: white; padding: 5px; font-weight: bold; }
+.card-content { padding: 20px; }
+
+/* Sponsors Detalle */
+.sponsors-grid-details { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; }
+.sponsor-detail-card { width: 300px; background: var(--bg-card); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px var(--shadow-color); display: flex; flex-direction: column; }
+.sponsor-logo-link { height: 150px; display: flex; align-items: center; justify-content: center; padding: 20px; background: white; }
+.sponsor-logo-link img { max-height: 80%; object-fit: contain; }
+.sponsor-body { padding: 20px; text-align: center; flex-grow: 1; }
+.btn-toggle-services { background: none; border: 2px solid var(--color-rojo-club); color: var(--color-rojo-club); padding: 5px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; margin-bottom: 10px; width: 100%; display: flex; justify-content: center; align-items: center; gap: 5px; }
+.btn-toggle-services:hover { background: var(--color-rojo-club); color: white; }
+.btn-toggle-services.active i { transform: rotate(180deg); }
+.sponsor-description { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; text-align: left; font-size: 0.9rem; }
+.sponsor-description p { padding-top: 10px; color: var(--text-muted); }
+
+/* Search Overlay */
+.search-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(29, 53, 87, 0.95); z-index: 2000; justify-content: center; padding-top: 100px; }
+.search-overlay.active { display: flex; animation: fadeIn 0.3s; }
+.search-content { width: 90%; max-width: 600px; position: relative; text-align: center; color: white; }
+#search-input { width: 100%; padding: 15px; font-size: 1.5rem; background: transparent; border: none; border-bottom: 2px solid var(--color-rojo-club); color: white; text-align: center; }
+.close-search { position: absolute; top: -50px; right: 0; font-size: 3rem; cursor: pointer; }
+.result-item { background: white; color: #333; padding: 10px; margin-top: 10px; border-radius: 5px; cursor: pointer; text-align: left; }
+
+/* =========================================
+   6. SIDEBARS (Layout PC)
+   ========================================= */
+.sidebar-left, .sidebar-sponsor { position: fixed; top: 0; width: var(--ancho-sidebar); height: 100vh; z-index: 90; }
+.sidebar-left { left: 0; background: var(--bg-container); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px 10px; overflow-y: auto; }
+.sidebar-sponsor { right: 0; background: var(--color-azul-club); display: flex; justify-content: center; padding-top: 20px; }
+
+/* Index Nav */
+.toc-nav ul li { margin-bottom: 10px; }
+.toc-link { font-size: 0.85rem; color: var(--text-muted); display: block; padding: 5px; border-left: 3px solid transparent; }
+.toc-link.active { color: var(--color-rojo-club); border-left-color: var(--color-rojo-club); font-weight: bold; }
+.toc-sponsor img { max-width: 80px; margin: 0 auto; display: block; }
+
+/* Sponsor Scroll Vertical */
+.sponsor-track { display: flex; flex-direction: column; gap: 30px; width: 100%; align-items: center; animation: scrollVertical 20s linear infinite; }
+.sponsor-track img { width: 80%; background: white; padding: 5px; border-radius: 5px; }
+.your-brand-here { background: var(--color-rojo-club); padding: 10px; text-align: center; width: 90%; }
+.your-brand-here a { color: white; font-weight: bold; font-size: 0.8rem; }
+
+/* Mobile Sponsor Bar */
+.mobile-sponsor-bar { display: none; position: fixed; bottom: 0; left: 0; width: 100%; height: 50px; background: var(--color-azul-club); z-index: 2000; overflow: hidden; border-top: 3px solid var(--color-rojo-club); }
+.mobile-track { display: flex; align-items: center; width: max-content; animation: scrollHorizontal 15s linear infinite; }
+.mobile-track a { color: white; font-weight: bold; margin-right: 20px; white-space: nowrap; }
+
+/* =========================================
+   7. FOOTER
+   ========================================= */
+.main-footer { background: #111; color: #aaa; padding-top: 50px; }
+.footer-content { max-width: 1000px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 40px; padding: 0 20px 40px; }
+.footer-col { flex: 1; min-width: 250px; }
+.footer-col h3 { color: white; border-bottom: 2px solid var(--color-rojo-club); display: inline-block; margin-bottom: 20px; }
+.social-icons-container { display: flex; gap: 15px; }
+.social-btn { width: 40px; height: 40px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; color: white; transition: background 0.3s; }
+.social-btn:hover { background: var(--color-rojo-club); }
+.footer-bottom { background: #000; padding: 15px; text-align: center; font-size: 0.8rem; }
+
+/* =========================================
+   8. MEDIA QUERIES
+   ========================================= */
+@media (max-width: 1300px) {
+    .sidebar-left, .sidebar-sponsor { display: none; }
+    .main-content { margin: 0; width: 100%; }
+    .mobile-sponsor-bar { display: block; }
+    body { padding-bottom: 50px; }
+}
+
+@media (max-width: 900px) {
+    .hero { flex-direction: column; height: auto; }
+    .hero-carousel-window, .hero-content { width: 100%; }
+    .hero-carousel-window { height: 300px; }
+    .hero-content { padding: 30px; border-left: none; border-top: 5px solid var(--color-rojo-club); }
+    .hero-content h1 { font-size: 2rem; }
+    .menu-toggle { display: block; }
+    .nav-menu { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: var(--nav-bg); flex-direction: column; padding: 20px; text-align: center; }
+    .nav-menu.active { display: flex; }
+}
+
+@keyframes scrollVertical { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+@keyframes scrollHorizontal { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
