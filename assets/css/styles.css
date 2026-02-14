@@ -515,7 +515,9 @@ header {
 .social-btn.instagram:hover { color: #E1306C; border-color: #E1306C; }
 .social-btn.twitter:hover { color: #000000; border-color: #000000; }
 .social-btn.twitch:hover { color: #9146FF; border-color: #9146FF; }
-.social-btn.tiktok:hover { color: #000000; border-color: #00f2ea; }
+.social-btn.tiktok:hover { color: #EE1D52; border-color: #69c9d0; }
+.social-btn.facebook:hover { color: #3b5998; border-color: #4800ff; }
+
 
 /* =========================================
    11. FOOTER (Nuevo diseño)
@@ -557,6 +559,12 @@ header {
     border-radius: 50%; transition: 0.3s;
 }
 .social-btn-mini:hover { background: var(--color-rojo-club); transform: translateY(-3px); }
+.social-btn-mini:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+.social-btn-mini.instagram:hover { color: #E1306C; border-color: #E1306C; }
+.social-btn-mini.twitter:hover { color: #000000; border-color: #000000; }
+.social-btn-mini.twitch:hover { color: #9146FF; border-color: #9146FF; }
+.social-btn-mini.tiktok:hover { color: #EE1D52; border-color: #69c9d0; }
+.social-btn-mini.facebook:hover { color: #3b5998; border-color: #4800ff; }
 
 .footer-bottom {
     background-color: #0b1421;
