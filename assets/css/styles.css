@@ -563,7 +563,7 @@ header {
 .social-btn-mini.instagram:hover { background: #E1306C; }
 .social-btn-mini.twitter:hover {background: #000000; }
 .social-btn-mini.twitch:hover {background: #9146FF; }
-.social-btn-mini.tiktok:hover { background: #69c9d0; }
+.social-btn-mini.tiktok:hover {color:#fe2c55; background: #69c9d0; }
 .social-btn-mini.facebook:hover {background: #4800ff; }
 
 .footer-bottom {
