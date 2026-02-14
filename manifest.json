@@ -1,0 +1,20 @@
+{
+  "name": "Club Voleibol Navalcarnero",
+  "short_name": "CV Navalcarnero",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1d3557",
+  "icons": [
+    {
+      "src": "assets/img/image.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/img/image.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

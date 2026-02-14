@@ -328,3 +328,70 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+// Registro PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').then(registration => {
+      console.log('SW registrado: ', registration);
+    }).catch(registrationError => {
+      console.log('SW error: ', registrationError);
+    });
+  });
+}
+document.addEventListener('DOMContentLoaded', () => {
+    const banner = document.getElementById('cookie-banner');
+    const acceptBtn = document.getElementById('btn-accept-cookies');
+    const rejectBtn = document.getElementById('btn-reject-cookies');
+
+    // 1. Comprobar si ya existe consentimiento
+    const consent = localStorage.getItem('cookieConsent');
+
+    if (consent === 'accepted') {
+        loadThirdPartyWidgets(); // Cargar Insta inmediatamente
+    } else if (!consent) {
+        // Si no hay decisión, mostrar banner tras 1 segundo
+        setTimeout(() => {
+            banner.classList.add('show');
+        }, 1000);
+    }
+
+    // 2. Botón Aceptar
+    acceptBtn.addEventListener('click', () => {
+        localStorage.setItem('cookieConsent', 'accepted');
+        banner.classList.remove('show');
+        loadThirdPartyWidgets(); // <--- AQUÍ ESTÁ LA CLAVE: Carga dinámica
+    });
+
+    // 3. Botón Rechazar
+    rejectBtn.addEventListener('click', () => {
+        localStorage.setItem('cookieConsent', 'rejected');
+        banner.classList.remove('show');
+        // No cargamos nada, el widget se queda con el mensaje de "Acepta cookies"
+    });
+});
+
+// Función para despertar los scripts dormidos
+function loadThirdPartyWidgets() {
+    // A. Añadir clase al body para cambios CSS (ocultar mensaje de bloqueo)
+    document.body.classList.add('cookies-accepted');
+
+    // B. Buscar scripts "dormidos" (type="text/plain")
+    const lazyScripts = document.querySelectorAll('.lazy-widget-script');
+
+    lazyScripts.forEach(script => {
+        // Crear un nuevo script real
+        const newScript = document.createElement('script');
+        newScript.src = script.dataset.src; // Cogemos la URL del data-src
+        newScript.type = 'text/javascript'; // Ahora sí es JS real
+        newScript.async = true;
+        
+        // Inyectarlo en el HTML para que arranque
+        document.body.appendChild(newScript);
+        
+        // Eliminar la etiqueta vieja para limpiar
+        script.remove();
+    });
+
+    console.log('Widgets de terceros cargados correctamente.');
+}
