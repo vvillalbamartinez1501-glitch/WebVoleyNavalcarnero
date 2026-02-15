@@ -328,6 +328,54 @@ header {
         flex: 1 1 100%;
     }
 }
+/* 1. Forzamos al contenedor principal a que permita varias filas */
+.competition-banner {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los elementos bajen a la siguiente línea */
+    gap: 15px;       /* Espacio entre botones */
+    align-items: center;
+    justify-content: center; /* Centra el contenido si sobran huecos */
+    padding: 20px;
+}
+
+/* 2. Ajustamos los bloques de información para que no empujen demasiado */
+.comp-info {
+    flex: 1 1 300px; /* Crece, pero tiene un mínimo de 300px */
+    min-width: 250px;
+}
+
+/* 3. Ajustamos los contenedores de los botones */
+.comp-action {
+    flex: 1 1 auto; /* Se ajustan al contenido */
+    display: flex;
+}
+
+/* 4. Estilo crítico para los botones con textos largos */
+.btn-cta.btn-white {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    line-height: 1.2;
+    min-height: 50px; /* Asegura que todos tengan la misma altura */
+    width: 100%;      /* Ocupa el ancho de su contenedor .comp-action */
+    white-space: normal; /* PERMITE que el texto rompa en dos líneas si es necesario */
+    word-wrap: break-word;
+}
+
+/* 5. Responsive: En móviles, un botón debajo de otro */
+@media (max-width: 768px) {
+    .comp-action {
+        flex: 1 1 100%; /* El botón ocupa todo el ancho */
+    }
+    
+    .competition-banner {
+        flex-direction: column;
+        text-align: center;
+    }
+}
 
 /* Equipos (Flexbox) */
 .teams-section { padding-bottom: 60px; }
