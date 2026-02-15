@@ -300,7 +300,34 @@ header {
 .card-content { padding: 20px; }
 .card-content h3 { color: var(--color-azul-club); margin-bottom: 10px; font-size: 1.5rem; }
 [data-theme="dark"] .card-content h3 { color: #5dade2; }
-.card-actions { margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; flex-wrap: wrap; }
+/* Ajuste para el contenedor de acciones */
+.card-actions { 
+    margin-top: 15px; 
+    padding-top: 15px; 
+    border-top: 1px solid var(--border-color); 
+    display: flex; 
+    gap: 10px; 
+    flex-wrap: wrap; /* Esto ya lo tenías, pero asegura que esté */
+    justify-content: flex-start; /* Alinea al inicio */
+}
+
+/* Ajuste para los botones dentro de la tarjeta */
+.card-actions .btn, 
+.card-actions button, 
+.card-actions a {
+    flex: 1 1 calc(50% - 10px); /* Intenta ocupar el 50% (2 por fila) */
+    min-width: 120px;           /* Evita que se hagan demasiado pequeños */
+    text-align: center;
+    padding: 8px 5px;          /* Reduce un poco el padding lateral */
+    font-size: 0.9rem;         /* Ajusta el tamaño de fuente si es necesario */
+}
+@media (max-width: 480px) {
+    .card-actions .btn, 
+    .card-actions button, 
+    .card-actions a {
+        flex: 1 1 100%;
+    }
+}
 
 /* Equipos (Flexbox) */
 .teams-section { padding-bottom: 60px; }
