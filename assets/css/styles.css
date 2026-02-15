@@ -363,7 +363,7 @@ header {
 
 .comp-info {
     flex: 1 1 300px; /* Ocupa espacio disponible, mínimo 300px */
-    min-width: 250px;
+    min-width: 100%;
     margin-right: auto; /* Empuja los botones a la derecha si hay espacio */
 }
 
@@ -417,8 +417,8 @@ header {
 }
 
     .comp-action {
-        width: 40%;
-        flex: 1 1 40%; /* Botones ocupan todo el ancho */
+        width: 100%;
+        flex: 1 1 100%; /* Botones ocupan todo el ancho */
     }
 }
 
