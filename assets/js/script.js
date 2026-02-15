@@ -1,39 +1,106 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-// ==========================================
-    // 1. MENÚ HAMBURGUESA GLOBAL
+    // ==========================================
+    // 1. GESTIÓN DE COOKIES (Lógica Unificada)
+    // ==========================================
+    const banner = document.getElementById('cookie-banner');
+    const acceptBtnBanner = document.getElementById('btn-accept-cookies'); // Botón "Aceptar todas" del banner
+    const rejectBtnBanner = document.getElementById('btn-reject-cookies'); // Botón "Rechazar" del banner
+    const acceptBtnWidget = document.getElementById('btn-accept-widget');  // Botón "Aceptar y Ver Fotos" (Overlay)
+
+    // Función principal para cargar todo el contenido bloqueado
+    const loadRestrictedContent = () => {
+        document.body.classList.add('cookies-accepted');
+
+        // A. Cargar Scripts de Widgets (Elfsight, Instagram, etc.)
+        const lazyWidgetScripts = document.querySelectorAll('script.lazy-widget-script');
+        lazyWidgetScripts.forEach(script => {
+            if (script.getAttribute('data-loaded') === 'true') return;
+            
+            console.log('Cargando widget:', script.dataset.src);
+            const newScript = document.createElement('script');
+            newScript.src = script.dataset.src;
+            newScript.type = 'text/javascript';
+            newScript.async = true;
+            document.body.appendChild(newScript);
+            script.setAttribute('data-loaded', 'true');
+        });
+
+        // B. Cargar Iframes (Mapas, vídeos)
+        const lazyIframes = document.querySelectorAll('.lazy-iframe');
+        lazyIframes.forEach(iframe => {
+            if (iframe.dataset.src) iframe.src = iframe.dataset.src;
+        });
+
+        // C. Cargar otros scripts genéricos
+        const lazyScripts = document.querySelectorAll('.lazy-script');
+        lazyScripts.forEach(oldScript => {
+            const newScript = document.createElement('script');
+            newScript.src = oldScript.dataset.src;
+            newScript.type = 'text/javascript';
+            newScript.async = true;
+            oldScript.parentNode.insertBefore(newScript, oldScript);
+            oldScript.remove();
+        });
+    };
+
+    // Función para procesar la aceptación
+    const handleAccept = () => {
+        localStorage.setItem('cookieConsent', 'accepted');
+        if (banner) banner.classList.remove('show');
+        loadRestrictedContent();
+    };
+
+    // Lógica de inicio: Comprobar consentimiento previo
+    const consent = localStorage.getItem('cookieConsent');
+    if (consent === 'accepted') {
+        loadRestrictedContent();
+    } else if (consent === 'rejected') {
+        // Se queda bloqueado
+    } else {
+        // Primera visita: Mostrar banner tras 1 seg
+        setTimeout(() => {
+            if (banner) banner.classList.add('show');
+        }, 1000);
+    }
+
+    // Event Listeners para los botones de cookies
+    if (acceptBtnBanner) acceptBtnBanner.addEventListener('click', handleAccept);
+    if (acceptBtnWidget) acceptBtnWidget.addEventListener('click', handleAccept);
+    
+    if (rejectBtnBanner) {
+        rejectBtnBanner.addEventListener('click', () => {
+            localStorage.setItem('cookieConsent', 'rejected');
+            if (banner) banner.classList.remove('show');
+        });
+    }
+
+    // ==========================================
+    // 2. MENÚ HAMBURGUESA
     // ==========================================
     const menuToggle = document.getElementById('mobile-menu');
     const navMenu = document.querySelector('.nav-menu');
     const navLinks = document.querySelectorAll('.nav-menu a');
-    const body = document.body;
 
     if (menuToggle && navMenu) {
         menuToggle.addEventListener('click', () => {
             navMenu.classList.toggle('active');
-            
-            // Cambiar icono de hamburguesa (☰) a X
-            if (navMenu.classList.contains('active')) {
-                menuToggle.innerHTML = '✕'; // Símbolo de cerrar
-                body.style.overflow = 'hidden'; // Bloquear scroll del fondo
-            } else {
-                menuToggle.innerHTML = '☰'; // Símbolo de menú
-                body.style.overflow = 'auto'; // Reactivar scroll
-            }
+            const isActive = navMenu.classList.contains('active');
+            menuToggle.innerHTML = isActive ? '✕' : '☰';
+            document.body.style.overflow = isActive ? 'hidden' : 'auto';
         });
 
-        // Cerrar menú al hacer clic en un enlace
         navLinks.forEach(link => {
             link.addEventListener('click', () => {
                 navMenu.classList.remove('active');
                 menuToggle.innerHTML = '☰';
-                body.style.overflow = 'auto';
+                document.body.style.overflow = 'auto';
             });
         });
     }
 
     // ==========================================
-    // 2. ANIMACIÓN DE APARICIÓN AL HACER SCROLL
+    // 3. ANIMACIÓN SCROLL (FADE IN)
     // ==========================================
     const sectionsFade = document.querySelectorAll('section');
     const sectionObserver = new IntersectionObserver((entries, observer) => {
@@ -54,86 +121,71 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 3. PATROCINADORES (SCROLL INFINITO)
+    // 4. CARRUSELES INFINITOS (Sponsors/Hero)
     // ==========================================
-    const tracks = document.querySelectorAll('.sponsor-track');
+    // Sponsors
+    const tracks = document.querySelectorAll('.sponsor-track, .mobile-track');
     tracks.forEach(track => {
-        const content = track.innerHTML;
-        track.innerHTML = content + content + content;
+        // Evitar duplicación si ya tiene contenido duplicado
+        if (track.children.length < 10) { 
+            const content = track.innerHTML;
+            track.innerHTML = content + content + content;
+        }
     });
 
-    const mobileTrack = document.querySelector('.mobile-track');
-    if (mobileTrack) {
-        const mobileContent = mobileTrack.innerHTML;
-        mobileTrack.innerHTML = mobileContent + mobileContent + mobileContent;
-    }
-
-    // ==========================================
-    // 4. CARRUSEL HERO (INFINITO)
-    // ==========================================
+    // Hero Slider
     const heroTrack = document.querySelector('.hero-track');
     const heroSlides = document.querySelectorAll('.hero-slide');
-
     if (heroTrack && heroSlides.length > 0) {
-        const intervalTime = 5000;
         const firstClone = heroSlides[0].cloneNode(true);
         heroTrack.appendChild(firstClone);
-
         let currentSlide = 0;
-        const totalSlides = heroTrack.children.length; 
-
-        const moveToNextSlide = () => {
+        
+        setInterval(() => {
             currentSlide++;
             heroTrack.style.transition = 'transform 1.5s cubic-bezier(0.25, 1, 0.5, 1)';
             heroTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
-        };
+        }, 5000);
 
         heroTrack.addEventListener('transitionend', () => {
-            if (currentSlide >= totalSlides - 1) {
+            if (currentSlide >= heroSlides.length) {
                 heroTrack.style.transition = 'none';
                 currentSlide = 0;
                 heroTrack.style.transform = `translateX(0)`;
             }
         });
-
-        setInterval(moveToNextSlide, intervalTime);
     }
 
     // ==========================================
     // 5. MODO OSCURO
     // ==========================================
     const themeToggle = document.querySelector('.theme-toggle') || document.getElementById('theme-toggle');
-    
     if (themeToggle) {
         const icon = themeToggle.querySelector('i');
         const htmlElement = document.documentElement;
-
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') {
+        
+        if (localStorage.getItem('theme') === 'dark') {
             document.body.setAttribute('data-theme', 'dark');
             htmlElement.setAttribute('data-theme', 'dark');
             if(icon) icon.classList.replace('fa-moon', 'fa-sun');
         }
 
         themeToggle.addEventListener('click', () => {
-            const isDark = htmlElement.getAttribute('data-theme') === 'dark' || document.body.getAttribute('data-theme') === 'dark';
+            const isDark = htmlElement.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
             
-            if (isDark) {
-                htmlElement.setAttribute('data-theme', 'light');
-                document.body.setAttribute('data-theme', 'light');
-                localStorage.setItem('theme', 'light');
-                if(icon) icon.classList.replace('fa-sun', 'fa-moon');
-            } else {
-                htmlElement.setAttribute('data-theme', 'dark');
-                document.body.setAttribute('data-theme', 'dark');
-                localStorage.setItem('theme', 'dark');
-                if(icon) icon.classList.replace('fa-moon', 'fa-sun');
+            htmlElement.setAttribute('data-theme', newTheme);
+            document.body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            if(icon) {
+                icon.classList.replace(isDark ? 'fa-sun' : 'fa-moon', isDark ? 'fa-moon' : 'fa-sun');
             }
         });
     }
 
     // ==========================================
-    // 6. BUSCADOR INTERACTIVO
+    // 6. BUSCADOR
     // ==========================================
     const searchTrigger = document.getElementById('search-trigger');
     const searchOverlay = document.getElementById('search-overlay');
@@ -155,417 +207,106 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.style.overflow = 'hidden';
         });
     }
-
     if(closeSearch) closeSearch.addEventListener('click', closeSearchModal);
-
+    
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && searchOverlay?.classList.contains('active')) {
-            closeSearchModal();
-        }
+        if (e.key === 'Escape' && searchOverlay?.classList.contains('active')) closeSearchModal();
     });
 
     if(searchInput && resultsContainer) {
         searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase().trim();
+            const term = e.target.value.toLowerCase().trim();
             resultsContainer.innerHTML = ''; 
-            
-            if (searchTerm.length < 2) return; 
+            if (term.length < 2) return; 
 
-            const searchableElements = document.querySelectorAll('.main-content h1, .main-content h2, .main-content h3, .main-content p, .team-card h3');
-            let foundCount = 0;
+            const elements = document.querySelectorAll('.main-content h1, .main-content h2, .main-content h3, .main-content p, .team-card h3');
+            let found = false;
 
-            searchableElements.forEach(el => {
-                const text = el.innerText;
-                if (text.toLowerCase().includes(searchTerm)) {
-                    foundCount++;
-                    const resultDiv = document.createElement('div');
-                    resultDiv.classList.add('result-item');
-                    const snippet = text.length > 80 ? text.substring(0, 80) + '...' : text;
-                    resultDiv.innerHTML = `<h4>Encontrado:</h4><p>${snippet}</p>`;
-                    
-                    resultDiv.addEventListener('click', () => {
+            elements.forEach(el => {
+                if (el.innerText.toLowerCase().includes(term)) {
+                    found = true;
+                    const div = document.createElement('div');
+                    div.className = 'result-item';
+                    div.innerHTML = `<h4>Encontrado:</h4><p>${el.innerText.substring(0, 80)}...</p>`;
+                    div.addEventListener('click', () => {
                         closeSearchModal();
                         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        el.style.transition = 'background-color 0.5s';
-                        el.style.backgroundColor = 'rgba(200, 16, 46, 0.3)'; 
-                        setTimeout(() => { el.style.backgroundColor = 'transparent'; }, 1500);
+                        el.style.backgroundColor = 'rgba(200, 16, 46, 0.3)';
+                        setTimeout(() => el.style.backgroundColor = 'transparent', 1500);
                     });
-                    
-                    resultsContainer.appendChild(resultDiv);
+                    resultsContainer.appendChild(div);
                 }
             });
-            
-            if (foundCount === 0) {
-                resultsContainer.innerHTML = '<div class="result-item"><p>No se encontraron coincidencias.</p></div>';
-            }
+            if (!found) resultsContainer.innerHTML = '<div class="result-item"><p>No se encontraron coincidencias.</p></div>';
         });
     }
 
     // ==========================================
-    // 7. HIGHLIGHT ACTIVO
+    // 7. SCROLL SPY & LINKS
     // ==========================================
-    const sectionsSpy = document.querySelectorAll('section');
     const allSpyLinks = document.querySelectorAll('.toc-link, .nav-menu a');
+    const sectionsSpy = document.querySelectorAll('section');
 
     if (allSpyLinks.length > 0) {
         const spyObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const id = entry.target.getAttribute('id');
-                    if (id) {
-                        allSpyLinks.forEach(link => {
-                            if (link.getAttribute('href') === `#${id}`) {
-                                link.classList.add('active');
-                            } else {
-                                link.classList.remove('active');
-                            }
-                        });
-                    }
+                if (entry.isIntersecting && entry.target.id) {
+                    allSpyLinks.forEach(link => {
+                        link.classList.toggle('active', link.getAttribute('href') === `#${entry.target.id}`);
+                    });
                 }
             });
         }, { rootMargin: '-30% 0px -70% 0px' });
-
-        sectionsSpy.forEach(section => spyObserver.observe(section));
+        
+        sectionsSpy.forEach(s => spyObserver.observe(s));
         
         allSpyLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 const href = link.getAttribute('href');
-                if(href && href.startsWith('#')) {
+                if(href?.startsWith('#')) {
                     e.preventDefault();
-                    const targetId = href.substring(1);
-                    const targetSection = document.getElementById(targetId);
-                    if(targetSection){
-                        window.scrollTo({ top: targetSection.offsetTop - 80, behavior: 'smooth' });
-                    }
+                    const target = document.getElementById(href.substring(1));
+                    if(target) window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
                 }
             });
         });
     }
 
     // ==========================================
-    // 8. ACORDEÓN PATROCINADORES
+    // 8. ACORDEÓN
     // ==========================================
-    const sponsorButtons = document.querySelectorAll('.btn-toggle-services');
-
-    sponsorButtons.forEach(btn => {
+    document.querySelectorAll('.btn-toggle-services').forEach(btn => {
         btn.addEventListener('click', () => {
             btn.classList.toggle('active');
-            const description = btn.nextElementSibling;
-
-            if (description.style.maxHeight) {
-                description.style.maxHeight = null;
-                const spanText = btn.querySelector('span');
-                if(spanText) spanText.textContent = "Ver Servicios";
+            const desc = btn.nextElementSibling;
+            const span = btn.querySelector('span');
+            
+            if (desc.style.maxHeight) {
+                desc.style.maxHeight = null;
+                if(span) span.textContent = "Ver Servicios";
             } else {
-                description.style.maxHeight = description.scrollHeight + "px";
-                const spanText = btn.querySelector('span');
-                if(spanText) spanText.textContent = "Cerrar Info";
+                desc.style.maxHeight = desc.scrollHeight + "px";
+                if(span) span.textContent = "Cerrar Info";
             }
         });
     });
 
     // ==========================================
-    // 9. LÓGICA DE COOKIES (NUEVO)
+    // 9. FOOTER LINKS
     // ==========================================
-    const cookieConsent = localStorage.getItem('cookieConsent');
-    
-    if (cookieConsent === 'accepted') {
-        activateCookies(); 
-    } else if (cookieConsent === 'rejected') {
-        // No hacemos nada, se quedan bloqueados
-    } else {
-        // Mostrar Banner
-        setTimeout(() => {
-            const banner = document.getElementById('cookie-banner');
-            if(banner) banner.classList.add('show');
-        }, 1000);
-    }
-});
-
-// FUNCIONES GLOBALES PARA COOKIES (Fuera del DOMContentLoaded)
-// Así funcionan con onclick="..." en el HTML
-
-function acceptAllCookies() {
-    localStorage.setItem('cookieConsent', 'accepted');
-    const banner = document.getElementById('cookie-banner');
-    if(banner) banner.classList.remove('show');
-    activateCookies();
-}
-
-function rejectCookies() {
-    localStorage.setItem('cookieConsent', 'rejected');
-    const banner = document.getElementById('cookie-banner');
-    if(banner) banner.classList.remove('show');
-}
-
-function activateCookies() {
-    // 1. Quitar las capas oscuras (overlay)
-    document.body.classList.add('cookies-accepted');
-
-    // 2. Activar IFRAMES (Mapas)
-    const lazyIframes = document.querySelectorAll('.lazy-iframe');
-    lazyIframes.forEach(iframe => {
-        if (iframe.dataset.src) {
-            iframe.src = iframe.dataset.src; 
-        }
-    });
-
-    // 3. Activar SCRIPTS (Instagram/Elfsight)
-    const lazyScripts = document.querySelectorAll('.lazy-script');
-    lazyScripts.forEach(oldScript => {
-        // Creamos un script nuevo y ejecutable
-        const newScript = document.createElement('script');
-        newScript.src = oldScript.dataset.src; 
-        newScript.type = 'text/javascript'; // Ahora sí se ejecuta
-        newScript.async = true;
-        
-        // Lo insertamos y borramos el viejo
-        oldScript.parentNode.insertBefore(newScript, oldScript);
-        oldScript.remove();
-    });
-}
-// Asignar al objeto window para asegurar que el HTML los encuentre
-window.acceptAllCookies = acceptAllCookies;
-window.rejectCookies = rejectCookies;
-
-// Gestión de efectos en enlaces de interés del footer
-document.addEventListener('DOMContentLoaded', () => {
-    const footerLinks = document.querySelectorAll('.interest-links a');
-    
-    footerLinks.forEach(link => {
-        link.addEventListener('mouseenter', () => {
-            link.style.color = 'white';
-        });
-        link.addEventListener('mouseleave', () => {
-            link.style.color = '#ccc';
-        });
+    document.querySelectorAll('.interest-links a').forEach(link => {
+        link.addEventListener('mouseenter', () => link.style.color = 'white');
+        link.addEventListener('mouseleave', () => link.style.color = '#ccc');
     });
 });
 
-// Registro PWA
+// ==========================================
+// 10. PWA (Fuera del DOMContentLoaded)
+// ==========================================
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').then(registration => {
-      console.log('SW registrado: ', registration);
-    }).catch(registrationError => {
-      console.log('SW error: ', registrationError);
-    });
-  });
-}
-document.addEventListener('DOMContentLoaded', () => {
-    const banner = document.getElementById('cookie-banner');
-    const acceptBtn = document.getElementById('btn-accept-cookies');
-    const rejectBtn = document.getElementById('btn-reject-cookies');
-
-    // 1. Comprobar si ya existe consentimiento
-    const consent = localStorage.getItem('cookieConsent');
-
-    if (consent === 'accepted') {
-        loadThirdPartyWidgets(); // Cargar Insta inmediatamente
-    } else if (!consent) {
-        // Si no hay decisión, mostrar banner tras 1 segundo
-        setTimeout(() => {
-            banner.classList.add('show');
-        }, 1000);
-    }
-
-    // 2. Botón Aceptar
-    acceptBtn.addEventListener('click', () => {
-        localStorage.setItem('cookieConsent', 'accepted');
-        banner.classList.remove('show');
-        loadThirdPartyWidgets(); // <--- AQUÍ ESTÁ LA CLAVE: Carga dinámica
-    });
-
-    // 3. Botón Rechazar
-    rejectBtn.addEventListener('click', () => {
-        localStorage.setItem('cookieConsent', 'rejected');
-        banner.classList.remove('show');
-        // No cargamos nada, el widget se queda con el mensaje de "Acepta cookies"
-    });
-});
-
-// Función para despertar los scripts dormidos
-function loadThirdPartyWidgets() {
-    // A. Añadir clase al body para cambios CSS (ocultar mensaje de bloqueo)
-    document.body.classList.add('cookies-accepted');
-
-    // B. Buscar scripts "dormidos" (type="text/plain")
-    const lazyScripts = document.querySelectorAll('.lazy-widget-script');
-
-    lazyScripts.forEach(script => {
-        // Crear un nuevo script real
-        const newScript = document.createElement('script');
-        newScript.src = script.dataset.src; // Cogemos la URL del data-src
-        newScript.type = 'text/javascript'; // Ahora sí es JS real
-        newScript.async = true;
-        
-        // Inyectarlo en el HTML para que arranque
-        document.body.appendChild(newScript);
-        
-        // Eliminar la etiqueta vieja para limpiar
-        script.remove();
-    });
-
-    console.log('Widgets de terceros cargados correctamente.');
-}
-document.addEventListener('DOMContentLoaded', () => {
-    const banner = document.getElementById('cookie-banner');
-    const acceptBtn = document.getElementById('btn-accept-cookies');
-    const rejectBtn = document.getElementById('btn-reject-cookies');
-
-    // 1. Comprobar si ya existe consentimiento guardado
-    const consent = localStorage.getItem('cookieConsent');
-
-    if (consent === 'accepted') {
-        loadThirdPartyWidgets(); // Si ya aceptó antes, cargamos el widget directo
-    } else if (consent === 'rejected') {
-        // Si rechazó, no hacemos nada (se queda el mensaje de bloqueo)
-    } else {
-        // Si no hay decisión (es la primera vez), mostramos el banner tras 1 seg
-        setTimeout(() => {
-            if(banner) banner.classList.add('show');
-        }, 1000);
-    }
-
-    // 2. Botón Aceptar
-    if(acceptBtn) {
-        acceptBtn.addEventListener('click', () => {
-            localStorage.setItem('cookieConsent', 'accepted');
-            if(banner) banner.classList.remove('show');
-            loadThirdPartyWidgets(); // <--- AQUÍ DESPERTAMOS EL SCRIPT
-        });
-    }
-
-    // 3. Botón Rechazar
-    if(rejectBtn) {
-        rejectBtn.addEventListener('click', () => {
-            localStorage.setItem('cookieConsent', 'rejected');
-            if(banner) banner.classList.remove('show');
-            // No cargamos nada. El usuario verá el mensaje "Acepta las cookies..." en el hueco
-        });
-    }
-});
-
-// Función para despertar los scripts dormidos
-function loadThirdPartyWidgets() {
-    // A. Añadir clase al body para que CSS oculte el mensaje de bloqueo
-    document.body.classList.add('cookies-accepted');
-
-    // B. Buscar scripts "dormidos" (type="text/plain" y clase lazy-widget-script)
-    const lazyScripts = document.querySelectorAll('script.lazy-widget-script');
-
-    lazyScripts.forEach(script => {
-        // Evitar cargar el script si ya fue procesado
-        if (script.getAttribute('data-loaded') === 'true') return;
-
-        console.log('Cargando widget externo:', script.dataset.src);
-
-        // Crear un nuevo script real
-        const newScript = document.createElement('script');
-        newScript.src = script.dataset.src; // Cogemos la URL (elfsight...)
-        newScript.type = 'text/javascript'; // Ahora sí es ejecutable
-        newScript.async = true;
-        
-        // Inyectarlo en el HTML
-        document.body.appendChild(newScript);
-        
-        // Marcar el original como cargado o eliminarlo
-        script.setAttribute('data-loaded', 'true');
-    });
-}
-// ... Código anterior del banner ...
-
-    // NUEVO: Lógica para el botón dentro del widget
-    const widgetBtn = document.getElementById('btn-accept-widget');
-    
-    if (widgetBtn) {
-        widgetBtn.addEventListener('click', () => {
-            // 1. Guardar consentimiento
-            localStorage.setItem('cookieConsent', 'accepted');
-            
-            // 2. Ocultar el banner inferior si estaba abierto
-            if(banner) banner.classList.remove('show');
-            
-            // 3. Cargar el widget inmediatamente
-            loadThirdPartyWidgets();
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-    // ==========================================
-    // 9. LÓGICA DE COOKIES (UNIFICADA)
-    // ==========================================
-    const banner = document.getElementById('cookie-banner');
-    const acceptBtnBanner = document.getElementById('btn-accept-cookies'); // Botón del banner
-    const rejectBtnBanner = document.getElementById('btn-reject-cookies'); // Botón rechazar del banner
-    const acceptBtnWidget = document.getElementById('btn-accept-widget');  // Botón sobre las fotos (Overlay)
-
-    // 1. Comprobar consentimiento guardado
-    const consent = localStorage.getItem('cookieConsent');
-
-    if (consent === 'accepted') {
-        loadThirdPartyWidgets(); // Cargar scripts inmediatamente
-    } else if (consent === 'rejected') {
-        // No hacer nada, se queda bloqueado
-    } else {
-        // Si es la primera vez, mostrar banner tras 1 segundo
-        setTimeout(() => {
-            if (banner) banner.classList.add('show');
-        }, 1000);
-    }
-
-    // 2. Función para ACEPTAR (sirve para ambos botones)
-    const handleAccept = () => {
-        localStorage.setItem('cookieConsent', 'accepted');
-        if (banner) banner.classList.remove('show');
-        loadThirdPartyWidgets(); // <--- Aquí ocurre la magia
-    };
-
-    // 3. Event Listeners
-    if (acceptBtnBanner) {
-        acceptBtnBanner.addEventListener('click', handleAccept);
-    }
-
-    if (acceptBtnWidget) {
-        // Este es el botón que no te funcionaba
-        acceptBtnWidget.addEventListener('click', handleAccept);
-    }
-
-    if (rejectBtnBanner) {
-        rejectBtnBanner.addEventListener('click', () => {
-            localStorage.setItem('cookieConsent', 'rejected');
-            if (banner) banner.classList.remove('show');
-        });
-    }
-});
-
-// ==========================================
-// FUNCIÓN DE CARGA DE WIDGETS (GLOBAL)
-// ==========================================
-function loadThirdPartyWidgets() {
-    // A. Añadir clase al body para cambios CSS (ocultar mensaje de bloqueo u overlays)
-    document.body.classList.add('cookies-accepted');
-
-    // B. Buscar scripts "dormidos" (type="text/plain" o clase específica)
-    // Asegúrate de que tus scripts de elfsight tengan class="lazy-widget-script"
-    const lazyScripts = document.querySelectorAll('script.lazy-widget-script');
-
-    lazyScripts.forEach(script => {
-        // Evitar cargar el script si ya fue procesado
-        if (script.getAttribute('data-loaded') === 'true') return;
-
-        console.log('Cargando widget externo:', script.dataset.src);
-
-        // Crear un nuevo script real
-        const newScript = document.createElement('script');
-        newScript.src = script.dataset.src; 
-        newScript.type = 'text/javascript'; 
-        newScript.async = true;
-        
-        // Inyectarlo en el HTML
-        document.body.appendChild(newScript);
-        
-        // Marcar el original como cargado
-        script.setAttribute('data-loaded', 'true');
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then(reg => console.log('SW registrado:', reg))
+            .catch(err => console.log('SW error:', err));
     });
 }
