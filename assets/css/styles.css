@@ -300,112 +300,122 @@ header {
 .card-content { padding: 20px; }
 .card-content h3 { color: var(--color-azul-club); margin-bottom: 10px; font-size: 1.5rem; }
 [data-theme="dark"] .card-content h3 { color: #5dade2; }
-/* Ajuste para el contenedor de acciones */
+/* =========================================
+   6. SECCIONES ESPECÍFICAS (DEFINITIVO)
+   ========================================= */
+
+/* --- 1. TARJETAS DE EQUIPOS Y EVENTOS --- */
+.event-card, .team-card {
+    background: var(--bg-card); 
+    border-radius: 12px; 
+    overflow: hidden;
+    box-shadow: var(--shadow-soft); 
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.05); 
+    text-align: left;
+    display: flex;
+    flex-direction: column; /* Asegura que el contenido fluya verticalmente */
+}
+
+.event-card:hover, .team-card:hover { 
+    transform: translateY(-8px); 
+    box-shadow: var(--shadow-hover); 
+}
+
+/* Contenedor de Botones en las Tarjetas */
 .card-actions { 
-    margin-top: 15px; 
+    margin-top: auto; /* Empuja los botones al final de la tarjeta */
     padding-top: 15px; 
     border-top: 1px solid var(--border-color); 
     display: flex; 
     gap: 10px; 
-    flex-wrap: wrap; /* Esto ya lo tenías, pero asegura que esté */
-    justify-content: flex-start; /* Alinea al inicio */
+    flex-wrap: wrap; 
+    justify-content: flex-start;
 }
 
-/* Ajuste para los botones dentro de la tarjeta */
+/* Botones individuales de las tarjetas */
 .card-actions .btn, 
 .card-actions button, 
 .card-actions a {
-    flex: 1 1 calc(50% - 10px); /* Intenta ocupar el 50% (2 por fila) */
-    min-width: 120px;           /* Evita que se hagan demasiado pequeños */
+    flex: 1 1 calc(50% - 10px); /* Cuadrícula de 2x2 */
+    min-width: 120px;
     text-align: center;
-    padding: 8px 5px;          /* Reduce un poco el padding lateral */
-    font-size: 0.9rem;         /* Ajusta el tamaño de fuente si es necesario */
-}
-@media (max-width: 480px) {
-    .card-actions .btn, 
-    .card-actions button, 
-    .card-actions a {
-        flex: 1 1 100%;
-    }
+    padding: 8px 5px;
+    font-size: 0.9rem;
 }
 
-/* 1. Forzamos al contenedor principal a que permita varias filas */
+/* --- 2. BANNER DE COMPETICIÓN (CLASIFICACIÓN) --- */
 .competition-banner {
     display: flex;
-    flex-wrap: wrap; /* Permite que los elementos bajen a la siguiente línea */
-    gap: 15px;       /* Espacio entre botones */
+    flex-wrap: wrap;
+    gap: 15px; /* Espacio uniforme entre elementos */
     align-items: center;
-    justify-content: center; /* Centra el contenido si sobran huecos */
+    justify-content: center;
     padding: 20px;
 }
 
-/* 2. Ajustamos los bloques de información para que no empujen demasiado */
+/* Información (Icono + Texto) */
+.comp-icon {
+    font-size: 2.5rem;
+    color: #ffd700; /* Color dorado trofeo opcional */
+    margin-right: 15px;
+}
+
 .comp-info {
-    flex: 1 1 300px; /* Crece, pero tiene un mínimo de 300px */
+    flex: 1 1 300px; /* Ocupa espacio disponible, mínimo 300px */
     min-width: 250px;
+    margin-right: auto; /* Empuja los botones a la derecha si hay espacio */
 }
 
-/* 3. Ajustamos los contenedores de los botones */
+/* Contenedores de los 4 botones */
 .comp-action {
-    flex: 1 1 auto; /* Se ajustan al contenido */
-    display: flex;
+    /* CLAVE: flex-grow:0 impide que los últimos se estiren */
+    flex: 0 1 calc(50% - 15px); 
+    display: flex; /* Para que el botón hijo ocupe todo el alto */
+    min-width: 200px;
 }
 
-/* 4. Estilo crítico para los botones con textos largos */
+/* Estilo de los Botones Blancos (Textos largos) */
 .btn-cta.btn-white {
-    display: inline-flex;
+    width: 100%;
+    display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 10px 15px;
-    font-size: 0.9rem;
-    line-height: 1.2;
-    min-height: 50px; /* Asegura que todos tengan la misma altura */
-    width: 100%;      /* Ocupa el ancho de su contenedor .comp-action */
-    white-space: normal; /* PERMITE que el texto rompa en dos líneas si es necesario */
-    word-wrap: break-word;
+    padding: 10px;
+    font-size: 0.85rem;
+    line-height: 1.3;
+    min-height: 60px; /* Altura fija para uniformidad */
+    white-space: normal; /* Permite saltos de línea */
+    border-radius: 6px; /* Opcional: redondeado ligero */
+    box-sizing: border-box;
 }
 
-/* 5. Responsive: En móviles, un botón debajo de otro */
+/* --- 3. RESPONSIVE (Móviles) --- */
 @media (max-width: 768px) {
-    .comp-action {
-        flex: 1 1 100%; /* El botón ocupa todo el ancho */
+    /* En tarjetas */
+    .card-actions .btn, 
+    .card-actions button, 
+    .card-actions a {
+        flex: 1 1 100%; /* Botones uno debajo de otro */
     }
-    
+
+    /* En competición */
     .competition-banner {
         flex-direction: column;
         text-align: center;
     }
-}
-/* Contenedor de los botones */
-.comp-action {
-    /* No permitimos que crezcan infinitamente (flex-grow: 0) */
-    /* Pero les damos una base del 45% para que entren 2 por fila */
-    flex: 0 1 calc(50% - 20px); 
-    min-width: 200px; /* Evita que se encojan demasiado */
-}
 
-/* El botón dentro del contenedor */
-.btn-cta.btn-white {
-    width: 100%;       /* Ocupa todo su .comp-action */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 12px 10px;
-    font-size: 0.85rem;
-    min-height: 60px;  /* Altura fija para que todos alineen igual */
-    box-sizing: border-box;
-}
-
-/* En móviles, que vuelvan al 100% para que no se vean raros */
-@media (max-width: 600px) {
-    .comp-action {
-        flex: 1 1 100%;
+    .comp-info {
+        margin-right: 0;
+        margin-bottom: 20px;
+        flex: 1 1 auto;
     }
-}
-.competition-banner {
-    justify-content: center; /* Si los botones no llenan la fila, se centran */
+
+    .comp-action {
+        width: 100%;
+        flex: 1 1 100%; /* Botones ocupan todo el ancho */
+    }
 }
 
 /* Equipos (Flexbox) */
