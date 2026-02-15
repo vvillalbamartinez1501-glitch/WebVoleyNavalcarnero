@@ -408,3 +408,68 @@ function loadThirdPartyWidgets() {
 
     console.log('Widgets de terceros cargados correctamente.');
 }
+document.addEventListener('DOMContentLoaded', () => {
+    const banner = document.getElementById('cookie-banner');
+    const acceptBtn = document.getElementById('btn-accept-cookies');
+    const rejectBtn = document.getElementById('btn-reject-cookies');
+
+    // 1. Comprobar si ya existe consentimiento guardado
+    const consent = localStorage.getItem('cookieConsent');
+
+    if (consent === 'accepted') {
+        loadThirdPartyWidgets(); // Si ya aceptó antes, cargamos el widget directo
+    } else if (consent === 'rejected') {
+        // Si rechazó, no hacemos nada (se queda el mensaje de bloqueo)
+    } else {
+        // Si no hay decisión (es la primera vez), mostramos el banner tras 1 seg
+        setTimeout(() => {
+            if(banner) banner.classList.add('show');
+        }, 1000);
+    }
+
+    // 2. Botón Aceptar
+    if(acceptBtn) {
+        acceptBtn.addEventListener('click', () => {
+            localStorage.setItem('cookieConsent', 'accepted');
+            if(banner) banner.classList.remove('show');
+            loadThirdPartyWidgets(); // <--- AQUÍ DESPERTAMOS EL SCRIPT
+        });
+    }
+
+    // 3. Botón Rechazar
+    if(rejectBtn) {
+        rejectBtn.addEventListener('click', () => {
+            localStorage.setItem('cookieConsent', 'rejected');
+            if(banner) banner.classList.remove('show');
+            // No cargamos nada. El usuario verá el mensaje "Acepta las cookies..." en el hueco
+        });
+    }
+});
+
+// Función para despertar los scripts dormidos
+function loadThirdPartyWidgets() {
+    // A. Añadir clase al body para que CSS oculte el mensaje de bloqueo
+    document.body.classList.add('cookies-accepted');
+
+    // B. Buscar scripts "dormidos" (type="text/plain" y clase lazy-widget-script)
+    const lazyScripts = document.querySelectorAll('script.lazy-widget-script');
+
+    lazyScripts.forEach(script => {
+        // Evitar cargar el script si ya fue procesado
+        if (script.getAttribute('data-loaded') === 'true') return;
+
+        console.log('Cargando widget externo:', script.dataset.src);
+
+        // Crear un nuevo script real
+        const newScript = document.createElement('script');
+        newScript.src = script.dataset.src; // Cogemos la URL (elfsight...)
+        newScript.type = 'text/javascript'; // Ahora sí es ejecutable
+        newScript.async = true;
+        
+        // Inyectarlo en el HTML
+        document.body.appendChild(newScript);
+        
+        // Marcar el original como cargado o eliminarlo
+        script.setAttribute('data-loaded', 'true');
+    });
+}
