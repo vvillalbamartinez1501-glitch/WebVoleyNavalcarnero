@@ -310,3 +310,66 @@ if ('serviceWorker' in navigator) {
             .catch(err => console.log('SW error:', err));
     });
 }
+
+// Función principal para cargar todo el contenido bloqueado
+    const loadRestrictedContent = () => {
+        document.body.classList.add('cookies-accepted');
+
+        // A. Cargar Scripts de Widgets (Elfsight)
+        const lazyWidgetScripts = document.querySelectorAll('script.lazy-widget-script');
+        lazyWidgetScripts.forEach(script => {
+            if (script.getAttribute('data-loaded') === 'true') return;
+            
+            console.log('Cargando widget:', script.dataset.src);
+            const newScript = document.createElement('script');
+            newScript.src = script.dataset.src;
+            newScript.type = 'text/javascript';
+            newScript.async = true;
+            document.body.appendChild(newScript);
+            script.setAttribute('data-loaded', 'true');
+        });
+
+        // B. Cargar Iframes (Mapas)
+        const lazyIframes = document.querySelectorAll('.lazy-iframe');
+        lazyIframes.forEach(iframe => {
+            if (iframe.dataset.src) iframe.src = iframe.dataset.src;
+        });
+
+        // ============================================================
+        // C. VERIFICACIÓN DE ELFSIGHT (SISTEMA FALLBACK)
+        // ============================================================
+        // Esperamos 4 segundos para dar tiempo a Elfsight a cargar o fallar
+        setTimeout(() => {
+            const containerWidget = document.getElementById('instagram-container');
+            const containerFallback = document.getElementById('news-fallback');
+            
+            if (!containerWidget) return;
+
+            // Buscamos si Elfsight ha creado contenido real dentro del div
+            // Elfsight suele crear clases que empiezan por 'eapps-' o 'elfsight-app' con contenido
+            const hasContent = containerWidget.querySelector('a') || containerWidget.innerText.length > 50;
+            
+            // Verificamos la altura (si falla la cuota, suele quedarse pequeño o vacío)
+            const containerHeight = containerWidget.offsetHeight;
+
+            // CONDICIÓN: Si la altura es muy pequeña (<100px) O no parece haber contenido real
+            if (containerHeight < 100 || !hasContent) {
+                console.warn('Elfsight parece haber fallado. Activando Fallback.');
+                
+                // 1. Ocultamos SOLO el contenedor del widget
+                containerWidget.style.display = 'none';
+                
+                // 2. Mostramos el contenedor de noticias estáticas
+                if(containerFallback) {
+                    containerFallback.style.display = 'block';
+                }
+            } else {
+                console.log('Elfsight cargado correctamente.');
+                // Nos aseguramos que el fallback esté oculto
+                 if(containerFallback) {
+                    containerFallback.style.display = 'none';
+                }
+            }
+
+        }, 4000); // 4 segundos de espera
+    };

@@ -1298,3 +1298,120 @@ header {
         width: 100%;
     }
 }
+/* =========================================
+   ESTILOS CONTENIDO ALTERNATIVO (FALLBACK)
+   ========================================= */
+.news-fallback-container {
+    padding: 10px 0;
+    animation: fadeIn 0.5s ease-out;
+    width: 100%;
+}
+
+.fallback-msg {
+    color: var(--text-muted);
+    margin-bottom: 25px;
+    font-size: 1rem;
+}
+
+.fallback-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 10px;
+}
+
+.fallback-card {
+    background: var(--bg-card);
+    border-radius: 12px;
+    overflow: hidden;
+    width: 300px;
+    box-shadow: var(--shadow-soft);
+    text-align: left;
+    border: 1px solid rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+}
+
+.fallback-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+.fb-img {
+    height: 160px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.fb-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.fallback-card:hover .fb-img img {
+    transform: scale(1.05);
+}
+
+.fb-content {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.fb-content h4 {
+    color: var(--color-azul-club);
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    font-family: 'Oswald', sans-serif;
+}
+
+.fb-content p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+/* Estilo especial para la tarjeta de Instagram */
+.fallback-card.instagram-direct {
+    background: linear-gradient(135deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
+    color: white;
+    border: none;
+}
+
+.fb-content.centered {
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
+.fallback-card.instagram-direct h4,
+.fallback-card.instagram-direct p {
+    color: white;
+}
+
+.fallback-card.instagram-direct .big-icon {
+    font-size: 3.5rem;
+    margin-bottom: 15px;
+}
+
+.fallback-card.instagram-direct .btn-cta {
+    color: #c13584; /* Color texto botón */
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Ajustes Dark Mode */
+[data-theme="dark"] .fallback-card {
+    background: #1e1e1e;
+    border-color: #333;
+}
+[data-theme="dark"] .fb-content h4 {
+    color: white; /* Título blanco en modo oscuro */
+}
