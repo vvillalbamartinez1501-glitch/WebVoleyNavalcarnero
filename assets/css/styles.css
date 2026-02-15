@@ -1098,3 +1098,28 @@ header {
 [data-theme="dark"] .nav-menu {
     background: rgba(10, 10, 10, 0.98);
 }
+/* Botón dentro del widget bloqueado */
+.btn-cookie-overlay {
+    margin-top: 15px;
+    background-color: var(--color-rojo-club); /* Usa el rojo corporativo */
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 1px;
+    border-radius: 50px; /* Redondeado */
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(200, 16, 46, 0.3);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+
+.btn-cookie-overlay:hover {
+    background-color: white;
+    color: var(--color-rojo-club);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    outline: 2px solid var(--color-rojo-club); /* Borde rojo al pasar ratón */
+}

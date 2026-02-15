@@ -473,3 +473,20 @@ function loadThirdPartyWidgets() {
         script.setAttribute('data-loaded', 'true');
     });
 }
+// ... Código anterior del banner ...
+
+    // NUEVO: Lógica para el botón dentro del widget
+    const widgetBtn = document.getElementById('btn-accept-widget');
+    
+    if (widgetBtn) {
+        widgetBtn.addEventListener('click', () => {
+            // 1. Guardar consentimiento
+            localStorage.setItem('cookieConsent', 'accepted');
+            
+            // 2. Ocultar el banner inferior si estaba abierto
+            if(banner) banner.classList.remove('show');
+            
+            // 3. Cargar el widget inmediatamente
+            loadThirdPartyWidgets();
+        });
+    }
