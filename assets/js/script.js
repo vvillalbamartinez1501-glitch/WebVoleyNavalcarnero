@@ -490,3 +490,82 @@ function loadThirdPartyWidgets() {
             loadThirdPartyWidgets();
         });
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+    // ==========================================
+    // 9. LÓGICA DE COOKIES (UNIFICADA)
+    // ==========================================
+    const banner = document.getElementById('cookie-banner');
+    const acceptBtnBanner = document.getElementById('btn-accept-cookies'); // Botón del banner
+    const rejectBtnBanner = document.getElementById('btn-reject-cookies'); // Botón rechazar del banner
+    const acceptBtnWidget = document.getElementById('btn-accept-widget');  // Botón sobre las fotos (Overlay)
+
+    // 1. Comprobar consentimiento guardado
+    const consent = localStorage.getItem('cookieConsent');
+
+    if (consent === 'accepted') {
+        loadThirdPartyWidgets(); // Cargar scripts inmediatamente
+    } else if (consent === 'rejected') {
+        // No hacer nada, se queda bloqueado
+    } else {
+        // Si es la primera vez, mostrar banner tras 1 segundo
+        setTimeout(() => {
+            if (banner) banner.classList.add('show');
+        }, 1000);
+    }
+
+    // 2. Función para ACEPTAR (sirve para ambos botones)
+    const handleAccept = () => {
+        localStorage.setItem('cookieConsent', 'accepted');
+        if (banner) banner.classList.remove('show');
+        loadThirdPartyWidgets(); // <--- Aquí ocurre la magia
+    };
+
+    // 3. Event Listeners
+    if (acceptBtnBanner) {
+        acceptBtnBanner.addEventListener('click', handleAccept);
+    }
+
+    if (acceptBtnWidget) {
+        // Este es el botón que no te funcionaba
+        acceptBtnWidget.addEventListener('click', handleAccept);
+    }
+
+    if (rejectBtnBanner) {
+        rejectBtnBanner.addEventListener('click', () => {
+            localStorage.setItem('cookieConsent', 'rejected');
+            if (banner) banner.classList.remove('show');
+        });
+    }
+});
+
+// ==========================================
+// FUNCIÓN DE CARGA DE WIDGETS (GLOBAL)
+// ==========================================
+function loadThirdPartyWidgets() {
+    // A. Añadir clase al body para cambios CSS (ocultar mensaje de bloqueo u overlays)
+    document.body.classList.add('cookies-accepted');
+
+    // B. Buscar scripts "dormidos" (type="text/plain" o clase específica)
+    // Asegúrate de que tus scripts de elfsight tengan class="lazy-widget-script"
+    const lazyScripts = document.querySelectorAll('script.lazy-widget-script');
+
+    lazyScripts.forEach(script => {
+        // Evitar cargar el script si ya fue procesado
+        if (script.getAttribute('data-loaded') === 'true') return;
+
+        console.log('Cargando widget externo:', script.dataset.src);
+
+        // Crear un nuevo script real
+        const newScript = document.createElement('script');
+        newScript.src = script.dataset.src; 
+        newScript.type = 'text/javascript'; 
+        newScript.async = true;
+        
+        // Inyectarlo en el HTML
+        document.body.appendChild(newScript);
+        
+        // Marcar el original como cargado
+        script.setAttribute('data-loaded', 'true');
+    });
+}
