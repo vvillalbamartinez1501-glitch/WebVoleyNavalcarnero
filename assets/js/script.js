@@ -488,7 +488,5 @@ function loadThirdPartyWidgets() {
             
             // 3. Cargar el widget inmediatamente
             loadThirdPartyWidgets();
-            // Recargar la página actual
-            location.reload();
         });
     }
