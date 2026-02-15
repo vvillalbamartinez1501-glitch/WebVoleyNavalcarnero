@@ -1123,3 +1123,101 @@ header {
     box-shadow: 0 6px 15px rgba(0,0,0,0.2);
     outline: 2px solid var(--color-rojo-club); /* Borde rojo al pasar ratón */
 }
+/* =========================================
+   ACTUALIZACIÓN SECCIÓN LOGROS (CON FOTOS)
+   ========================================= */
+
+.achievements-grid {
+    display: flex; 
+    flex-wrap: wrap; 
+    justify-content: center; 
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.trophy-card {
+    background: var(--bg-card); 
+    padding: 20px; 
+    border-radius: 12px;
+    /* CAMBIO PRINCIPAL: Flex column para apilar cabecera e imagen */
+    display: flex; 
+    flex-direction: column; 
+    width: 320px; /* Un poco más ancho para que luzca la foto */
+    box-shadow: var(--shadow-soft); 
+    border-left: 4px solid #d4af37; /* Dorado */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden; /* Para que la imagen respete bordes si es necesario */
+}
+
+.trophy-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* Nueva clase para mantener Icono y Texto juntos arriba */
+.trophy-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px; /* Espacio entre texto e imagen */
+    width: 100%;
+}
+
+.trophy-icon { 
+    font-size: 2.5rem; 
+    color: #d4af37; 
+    flex-shrink: 0; /* Evita que el icono se aplaste */
+}
+
+.trophy-info {
+    text-align: left; /* Asegura alineación izquierda */
+}
+
+.trophy-info h4 { 
+    margin: 5px 0 2px; 
+    font-size: 1.1rem; 
+    color: var(--color-azul-club); 
+    line-height: 1.2;
+}
+
+.trophy-info p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.year { 
+    background: var(--color-rojo-club); 
+    color: white; 
+    padding: 2px 8px; 
+    border-radius: 4px; 
+    font-size: 0.75rem; 
+    font-weight: bold;
+    display: inline-block;
+}
+
+/* Estilos de la Caja de Imagen */
+.trophy-img-box {
+    width: 100%;
+    height: 160px; /* Altura fija para que todas las tarjetas sean iguales */
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: auto; /* Empuja la imagen al fondo si hay diferencias de texto */
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.trophy-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Recorta la imagen para llenar el hueco sin deformar */
+    transition: transform 0.5s ease;
+}
+
+/* Efecto Zoom en la foto al pasar el mouse por la tarjeta */
+.trophy-card:hover .trophy-img-box img {
+    transform: scale(1.1);
+}
+
+/* Ajustes Dark Mode */
+[data-theme="dark"] .trophy-info h4 { color: white; }
+[data-theme="dark"] .trophy-img-box { border-color: rgba(255,255,255,0.1); }
