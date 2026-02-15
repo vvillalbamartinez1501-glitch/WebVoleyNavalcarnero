@@ -328,6 +328,7 @@ header {
         flex: 1 1 100%;
     }
 }
+
 /* 1. Forzamos al contenedor principal a que permita varias filas */
 .competition-banner {
     display: flex;
@@ -375,6 +376,36 @@ header {
         flex-direction: column;
         text-align: center;
     }
+}
+/* Contenedor de los botones */
+.comp-action {
+    /* No permitimos que crezcan infinitamente (flex-grow: 0) */
+    /* Pero les damos una base del 45% para que entren 2 por fila */
+    flex: 0 1 calc(50% - 20px); 
+    min-width: 200px; /* Evita que se encojan demasiado */
+}
+
+/* El botón dentro del contenedor */
+.btn-cta.btn-white {
+    width: 100%;       /* Ocupa todo su .comp-action */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 12px 10px;
+    font-size: 0.85rem;
+    min-height: 60px;  /* Altura fija para que todos alineen igual */
+    box-sizing: border-box;
+}
+
+/* En móviles, que vuelvan al 100% para que no se vean raros */
+@media (max-width: 600px) {
+    .comp-action {
+        flex: 1 1 100%;
+    }
+}
+.competition-banner {
+    justify-content: center; /* Si los botones no llenan la fila, se centran */
 }
 
 /* Equipos (Flexbox) */
