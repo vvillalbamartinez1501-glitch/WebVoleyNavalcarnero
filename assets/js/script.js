@@ -1,20 +1,33 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+// ==========================================
+    // 1. MENÚ HAMBURGUESA GLOBAL
     // ==========================================
-    // 1. MENÚ MÓVIL (HAMBURGUESA)
-    // ==========================================
-    const menuToggle = document.getElementById('mobile-menu') || document.querySelector('.menu-toggle');
+    const menuToggle = document.getElementById('mobile-menu');
     const navMenu = document.querySelector('.nav-menu');
     const navLinks = document.querySelectorAll('.nav-menu a');
+    const body = document.body;
 
     if (menuToggle && navMenu) {
         menuToggle.addEventListener('click', () => {
             navMenu.classList.toggle('active');
+            
+            // Cambiar icono de hamburguesa (☰) a X
+            if (navMenu.classList.contains('active')) {
+                menuToggle.innerHTML = '✕'; // Símbolo de cerrar
+                body.style.overflow = 'hidden'; // Bloquear scroll del fondo
+            } else {
+                menuToggle.innerHTML = '☰'; // Símbolo de menú
+                body.style.overflow = 'auto'; // Reactivar scroll
+            }
         });
 
+        // Cerrar menú al hacer clic en un enlace
         navLinks.forEach(link => {
             link.addEventListener('click', () => {
                 navMenu.classList.remove('active');
+                menuToggle.innerHTML = '☰';
+                body.style.overflow = 'auto';
             });
         });
     }
