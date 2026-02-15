@@ -406,11 +406,15 @@ header {
         text-align: center;
     }
 
-    .comp-info {
-        margin-right: 0;
-        margin-bottom: 20px;
-        flex: 1 1 auto;
-    }
+/* Información (Icono + Texto) */
+/* MODIFICADO: Ahora ocupa el 100% para forzar a los botones a ir debajo */
+.comp-info {
+    flex: 1 1 40%;      /* Ocupa todo el ancho de la fila */
+    width: 30%;         /* Asegura que tome el ancho completo */
+    margin-right: 0;     /* Eliminamos el margen derecho que tenía antes */
+    margin-bottom: 30px; /* Añadimos espacio entre el texto y los botones de abajo */
+    text-align: left;    /* Mantiene el texto alineado a la izquierda (opcional: center) */
+}
 
     .comp-action {
         width: 100%;
