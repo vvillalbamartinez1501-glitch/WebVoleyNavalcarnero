@@ -1141,6 +1141,7 @@ header {
     border-radius: 12px;
     /* CAMBIO PRINCIPAL: Flex column para apilar cabecera e imagen */
     display: flex; 
+    flex-direction: column; 
     width: 320px; /* Un poco más ancho para que luzca la foto */
     box-shadow: var(--shadow-soft); 
     border-left: 4px solid #d4af37; /* Dorado */
