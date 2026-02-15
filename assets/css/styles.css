@@ -292,7 +292,7 @@ header {
 .event-card:hover, .team-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-hover); }
 
 /* Eventos */
-.events-grid { display: flex ;flex-wrap:wrap; gap: 30px; margin-top: 30px; }
+.events-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 30px; }
 .card-image { position: relative; height: 200px; overflow: hidden; }
 .card-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
 .event-card:hover .card-image img { transform: scale(1.1); }
@@ -300,203 +300,7 @@ header {
 .card-content { padding: 20px; }
 .card-content h3 { color: var(--color-azul-club); margin-bottom: 10px; font-size: 1.5rem; }
 [data-theme="dark"] .card-content h3 { color: #5dade2; }
-/* =========================================
-   6. SECCIONES ESPECÍFICAS (DEFINITIVO)
-   ========================================= */
-
-/* --- 1. TARJETAS DE EQUIPOS Y EVENTOS --- */
-.event-card, .team-card {
-    background: var(--bg-card); 
-    border-radius: 12px; 
-    overflow: hidden;
-    box-shadow: var(--shadow-soft); 
-    transition: all 0.3s ease;
-    border: 1px solid rgba(0,0,0,0.05); 
-    text-align: left;
-    display: flex;
-    flex-direction: column; /* Asegura que el contenido fluya verticalmente */
-}
-
-.event-card:hover, .team-card:hover { 
-    transform: translateY(-8px); 
-    box-shadow: var(--shadow-hover); 
-}
-
-/* Contenedor de Botones en las Tarjetas */
-.card-actions { 
-    margin-top: auto; /* Empuja los botones al final de la tarjeta */
-    padding-top: 15px; 
-    border-top: 1px solid var(--border-color); 
-    display: flex; 
-    gap: 10px; 
-    flex-wrap: wrap; 
-    justify-content: flex-start;
-}
-
-/* Botones individuales de las tarjetas */
-.card-actions .btn, 
-.card-actions button, 
-.card-actions a {
-    flex: 1 1 calc(50% - 10px); /* Cuadrícula de 2x2 */
-    min-width: 120px;
-    text-align: center;
-    padding: 8px 5px;
-    font-size: 0.9rem;
-}
-
-/* --- 2. BANNER DE COMPETICIÓN (CLASIFICACIÓN) --- */
-.competition-banner {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px; /* Espacio uniforme entre elementos */
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-
-/* Información (Icono + Texto) */
-.comp-icon {
-    font-size: 2.5rem;
-    color: #ffd700; /* Color dorado trofeo opcional */
-    margin-right: 15px;
-}
-
-.comp-info {
-    flex: 1 1 300px; /* Ocupa espacio disponible, mínimo 300px */
-    min-width: 100%;
-    margin-right: auto; /* Empuja los botones a la derecha si hay espacio */
-}
-
-/* Contenedores de los 4 botones */
-.comp-action {
-    /* CLAVE: flex-grow:0 impide que los últimos se estiren */
-    flex: 0 1 calc(50% - 15px); 
-    display: flex; /* Para que el botón hijo ocupe todo el alto */
-    min-width: 200px;
-}
-
-/* Estilo de los Botones Blancos (Textos largos) */
-.btn-cta.btn-white {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 10px;
-    font-size: 0.85rem;
-    line-height: 1.3;
-    min-height: 60px; /* Altura fija para uniformidad */
-    white-space: normal; /* Permite saltos de línea */
-    border-radius: 6px; /* Opcional: redondeado ligero */
-    box-sizing: border-box;
-}
-
-/* --- 3. RESPONSIVE (Móviles) --- */
-@media (max-width: 768px) {
-    /* En tarjetas */
-    .card-actions .btn, 
-    .card-actions button, 
-    .card-actions a {
-        flex: 1 1 100%; /* Botones uno debajo de otro */
-    }
-
-    /* En competición */
-    .competition-banner {
-        flex-direction: column;
-        text-align: center;
-    }
-
-/* Información (Icono + Texto) */
-/* MODIFICADO: Ahora ocupa el 100% para forzar a los botones a ir debajo */
-.comp-info {
-    flex: 1 1 100%;      /* Ocupa todo el ancho de la fila */
-    width: 100%;         /* Asegura que tome el ancho completo */
-    margin-right: 0;     /* Eliminamos el margen derecho que tenía antes */
-    margin-bottom: 30px; /* Añadimos espacio entre el texto y los botones de abajo */
-    text-align: left;    /* Mantiene el texto alineado a la izquierda (opcional: center) */
-}
-
-    .comp-action {
-        width: 100%;
-        flex: 1 1 100%; /* Botones ocupan todo el ancho */
-    }
-}
-/* --- 2. BANNER DE COMPETICIÓN (CLASIFICACIÓN) --- */
-.competition-banner {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px; 
-    align-items: center;
-    justify-content: center; /* Centra los botones en el medio */
-    padding: 20px;
-    text-align: center; /* Centra el texto del título también */
-}
-
-/* Icono */
-.comp-icon {
-    font-size: 2.5rem;
-    color: #ffd700;
-    /* No le damos margen derecho fijo para que quede bien centrado con el texto arriba */
-}
-
-/* Información: Fuerza a los botones a bajar, pero se mantiene centrada */
-.comp-info {
-    flex: 1 1 100%;      /* Ocupa todo el ancho, forzando a los botones a ir debajo */
-    margin-bottom: 25px; /* Espacio antes de los botones */
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Centra el título y el párrafo */
-}
-
-.comp-info h2, .comp-info p {
-    text-align: center;  /* Asegura que el texto interno esté centrado */
-    max-width: 800px;    /* Evita que las líneas de texto sean eternas en pantallas grandes */
-}
-
-/* Contenedores de los botones */
-.comp-action {
-    /* 1. Base: Queremos 2 por fila (50%) */
-    flex: 1 1 calc(50% - 20px); 
-    
-    /* 2. LÍMITE (La clave): No dejes que pasen de 400px de ancho en PC */
-    max-width: 400px; 
-    
-    /* 3. Mínimo: Para que no se rompan si la pantalla se encoge */
-    min-width: 280px;   
-    
-    display: flex;
-}
-
-/* Estilo de los Botones */
-.btn-cta.btn-white {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 12px 15px; /* Un poco más de padding */
-    font-size: 0.9rem;
-    line-height: 1.3;
-    min-height: 60px;
-    white-space: normal;
-    border-radius: 6px;
-    box-sizing: border-box;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Sombra suave para que destaquen */
-}
-
-/* --- RESPONSIVE (Móviles) --- */
-@media (max-width: 768px) {
-    .competition-banner {
-        flex-direction: column; /* Apila todo verticalmente */
-    }
-
-    .comp-action {
-        /* En móvil quitamos el límite para que aprovechen todo el espacio */
-        max-width: 100%; 
-        flex: 1 1 100%;
-        width: 100%;
-    }
-}
+.card-actions { margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; flex-wrap: wrap; }
 
 /* Equipos (Flexbox) */
 .teams-section { padding-bottom: 60px; }
@@ -1417,3 +1221,80 @@ header {
 /* Ajustes Dark Mode */
 [data-theme="dark"] .trophy-info h4 { color: white; }
 [data-theme="dark"] .trophy-img-box { border-color: rgba(255,255,255,0.1); }
+
+/* --- 2. BANNER DE COMPETICIÓN (CLASIFICACIÓN) --- */
+.competition-banner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; 
+    align-items: center;
+    justify-content: center; /* Centra los botones en el medio */
+    padding: 20px;
+    text-align: center; /* Centra el texto del título también */
+}
+
+/* Icono */
+.comp-icon {
+    font-size: 2.5rem;
+    color: #ffd700;
+    /* No le damos margen derecho fijo para que quede bien centrado con el texto arriba */
+}
+
+/* Información: Fuerza a los botones a bajar, pero se mantiene centrada */
+.comp-info {
+    flex: 1 1 100%;      /* Ocupa todo el ancho, forzando a los botones a ir debajo */
+    margin-bottom: 25px; /* Espacio antes de los botones */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra el título y el párrafo */
+}
+
+.comp-info h2, .comp-info p {
+    text-align: center;  /* Asegura que el texto interno esté centrado */
+    max-width: 800px;    /* Evita que las líneas de texto sean eternas en pantallas grandes */
+}
+
+/* Contenedores de los botones */
+.comp-action {
+    /* 1. Base: Queremos 2 por fila (50%) */
+    flex: 1 1 calc(50% - 20px); 
+    
+    /* 2. LÍMITE (La clave): No dejes que pasen de 400px de ancho en PC */
+    max-width: 400px; 
+    
+    /* 3. Mínimo: Para que no se rompan si la pantalla se encoge */
+    min-width: 280px;   
+    
+    display: flex;
+}
+
+/* Estilo de los Botones */
+.btn-cta.btn-white {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 12px 15px; /* Un poco más de padding */
+    font-size: 0.9rem;
+    line-height: 1.3;
+    min-height: 60px;
+    white-space: normal;
+    border-radius: 6px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Sombra suave para que destaquen */
+}
+
+/* --- RESPONSIVE (Móviles) --- */
+@media (max-width: 768px) {
+    .competition-banner {
+        flex-direction: column; /* Apila todo verticalmente */
+    }
+
+    .comp-action {
+        /* En móvil quitamos el límite para que aprovechen todo el espacio */
+        max-width: 100%; 
+        flex: 1 1 100%;
+        width: 100%;
+    }
+}
