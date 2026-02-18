@@ -3,22 +3,39 @@ import json
 import instaloader
 import google.generativeai as genai
 from datetime import datetime
-import time
+import shutil # Para mover archivos de forma segura
 
 # --- CONFIGURACIÓN ---
-# Pon aquí tu usuario de Instagram (PÚBLICO)
-IG_USERNAME = "clubvoleibolnavalcarnero"  # <--- ¡CÁMBIALO POR EL TUYO!
+# ⚠️ CAMBIA ESTO POR TU USUARIO REAL
+# --- CONFIGURACIÓN ---
+# 1. ¿A quién vamos a espiar? (El perfil público del club)
+TARGET_USERNAME = "clubvoleibolnavalcarnero" 
 
-# Rutas de carpetas (No tocar si seguiste los pasos)
+# 2. ¿Quién soy yo? (Tu usuario, el que acabas de usar en la terminal)
+LOGIN_USERNAME = "TU_USUARIO_PERSONAL"  # <--- ¡PON AQUÍ EL TUYO!
+
+# Rutas de carpetas...
+# (El resto sigue igual hasta llegar a la función main)
+
+# Rutas de carpetas
 CARPETA_IMAGENES = "imagenes"
 CARPETA_NOTICIAS = "noticias"
 ARCHIVO_JSON = "noticias.json"
 PLANTILLA_HTML = "plantilla.html"
 
+# Aseguramos que las carpetas existan
+os.makedirs(CARPETA_IMAGENES, exist_ok=True)
+os.makedirs(CARPETA_NOTICIAS, exist_ok=True)
+
 # Configuración de la IA (Gemini)
 api_key = os.environ.get("GENAI_API_KEY")
+
+# Verificación de seguridad de la API Key
 if not api_key:
-    print("❌ ERROR: No encontré la API Key de Google. Asegúrate de configurar GENAI_API_KEY.")
+    print("\n❌ ERROR CRÍTICO: No se encontró la API Key.")
+    print("👉 En la terminal, antes de ejecutar el script, debes escribir:")
+    print('   Windows: $env:GENAI_API_KEY="TU_CLAVE_AQUI"')
+    print('   Mac/Linux: export GENAI_API_KEY="TU_CLAVE_AQUI"')
     exit()
 
 genai.configure(api_key=api_key)
@@ -56,6 +73,7 @@ def generar_contenido_ia(caption, es_video):
     print("   🧠 Escribiendo noticia con IA...")
     tipo = "un video" if es_video else "una foto"
     
+    # --- AQUÍ ESTABA EL ERROR, YA ESTÁ CORREGIDO (AÑADIDA LA LLAVE DE CIERRE) ---
     prompt = f"""
     Actúa como un periodista digital experto.
     Tengo un post de Instagram que es {tipo}
@@ -63,7 +81,8 @@ def generar_contenido_ia(caption, es_video):
 
     Necesito que generes dos cosas separadas por una barra vertical (|):
     1. Un TÍTULO atractivo y corto (máximo 10 palabras).
-    2. El CUERPO de la noticia en formato HTML (usa <p>, <strong>, etc., pero NO uses <html> ni <body>). El texto debe ser profesional, ampliando la información de la descripción para que parezca una noticia real de un medio digital.
+    2. El CUERPO de la noticia en formato HTML (usa <p>, <strong>, etc., pero NO uses <html> ni <body>). 
+       El texto debe ser profesional, ampliando la información de la descripción para que parezca una noticia real.
     
     Formato de respuesta: TITULO | CUERPO_HTML
     """
@@ -72,8 +91,8 @@ def generar_contenido_ia(caption, es_video):
         response = model.generate_content(prompt)
         texto = response.text
         if "|" in texto:
-            titulo, cuerpo = texto.split("|", 1)
-            return titulo.strip(), cuerpo.strip()
+            parts = texto.split("|", 1)
+            return parts[0].strip(), parts[1].strip()
         else:
             return "Nueva Publicación", texto
     except Exception as e:
@@ -85,95 +104,25 @@ def main():
     
     # 1. Preparar Instaloader
     L = instaloader.Instaloader()
-    # Cargamos el perfil
+    
+    # A. Intentamos cargar TU sesión (tu pase VIP)
     try:
-        profile = instaloader.Profile.from_username(L.context, IG_USERNAME)
+        print(f"🔑 Intentando cargar sesión de {LOGIN_USERNAME}...")
+        L.load_session_from_file(LOGIN_USERNAME)
+        print("✅ ¡Sesión cargada! Entramos identificados.")
+    except FileNotFoundError:
+        print("⚠️ No tienes archivo de sesión. Instagram podría bloquearte (Error 429).")
+        print(f"👉 Solución: Ejecuta en terminal: python -m instaloader --login={LOGIN_USERNAME}")
+        # Si falla, intentamos seguir como anónimo, pero es arriesgado
+        pass 
+
+    # B. Conectamos con el perfil OBJETIVO (El Club)
+    try:
+        print(f"🔎 Buscando perfil objetivo: {TARGET_USERNAME}...")
+        profile = instaloader.Profile.from_username(L.context, TARGET_USERNAME)
     except Exception as e:
-        print(f"❌ Error al acceder al perfil {IG_USERNAME}: {e}")
+        print(f"❌ Error al encontrar al club: {e}")
         return
 
-    # 2. Cargar base de datos actual (JSON)
-    noticias_existentes = []
-    if os.path.exists(ARCHIVO_JSON):
-        with open(ARCHIVO_JSON, 'r', encoding='utf-8') as f:
-            noticias_existentes = json.load(f)
-    
-    ids_procesados = [n['id'] for n in noticias_existentes]
-
-    # 3. Revisar el ÚLTIMO post (solo el más reciente para empezar)
-    posts = profile.get_posts()
-    post = next(posts) # Tomamos solo el primero
-
-    shortcode = post.shortcode
-    print(f"🔎 Analizando último post: {shortcode}")
-
-    if shortcode in ids_procesados:
-        print("✅ Este post ya existe en la web. Nada que hacer.")
-        return
-
-    # --- PROCESANDO NUEVO POST ---
-    print("🆕 ¡Noticia nueva detectada! Procesando...")
-
-    # A. Descargar imagen (si es foto)
-    ruta_media_web = ""
-    bloque_media_html = ""
-    
-    if post.is_video:
-        print("   🎥 Es un video. Usaremos Embed.")
-        # Usamos el embed de Instagram para no gastar ancho de banda en Vercel
-        bloque_media_html = f'<div class="video-container"><iframe src="https://www.instagram.com/p/{shortcode}/embed" width="400" height="480" frameborder="0" scrolling="no" allowtransparency="true"></iframe></div>'
-        fecha_final = post.date.strftime("%d/%m/%Y")
-    else:
-        print("   📸 Es una imagen. Descargando...")
-        # Descargamos
-        L.download_post(post, target="temp_downloads")
-        
-        # Buscar el archivo jpg descargado
-        archivos = os.listdir("temp_downloads")
-        jpg_file = next((f for f in archivos if f.endswith(".jpg")), None)
-        
-        if jpg_file:
-            # Movemos y renombramos la foto
-            nombre_foto = f"{shortcode}.jpg"
-            origen = os.path.join("temp_downloads", jpg_file)
-            destino = os.path.join(CARPETA_IMAGENES, nombre_foto)
-            os.rename(origen, destino)
-            
-            # Limpieza carpeta temporal
-            for f in archivos: os.remove(os.path.join("temp_downloads", f))
-            os.rmdir("temp_downloads")
-            
-            ruta_media_web = f"/imagenes/{nombre_foto}"
-            bloque_media_html = f'<img src="{ruta_media_web}" alt="Foto noticia">'
-            
-            # IA Vision para la fecha
-            fecha_final = obtener_fecha_de_imagen(destino, post.date)
-        else:
-            fecha_final = post.date.strftime("%d/%m/%Y")
-
-    # B. Generar Texto con IA
-    caption = post.caption if post.caption else "Sin descripción"
-    titulo_ia, cuerpo_ia = generar_contenido_ia(caption, post.is_video)
-
-    # C. Crear el archivo HTML de la noticia
-    with open(PLANTILLA_HTML, 'r', encoding='utf-8') as f:
-        plantilla = f.read()
-
-    html_final = plantilla.replace("{{TITULO}}", titulo_ia)
-    html_final = html_final.replace("{{FECHA}}", fecha_final)
-    html_final = html_final.replace("{{MEDIA}}", bloque_media_html)
-    html_final = html_final.replace("{{CONTENIDO}}", cuerpo_ia)
-
-    nombre_archivo_html = f"{shortcode}.html"
-    ruta_noticia = os.path.join(CARPETA_NOTICIAS, nombre_archivo_html)
-    
-    with open(ruta_noticia, 'w', encoding='utf-8') as f:
-        f.write(html_final)
-    
-    print(f"   📝 Archivo HTML creado: {ruta_noticia}")
-
-    # D. Actualizar el índice JSON
-    nueva_entrada = {
-        "id": shortcode,
-        "titulo": titulo_ia,
-        "fecha":
+if __name__ == "__main__":
+    main()
