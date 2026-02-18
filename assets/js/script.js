@@ -373,3 +373,31 @@ if ('serviceWorker' in navigator) {
 
         }, 4000); // 4 segundos de espera
     };
+
+    // ==========================================
+// CARGA DINÁMICA DE HEADER Y FOOTER
+// ==========================================
+async function cargarComponentes() {
+    const headerPlaceholder = document.getElementById('header-placeholder');
+    const footerPlaceholder = document.getElementById('footer-placeholder');
+
+    if (headerPlaceholder) {
+        try {
+            const resp = await fetch('/components/header.html');
+            headerPlaceholder.innerHTML = await resp.text();
+        } catch (e) { console.error("Error cargando header:", e); }
+    }
+
+    if (footerPlaceholder) {
+        try {
+            const resp = await fetch('/components/footer.html');
+            footerPlaceholder.innerHTML = await resp.text();
+        } catch (e) { console.error("Error cargando footer:", e); }
+    }
+    
+    // Disparamos un evento para que tu JS sepa que el menú ya existe
+    document.dispatchEvent(new Event('componentesCargados'));
+}
+
+// Ejecutamos la función nada más empezar
+cargarComponentes();
