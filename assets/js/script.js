@@ -335,3 +335,74 @@ if ('serviceWorker' in navigator) {
             .catch(err => console.log('SW error:', err));
     });
 }
+
+// ==========================================================================
+// 11. SISTEMA DE NOTICIAS DINÁMICAS (Lee desde noticias.json)
+// ==========================================================================
+async function cargarNoticiasDinámicas() {
+    try {
+        // 1. Descargar el archivo JSON que crea el robot
+        const respuesta = await fetch('/noticias.json');
+        if (!respuesta.ok) throw new Error('No se encontró noticias.json');
+        
+        const noticias = await respuesta.json();
+
+        // 2. Ordenar por fecha (De más nueva a más vieja)
+        // La fecha viene en DD/MM/YYYY, la giramos a YYYYMMDD para comparar bien
+        noticias.sort((a, b) => {
+            const fechaA = a.fecha.split('/').reverse().join('');
+            const fechaB = b.fecha.split('/').reverse().join('');
+            return fechaB.localeCompare(fechaA); 
+        });
+
+        // 3. Función para crear el diseño HTML de la tarjeta "Quikitin"
+        const crearTarjeta = (noticia) => {
+            // Si la noticia no tiene imagen, ponemos una del club por defecto
+            const imagenSegura = noticia.imagen ? noticia.imagen : '/assets/img/equipo1.png';
+            
+            return `
+                <div class="event-card">
+                    <div class="card-image">
+                        <img src="${imagenSegura}" alt="${noticia.titulo}">
+                        <span class="event-date">${noticia.fecha}</span>
+                    </div>
+                    <div class="card-content" style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+                        <div>
+                            <h3 style="font-size: 1.2rem; margin-bottom: 10px; line-height: 1.3;">${noticia.titulo}</h3>
+                            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">
+                                ${noticia.resumen}
+                            </p>
+                        </div>
+                        <div style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                            <a href="/noticias/${noticia.archivo}" class="link-text">Leer noticia completa <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        // 4. Inyectar en el INDEX (Solo las 3 últimas)
+        const gridIndex = document.getElementById('ultimas-noticias-grid');
+        if (gridIndex) {
+            const ultimas3 = noticias.slice(0, 3);
+            gridIndex.innerHTML = ultimas3.map(crearTarjeta).join('');
+        }
+
+        // 5. Inyectar en la página NOTICIAS.HTML (Todas)
+        const gridTodas = document.getElementById('todas-noticias-grid');
+        if (gridTodas) {
+            gridTodas.innerHTML = noticias.map(crearTarjeta).join('');
+        }
+
+    } catch (error) {
+        console.log("Aviso de noticias:", error.message);
+        // Mensaje por si aún no hay noticias generadas
+        const grids = [document.getElementById('ultimas-noticias-grid'), document.getElementById('todas-noticias-grid')];
+        grids.forEach(grid => {
+            if (grid) grid.innerHTML = '<p style="color: var(--text-muted);">Próximamente nuevas crónicas y noticias del club.</p>';
+        });
+    }
+}
+
+// Ejecutar la carga de noticias cuando cargue la página
+document.addEventListener('DOMContentLoaded', cargarNoticiasDinámicas);
