@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{TITULO}}</title>
+    <style>
+        /* Estilos simples y limpios */
+        body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; color: #333; }
+        header { margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+        h1 { color: #222; }
+        .fecha { color: #888; font-size: 0.9em; }
+        
+        /* Contenedor multimedia (foto o video) */
+        .media-container { margin: 20px 0; text-align: center; }
+        img, video { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        
+        /* Botón volver */
+        .btn-volver { display: inline-block; margin-top: 40px; padding: 10px 20px; background: #eee; text-decoration: none; color: #333; border-radius: 5px; }
+        .btn-volver:hover { background: #ddd; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <p class="fecha">Publicado el: {{FECHA}}</p>
+        <h1>{{TITULO}}</h1>
+    </header>
+
+    <div class="media-container">
+        {{MEDIA}}
+    </div>
+
+    <div class="contenido">
+        {{CONTENIDO}}
+    </div>
+
+    <a href="/noticias.html" class="btn-volver">← Volver a Noticias</a>
+
+</body>
+</html>
