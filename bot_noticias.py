@@ -12,7 +12,7 @@ import shutil # Para mover archivos de forma segura
 TARGET_USERNAME = "clubvoleibolnavalcarnero" 
 
 # 2. ¿Quién soy yo? (Tu usuario, el que acabas de usar en la terminal)
-LOGIN_USERNAME = "TU_USUARIO_PERSONAL"  # <--- ¡PON AQUÍ EL TUYO!
+LOGIN_USERNAME = "vvillalbamartinez1501"  # <--- ¡PON AQUÍ EL TUYO!
 
 # Rutas de carpetas...
 # (El resto sigue igual hasta llegar a la función main)
