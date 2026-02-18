@@ -1415,3 +1415,99 @@ header {
 [data-theme="dark"] .fb-content h4 {
     color: white; /* Título blanco en modo oscuro */
 }
+
+/* =========================================
+   15. PLANTILLA DE NOTICIAS (BLOG)
+   ========================================= */
+
+.news-article-section {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 40px;
+    background-color: var(--bg-card);
+    border-radius: 15px;
+    box-shadow: var(--shadow-soft);
+    text-align: left; /* Sobrescribe el center de los section por defecto */
+    border-top: 5px solid var(--color-rojo-club);
+}
+
+.news-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.news-header .section-title {
+    margin-bottom: 15px;
+    font-size: 2.5rem;
+    line-height: 1.2;
+}
+
+.news-date {
+    display: inline-block;
+    background: rgba(200, 16, 46, 0.1);
+    color: var(--color-rojo-club);
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 1px;
+}
+
+.news-media {
+    margin: 30px 0;
+    text-align: center;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.news-media img {
+    width: 100%;
+    max-height: 600px;
+    object-fit: cover;
+    display: block;
+}
+
+/* Contenedor para los videos/embeds de Instagram */
+.news-media .video-container {
+    position: relative;
+    width: 100%;
+    max-width: 500px; /* Ancho máximo para el post de Insta */
+    margin: 0 auto;
+    background: #f9f9f9;
+}
+
+.news-body {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-main);
+}
+
+.news-body p {
+    margin-bottom: 20px;
+}
+
+.news-body strong {
+    color: var(--color-azul-club);
+}
+
+.news-footer-actions {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+}
+
+/* Ajustes Modo Oscuro para la noticia */
+[data-theme="dark"] .news-article-section {
+    border-top: 5px solid #ff334b;
+}
+[data-theme="dark"] .news-body strong {
+    color: #5dade2;
+}
+[data-theme="dark"] .news-media .video-container {
+    background: transparent;
+}

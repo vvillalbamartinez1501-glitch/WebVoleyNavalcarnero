@@ -3,39 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{TITULO}}</title>
-    <style>
-        /* Estilos simples y limpios */
-        body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; color: #333; }
-        header { margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
-        h1 { color: #222; }
-        .fecha { color: #888; font-size: 0.9em; }
-        
-        /* Contenedor multimedia (foto o video) */
-        .media-container { margin: 20px 0; text-align: center; }
-        img, video { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        
-        /* Botón volver */
-        .btn-volver { display: inline-block; margin-top: 40px; padding: 10px 20px; background: #eee; text-decoration: none; color: #333; border-radius: 5px; }
-        .btn-volver:hover { background: #ddd; }
-    </style>
+    <title>{{TITULO}} | Club Voleibol Navalcarnero</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Roboto:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="/assets/css/styles.css">
 </head>
 <body>
 
     <header>
-        <p class="fecha">Publicado el: {{FECHA}}</p>
-        <h1>{{TITULO}}</h1>
+        <div class="nav-container">
+            <div class="logo">CV NAVALCARNERO</div>
+            
+            <div class="header-controls">
+                <div class="icon-group">
+                    <i class="fas fa-moon theme-toggle" title="Cambiar Tema"></i>
+                    <i class="fas fa-search search-trigger" title="Buscar"></i>
+                </div>
+                <i class="fas fa-bars menu-toggle"></i>
+            </div>
+
+            <ul class="nav-menu">
+                <li><a href="/index.html">Inicio</a></li>
+                <li><a href="/noticias.html" class="active">Noticias</a></li>
+                </ul>
+        </div>
     </header>
 
-    <div class="media-container">
-        {{MEDIA}}
+    <div class="main-content">
+        
+        <section class="news-article-section">
+            
+            <div class="news-header">
+                <span class="news-date"><i class="far fa-calendar-alt"></i> {{FECHA}}</span>
+                <h1 class="section-title" style="margin-top: 15px; margin-bottom: 0;">{{TITULO}}</h1>
+            </div>
+
+            <div class="news-media">
+                {{MEDIA}}
+            </div>
+
+            <div class="news-body">
+                {{CONTENIDO}}
+            </div>
+
+            <div class="news-footer-actions">
+                <a href="/noticias.html" class="btn-cta"><i class="fas fa-arrow-left"></i> Volver a Noticias</a>
+            </div>
+
+        </section>
+
     </div>
 
-    <div class="contenido">
-        {{CONTENIDO}}
-    </div>
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-col">
+                <div class="footer-logo">CV NAVALCARNERO</div>
+                <p>Noticias de actualidad y resultados generados automáticamente.</p>
+            </div>
+            <div class="footer-col">
+                <h3>Síguenos</h3>
+                <div style="display: flex; gap: 10px;">
+                    <a href="#" class="social-btn-mini instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-btn-mini twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-btn-mini facebook"><i class="fab fa-facebook-f"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2024 Club Voleibol Navalcarnero</p>
+        </div>
+    </footer>
 
-    <a href="/noticias.html" class="btn-volver">← Volver a Noticias</a>
-
+    <script src="/assets/js/script.js"></script>
+    
 </body>
 </html>

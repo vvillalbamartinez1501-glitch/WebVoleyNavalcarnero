@@ -108,7 +108,7 @@ def main():
     # A. Intentamos cargar TU sesión (tu pase VIP)
     try:
         print(f"🔑 Intentando cargar sesión de {LOGIN_USERNAME}...")
-        L.load_session_from_file(LOGIN_USERNAME)
+        L.load_session_from_file(LOGIN_USERNAME, filename=f"session-{LOGIN_USERNAME}")
         print("✅ ¡Sesión cargada! Entramos identificados.")
     except FileNotFoundError:
         print("⚠️ No tienes archivo de sesión. Instagram podría bloquearte (Error 429).")
