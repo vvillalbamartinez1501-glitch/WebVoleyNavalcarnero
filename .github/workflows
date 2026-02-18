@@ -1,0 +1,39 @@
+name: Robot Periodista Automatizado
+
+on:
+  schedule:
+    # Este es el reloj. Ejecuta a las 22:00 (UTC) los Miércoles (3) y Domingos (0)
+    - cron: '0 22 * * 0,3'
+  workflow_dispatch: # Esto pone un botón en GitHub por si quieres forzarlo a mano
+
+permissions:
+  contents: write
+
+jobs:
+  crear-noticia:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+
+      - name: Preparar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Ejecutar el Robot
+        env:
+          # Coge tu API Key secreta de los ajustes de GitHub
+          GENAI_API_KEY: ${{ secrets.GENAI_API_KEY }} 
+        run: python bot_noticias.py
+
+      - name: Guardar y publicar en la web
+        run: |
+          git config --global user.name 'Robot Periodista'
+          git config --global user.email 'bot@tusitio.com'
+          git add .
+          git commit -m "🗞️ Nueva noticia generada por IA" || echo "No hay noticias nuevas"
+          git push
