@@ -6,16 +6,11 @@ from datetime import datetime
 import shutil # Para mover archivos de forma segura
 
 # --- CONFIGURACIÓN ---
-# ⚠️ CAMBIA ESTO POR TU USUARIO REAL
-# --- CONFIGURACIÓN ---
 # 1. ¿A quién vamos a espiar? (El perfil público del club)
 TARGET_USERNAME = "clubvoleibolnavalcarnero" 
 
 # 2. ¿Quién soy yo? (Tu usuario, el que acabas de usar en la terminal)
 LOGIN_USERNAME = "vvillalbamartinez1501"  # <--- ¡PON AQUÍ EL TUYO!
-
-# Rutas de carpetas...
-# (El resto sigue igual hasta llegar a la función main)
 
 # Rutas de carpetas
 CARPETA_IMAGENES = "imagenes"
@@ -73,7 +68,6 @@ def generar_contenido_ia(caption, es_video):
     print("   🧠 Escribiendo noticia con IA...")
     tipo = "un video" if es_video else "una foto"
     
-    # --- AQUÍ ESTABA EL ERROR, YA ESTÁ CORREGIDO (AÑADIDA LA LLAVE DE CIERRE) ---
     prompt = f"""
     Actúa como un periodista digital experto.
     Tengo un post de Instagram que es {tipo}
@@ -113,7 +107,6 @@ def main():
     except FileNotFoundError:
         print("⚠️ No tienes archivo de sesión. Instagram podría bloquearte (Error 429).")
         print(f"👉 Solución: Ejecuta en terminal: python -m instaloader --login={LOGIN_USERNAME}")
-        # Si falla, intentamos seguir como anónimo, pero es arriesgado
         pass 
 
     # B. Conectamos con el perfil OBJETIVO (El Club)
@@ -123,6 +116,110 @@ def main():
     except Exception as e:
         print(f"❌ Error al encontrar al club: {e}")
         return
+
+    # 2. Cargar base de datos actual (JSON)
+    noticias_existentes = []
+    if os.path.exists(ARCHIVO_JSON):
+        try:
+            with open(ARCHIVO_JSON, 'r', encoding='utf-8') as f:
+                content = f.read()
+                if content.strip():
+                    noticias_existentes = json.loads(content)
+        except json.JSONDecodeError:
+            print("⚠️ El archivo JSON estaba dañado o vacío, se creará uno nuevo.")
+            noticias_existentes = []
+    
+    ids_procesados = [n.get('id') for n in noticias_existentes]
+
+    # 3. Revisar el ÚLTIMO post
+    try:
+        posts = profile.get_posts()
+        post = next(posts) # Tomamos solo el primero
+    except Exception as e:
+        print(f"❌ Error descargando posts: {e}")
+        return
+
+    shortcode = post.shortcode
+    print(f"🔎 Analizando último post: {shortcode}")
+
+    if shortcode in ids_procesados:
+        print("✅ Este post ya existe en la web. Nada que hacer.")
+        return
+
+    # --- PROCESANDO NUEVO POST ---
+    print("🆕 ¡Noticia nueva detectada! Procesando...")
+
+    ruta_media_web = ""
+    bloque_media_html = ""
+    fecha_final = post.date.strftime("%d/%m/%Y") 
+    
+    if post.is_video:
+        print("   🎥 Es un video. Usaremos Embed.")
+        bloque_media_html = f'<div class="video-container"><iframe src="https://www.instagram.com/p/{shortcode}/embed" width="400" height="480" frameborder="0" scrolling="no" allowtransparency="true"></iframe></div>'
+    else:
+        print("   📸 Es una imagen. Descargando...")
+        try:
+            L.download_post(post, target="temp_downloads")
+            archivos = os.listdir("temp_downloads")
+            jpg_file = next((f for f in archivos if f.endswith(".jpg")), None)
+            
+            if jpg_file:
+                nombre_foto = f"{shortcode}.jpg"
+                origen = os.path.join("temp_downloads", jpg_file)
+                destino = os.path.join(CARPETA_IMAGENES, nombre_foto)
+                shutil.move(origen, destino)
+                shutil.rmtree("temp_downloads", ignore_errors=True)
+                
+                ruta_media_web = f"/imagenes/{nombre_foto}"
+                bloque_media_html = f'<img src="{ruta_media_web}" alt="Foto noticia">'
+                fecha_final = obtener_fecha_de_imagen(destino, post.date)
+            else:
+                shutil.rmtree("temp_downloads", ignore_errors=True)
+        except Exception as e:
+            print(f"⚠️ Error procesando la imagen: {e}")
+
+    # B. Generar Texto con IA
+    caption = post.caption if post.caption else "Sin descripción"
+    titulo_ia, cuerpo_ia = generar_contenido_ia(caption, post.is_video)
+
+    # C. Crear el archivo HTML de la noticia (¡AQUÍ ESTÁ TU MEJORA DEL NOMBRE!)
+    fecha_archivo = post.date.strftime("%Y-%m-%d")
+    nombre_archivo_html = f"{fecha_archivo}-noticia-{shortcode}.html"
+    
+    if os.path.exists(PLANTILLA_HTML):
+        with open(PLANTILLA_HTML, 'r', encoding='utf-8') as f:
+            plantilla = f.read()
+
+        html_final = plantilla.replace("{{TITULO}}", titulo_ia)
+        html_final = html_final.replace("{{FECHA}}", fecha_final)
+        html_final = html_final.replace("{{MEDIA}}", bloque_media_html)
+        html_final = html_final.replace("{{CONTENIDO}}", cuerpo_ia)
+
+        ruta_noticia = os.path.join(CARPETA_NOTICIAS, nombre_archivo_html)
+        
+        with open(ruta_noticia, 'w', encoding='utf-8') as f:
+            f.write(html_final)
+        
+        print(f"   📝 Archivo HTML creado: {ruta_noticia}")
+    else:
+        print(f"❌ ERROR: No se encuentra {PLANTILLA_HTML}. Crea ese archivo primero.")
+        return
+
+    # D. Actualizar el índice JSON
+    nueva_entrada = {
+        "id": shortcode,
+        "titulo": titulo_ia,
+        "fecha": fecha_final,
+        "archivo": nombre_archivo_html,
+        "imagen": ruta_media_web,
+        "resumen": cuerpo_ia[:120].replace("<p>", "").replace("</p>", "") + "..."
+    }
+    
+    noticias_existentes.append(nueva_entrada)
+    with open(ARCHIVO_JSON, 'w', encoding='utf-8') as f:
+        json.dump(noticias_existentes, f, indent=4, ensure_ascii=False)
+
+    print("✅ ¡Proceso terminado con éxito!")
 
 if __name__ == "__main__":
     main()
