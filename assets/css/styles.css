@@ -1642,3 +1642,107 @@ header {
         font-size: 1.2rem;
     }
 }
+
+/* ==========================================================================
+   16. MEDIA QUERIES ESPECÍFICAS (NOTICIAS, LOGROS Y FALLBACKS)
+   ========================================================================== */
+
+/* --- TABLETS (768px a 1024px) --- */
+@media (max-width: 1024px) {
+    /* Ajuste para que el artículo no quede pegado a los bordes */
+    .news-article-section {
+        margin: 30px 20px;
+        padding: 30px;
+    }
+}
+
+/* --- MÓVILES (Max 768px) --- */
+@media (max-width: 768px) {
+    
+    /* 1. PLANTILLA DE NOTICIA (BLOG) */
+    .news-article-section {
+        margin: 20px 10px; /* Reducimos mucho el margen exterior */
+        padding: 20px;     /* Reducimos el relleno interior para ganar espacio de lectura */
+        border-top-width: 3px;
+    }
+
+    .news-header {
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+    }
+
+    .news-header .section-title {
+        font-size: 1.8rem; /* Título más pequeño para evitar saltos de línea extremos */
+        margin-bottom: 10px;
+    }
+
+    .news-date {
+        font-size: 0.8rem;
+        padding: 4px 12px;
+    }
+
+    .news-media {
+        margin: 20px 0;
+    }
+
+    .news-media img {
+        max-height: 300px; /* Evita que una foto vertical ocupe toda la pantalla del móvil */
+    }
+
+    .news-body {
+        font-size: 1rem; /* Texto un pelín más pequeño para lectura cómoda en móvil */
+        line-height: 1.6;
+    }
+
+    /* 2. TARJETAS DE LOGROS / TROFEOS */
+    .achievements-grid {
+        gap: 15px; /* Menos espacio entre tarjetas */
+    }
+
+    .trophy-card {
+        width: 100%;       /* Ocupa todo el ancho en móvil */
+        max-width: 350px;  /* Límite para que no se estire demasiado si rotan el móvil */
+    }
+
+    .trophy-img-box {
+        height: 200px; /* Le damos un poco más de altura en móvil al ocupar el 100% de ancho */
+    }
+
+    /* 3. TARJETAS DE FALLBACK (Noticias alternativas) */
+    .fallback-card {
+        width: 100%; 
+        max-width: 350px;
+    }
+
+    .fb-img {
+        height: 180px; 
+    }
+
+    /* 4. GALERÍA DE FOTOS (COLLAGE) */
+    .news-gallery {
+        /* En pantallas pequeñas, 2 columnas agolpan mucho las fotos. Mejor 1 columna. */
+        column-count: 1; 
+        column-gap: 0;
+    }
+
+    .news-gallery-img {
+        margin-bottom: 15px;
+    }
+}
+
+/* --- MÓVILES MUY PEQUEÑOS (Max 480px) --- */
+@media (max-width: 480px) {
+    .news-header .section-title {
+        font-size: 1.5rem; /* Ajuste final para pantallas minúsculas */
+    }
+
+    .trophy-header {
+        flex-direction: column; /* Apila el icono y el texto del trofeo */
+        text-align: center;
+        gap: 10px;
+    }
+    
+    .trophy-info {
+        text-align: center; /* Centramos el texto de logros */
+    }
+}
