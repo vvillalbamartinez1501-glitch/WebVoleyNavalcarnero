@@ -181,7 +181,7 @@ def main():
                 if f.lower().endswith(('.jpg', '.jpeg', '.png')):
                     # MAGIA: Convertimos a WebP y lo guardamos en la carpeta final
                     origen = os.path.join("temp_downloads", f)
-                    nombre_webp = f"{contador}.webp"
+                    nombre_webp = f"{contador}.png"
                     destino = os.path.join(ruta_carpeta_especifica, nombre_webp)
                     
                     img = Image.open(origen)
