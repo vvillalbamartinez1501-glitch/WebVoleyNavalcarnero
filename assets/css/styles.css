@@ -176,7 +176,6 @@ header {
 
 /* MAIN CONTENT (Contenedor Central) */
 .main-content {
-    overflow-x: hidden;
     margin-left: var(--ancho-sidebar);
     margin-right: var(--ancho-sidebar);
     width: auto;
