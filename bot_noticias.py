@@ -4,7 +4,7 @@ import instaloader
 import google.generativeai as genai
 from datetime import datetime
 import shutil # Para mover archivos de forma segura
-from PIL import Image # ⚠️ NUEVO: Librería para convertir a WebP
+from PIL import Image # Librería para manejar y convertir imágenes
 
 # --- CONFIGURACIÓN ---
 # 1. ¿A quién vamos a espiar? (El perfil público del club)
@@ -99,7 +99,7 @@ def generar_contenido_ia(caption, es_video):
         return "Noticia de Instagram", f"<p>{caption}</p>"
 
 def main():
-    print("--- 🚀 INICIANDO ROBOT PERIODISTA (Modo Galería WebP) ---")
+    print("--- 🚀 INICIANDO ROBOT PERIODISTA (Modo Galería PNG) ---")
     
     # 1. Preparar Instaloader
     L = instaloader.Instaloader()
@@ -162,7 +162,7 @@ def main():
         print("   🎥 Es un video. Usaremos Embed.")
         bloque_media_html = f'<div class="video-container"><iframe src="https://www.instagram.com/p/{shortcode}/embed" width="400" height="480" frameborder="0" scrolling="no" allowtransparency="true"></iframe></div>'
     else:
-        print(f"   📸 Descargando galería de imágenes y convirtiendo a WebP: {shortcode}...")
+        print(f"   📸 Descargando galería de imágenes y procesando a PNG: {shortcode}...")
         try:
             # 1. Creamos la subcarpeta
             ruta_carpeta_especifica = os.path.join(CARPETA_IMAGENES, shortcode)
@@ -177,22 +177,21 @@ def main():
             contador = 1
             
             for f in archivos:
-                # ⚠️ MODIFICACIÓN: Ahora acepta tanto .jpg, .jpeg como .png
                 if f.lower().endswith(('.jpg', '.jpeg', '.png')):
-                    # MAGIA: Convertimos a WebP y lo guardamos en la carpeta final
+                    # MAGIA: Convertimos a PNG de forma segura
                     origen = os.path.join("temp_downloads", f)
-                    nombre_webp = f"{contador}.png"
-                    destino = os.path.join(ruta_carpeta_especifica, nombre_webp)
+                    nombre_png = f"{contador}.png" # <-- Cambio aquí
+                    destino = os.path.join(ruta_carpeta_especifica, nombre_png)
                     
                     img = Image.open(origen)
-                    # Convertimos a formato estándar si es necesario para evitar errores con PNGs transparentes al pasar a WebP
+                    # Convertimos a modo estándar si es necesario para evitar problemas
                     if img.mode in ("RGBA", "P"):
                         img = img.convert("RGBA")
                         
-                    img.save(destino, "WEBP", quality=80) # Calidad alta, peso bajo
+                    img.save(destino, "PNG") # <-- Guardamos como PNG
                     
                     # URL para el HTML
-                    url_foto = f"/imagenes/{shortcode}/{nombre_webp}"
+                    url_foto = f"/imagenes/{shortcode}/{nombre_png}" # <-- Cambio aquí
                     imagenes_html.append(f'<img src="{url_foto}" alt="Imagen {contador} de la noticia" class="news-gallery-img">')
                     
                     # Fecha de la IA solo en la primera foto para ahorrar tiempo
