@@ -1553,3 +1553,43 @@ header {
     text-decoration: none !important;
     color: inherit !important;
 }
+
+/* ==========================================================================
+   BOTÓN FLOTANTE "VOLVER AL INICIO" (STICKY)
+   ========================================================================== */
+.floating-home-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: var(--primary-color);
+    color: #ffffff;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1000; /* Asegura que esté por encima de las fotos y el texto */
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    text-decoration: none;
+}
+
+/* Efecto al pasar el ratón por encima */
+.floating-home-btn:hover {
+    transform: scale(1.1); /* Se hace un 10% más grande */
+    background-color: var(--accent-color); /* Cambia al color rojo del club */
+    color: #ffffff;
+}
+
+/* Ajuste más pequeño para la pantalla del móvil */
+@media (max-width: 768px) {
+    .floating-home-btn {
+        bottom: 20px;
+        right: 20px;
+        width: 45px;
+        height: 45px;
+        font-size: 1.2rem;
+    }
+}

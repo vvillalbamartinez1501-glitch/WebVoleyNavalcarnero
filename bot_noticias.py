@@ -4,6 +4,7 @@ import instaloader
 import google.generativeai as genai
 from datetime import datetime
 import shutil # Para mover archivos de forma segura
+from PIL import Image # ⚠️ NUEVO: Librería para convertir a WebP
 
 # --- CONFIGURACIÓN ---
 # 1. ¿A quién vamos a espiar? (El perfil público del club)
@@ -63,27 +64,26 @@ def obtener_fecha_de_imagen(ruta_imagen, fecha_post_original):
 
 def generar_contenido_ia(caption, es_video):
     """
-    Genera el título y el cuerpo de la noticia usando la descripción de Instagram.
+    Genera el título y el cuerpo de la noticia de forma EXTENSA.
     """
-    print("   🧠 Escribiendo noticia con IA...")
-    tipo = "un video" if es_video else "una foto"
+    print("   🧠 Escribiendo noticia EXTENSA con IA...")
+    tipo = "un video" if es_video else "una galería de fotos"
     
-    # Todo lo de abajo DEBE tener estos 4 espacios de margen
     prompt = f"""
     Actúa como un periodista deportivo de alto nivel para un diario digital. 
     Tengo un post de Instagram que es {tipo}.
     La descripción original es: "{caption}"
 
-    Necesito una noticia EXTENSA y profesional. Sigue esta estructura:
+    Necesito una noticia EXTENSA y profesional. Sigue esta estructura estricta separada por una barra vertical (|):
     1. Un TITULO impactante (máximo 10 palabras).
-    2. Un CUERPO en formato HTML que incluya:
-       - Una entradilla (párrafo corto en negrita).
+    2. Un CUERPO en formato HTML puro (usa <p>, <strong>, etc., pero NO uses <html> ni <body> ni bloques de código). 
+       - Debe incluir una entradilla (párrafo corto en negrita).
        - Al menos 3 o 4 párrafos detallados desarrollando la información.
-       - Inventa detalles realistas basados en el contexto del Voleibol si es necesario para dar cuerpo.
+       - Inventa detalles realistas basados en el contexto del Voleibol si es necesario para dar cuerpo (clima, ambiente en la grada, esfuerzo del equipo).
        - Usa <strong> para resaltar puntos clave.
        - Termina con una conclusión motivadora.
 
-    Formato de respuesta: TITULO | CUERPO_HTML
+    Formato de respuesta EXACTO: TITULO | CUERPO_HTML
     """
     
     try:
@@ -99,12 +99,12 @@ def generar_contenido_ia(caption, es_video):
         return "Noticia de Instagram", f"<p>{caption}</p>"
 
 def main():
-    print("--- 🚀 INICIANDO ROBOT PERIODISTA ---")
+    print("--- 🚀 INICIANDO ROBOT PERIODISTA (Modo Galería WebP) ---")
     
     # 1. Preparar Instaloader
     L = instaloader.Instaloader()
     
-    # A. Intentamos cargar TU sesión (tu pase VIP)
+    # A. Intentamos cargar TU sesión
     try:
         print(f"🔑 Intentando cargar sesión de {LOGIN_USERNAME}...")
         L.load_session_from_file(LOGIN_USERNAME, filename=f"session-{LOGIN_USERNAME}")
@@ -159,45 +159,48 @@ def main():
     fecha_final = post.date.strftime("%d/%m/%Y") 
     
     if post.is_video:
-        # ... (Mantén tu código de video igual)
+        print("   🎥 Es un video. Usaremos Embed.")
         bloque_media_html = f'<div class="video-container"><iframe src="https://www.instagram.com/p/{shortcode}/embed" width="400" height="480" frameborder="0" scrolling="no" allowtransparency="true"></iframe></div>'
     else:
-        print(f"   📸 Descargando galería de imágenes en carpeta: {shortcode}...")
+        print(f"   📸 Descargando galería de imágenes y convirtiendo a WebP: {shortcode}...")
         try:
-            # 1. Creamos la subcarpeta específica para esta noticia
+            # 1. Creamos la subcarpeta
             ruta_carpeta_especifica = os.path.join(CARPETA_IMAGENES, shortcode)
             os.makedirs(ruta_carpeta_especifica, exist_ok=True)
             
-            # 2. Descargamos el post completo
+            # 2. Descargamos el post temporalmente
             L.download_post(post, target="temp_downloads")
             
-            # 3. Movemos todos los archivos .jpg encontrados
+            # 3. Procesamos los archivos JPG de Instaloader
             archivos = sorted(os.listdir("temp_downloads"))
             imagenes_html = []
             contador = 1
             
             for f in archivos:
                 if f.endswith(".jpg"):
-                    nombre_foto = f"{contador}.jpg"
+                    # MAGIA: Convertimos a WebP y lo guardamos en la carpeta final
                     origen = os.path.join("temp_downloads", f)
-                    destino = os.path.join(ruta_carpeta_especifica, nombre_foto)
-                    shutil.move(origen, destino)
+                    nombre_webp = f"{contador}.webp"
+                    destino = os.path.join(ruta_carpeta_especifica, nombre_webp)
                     
-                    # Guardamos la ruta para el HTML
-                    url_foto = f"/imagenes/{shortcode}/{nombre_foto}"
+                    img = Image.open(origen)
+                    img.save(destino, "WEBP", quality=80) # Calidad alta, peso bajo
+                    
+                    # URL para el HTML
+                    url_foto = f"/imagenes/{shortcode}/{nombre_webp}"
                     imagenes_html.append(f'<img src="{url_foto}" alt="Imagen {contador} de la noticia" class="news-gallery-img">')
                     
-                    # Analizamos la fecha solo de la primera imagen para ahorrar tiempo
+                    # Fecha de la IA solo en la primera foto para ahorrar tiempo
                     if contador == 1:
                         fecha_final = obtener_fecha_de_imagen(destino, post.date)
-                        ruta_media_web = url_foto # Para el JSON (usamos la primera)
+                        ruta_media_web = url_foto
                     
                     contador += 1
             
-            # 4. Limpiamos la carpeta temporal
+            # 4. Limpiamos la basura temporal
             shutil.rmtree("temp_downloads", ignore_errors=True)
             
-            # 5. Creamos el bloque HTML con todas las imágenes
+            # 5. Unimos todas las fotos en el bloque HTML
             bloque_media_html = '<div class="news-gallery">' + "".join(imagenes_html) + '</div>'
             
         except Exception as e:
@@ -207,7 +210,7 @@ def main():
     caption = post.caption if post.caption else "Sin descripción"
     titulo_ia, cuerpo_ia = generar_contenido_ia(caption, post.is_video)
 
-    # C. Crear el archivo HTML de la noticia (¡AQUÍ ESTÁ TU MEJORA DEL NOMBRE!)
+    # C. Crear el archivo HTML de la noticia
     fecha_archivo = post.date.strftime("%Y-%m-%d")
     nombre_archivo_html = f"{fecha_archivo}-noticia-{shortcode}.html"
     
@@ -237,7 +240,7 @@ def main():
         "fecha": fecha_final,
         "archivo": nombre_archivo_html,
         "imagen": ruta_media_web,
-        "resumen": cuerpo_ia[:120].replace("<p>", "").replace("</p>", "") + "..."
+        "resumen": cuerpo_ia[:120].replace("<p>", "").replace("<strong>", "").replace("</p>", "").replace("</strong>", "") + "..."
     }
     
     noticias_existentes.append(nueva_entrada)
