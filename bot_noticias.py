@@ -68,7 +68,8 @@ def generar_contenido_ia(caption, es_video):
     print("   🧠 Escribiendo noticia con IA...")
     tipo = "un video" if es_video else "una foto"
     
-prompt = f"""
+    # Todo lo de abajo DEBE tener estos 4 espacios de margen
+    prompt = f"""
     Actúa como un periodista deportivo de alto nivel para un diario digital. 
     Tengo un post de Instagram que es {tipo}.
     La descripción original es: "{caption}"
@@ -78,24 +79,24 @@ prompt = f"""
     2. Un CUERPO en formato HTML que incluya:
        - Una entradilla (párrafo corto en negrita).
        - Al menos 3 o 4 párrafos detallados desarrollando la información.
-       - Inventa detalles realistas basados en el contexto del Voleibol si es necesario para dar cuerpo (clima, ambiente en la grada, esfuerzo del equipo).
+       - Inventa detalles realistas basados en el contexto del Voleibol si es necesario para dar cuerpo.
        - Usa <strong> para resaltar puntos clave.
        - Termina con una conclusión motivadora.
 
     Formato de respuesta: TITULO | CUERPO_HTML
     """
     
-try:
-    response = model.generate_content(prompt)
-    texto = response.text
-    if "|" in texto:
-        parts = texto.split("|", 1)
-        return parts[0].strip(), parts[1].strip()
-    else:
-        return "Nueva Publicación", texto
-except Exception as e:
-    print(f"Error IA: {e}")
-    return "Noticia de Instagram", f"<p>{caption}</p>"
+    try:
+        response = model.generate_content(prompt)
+        texto = response.text
+        if "|" in texto:
+            parts = texto.split("|", 1)
+            return parts[0].strip(), parts[1].strip()
+        else:
+            return "Nueva Publicación", texto
+    except Exception as e:
+        print(f"Error IA: {e}")
+        return "Noticia de Instagram", f"<p>{caption}</p>"
 
 def main():
     print("--- 🚀 INICIANDO ROBOT PERIODISTA ---")

@@ -355,7 +355,7 @@ async function cargarNoticiasDinámicas() {
             return fechaB.localeCompare(fechaA); 
         });
 
-        // 3. Función para crear el diseño HTML de la tarjeta "Quikitin"
+        // 3. Función para crear el diseño HTML de la tarjeta "Chikitin"
         const crearTarjeta = (noticia) => {
             // Si la noticia no tiene imagen, ponemos una del club por defecto
             const imagenSegura = noticia.imagen ? noticia.imagen : '/assets/img/equipo1.png';
