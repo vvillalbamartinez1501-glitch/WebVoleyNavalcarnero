@@ -148,7 +148,7 @@ header {
     background: var(--nav-bg);
     padding: 0; /* Dejamos que el height controle el espacio */
     color: var(--text-inverse);
-    position: fixed; /* Mantenlo fijo para que siempre esté arriba */
+    position: sticky; /* Mantenlo fijo para que siempre esté arriba */
     top: 0; 
     left: 0;
     width: 100%;
