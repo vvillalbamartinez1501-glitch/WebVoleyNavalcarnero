@@ -82,8 +82,21 @@ body {
     overflow-x: hidden;
     line-height: 1.6;
     transition: background-color 0.3s ease, color 0.3s ease;
-    padding-bottom: 0; /* Padding gestionado en media queries */
+    padding-bottom: 0; 
+    padding-top: 70px; /* <-- AÑADE ESTO para compensar el header fijo */
 }
+
+/*
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    overflow-x: hidden;
+    line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    padding-bottom: 0; /* Padding gestionado en media queries 
+}
+*/
 
 h1, h2, h3, h4 { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 0.5px; }
 a { text-decoration: none; color: inherit; transition: all 0.3s ease; }
@@ -112,7 +125,7 @@ section:nth-child(odd) { background-color: var(--bg-container); }
 /* =========================================
    3. LAYOUT GENERAL
    ========================================= */
-/* HEADER */
+/* HEADER 
 header {
     background: var(--nav-bg);
     padding: 1rem 0;
@@ -120,6 +133,18 @@ header {
     position: sticky; top: 0; z-index: 1000;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     transition: background-color 0.3s ease;
+}*/
+header {
+    background: var(--nav-bg);
+    padding: 15px 0;
+    color: var(--text-inverse);
+    position: fixed; /* 1. CAMBIA 'sticky' a 'fixed' */
+    top: 0; 
+    left: 0;         /* 2. AÑADE para fijar a la izquierda */
+    width: 100%;     /* 3. AÑADE para que ocupe todo el ancho */
+    z-index: 1000;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    height: 70px;
 }
 
 .nav-container {
@@ -1580,7 +1605,7 @@ header {
 .floating-home-btn:hover {
     transform: scale(1.1); /* Se hace un 10% más grande */
     background-color: var(--accent-color); /* Cambia al color rojo del club */
-    color: #ffffff;
+    color: var(--color-rojo-club);
 }
 
 /* Ajuste más pequeño para la pantalla del móvil */
