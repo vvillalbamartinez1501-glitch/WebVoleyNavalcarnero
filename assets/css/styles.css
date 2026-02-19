@@ -143,12 +143,12 @@ header {
     z-index: 1000;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     height: 70px;
-}*/
+}
 header {
     background: var(--nav-bg);
-    padding: 0; /* Dejamos que el height controle el espacio */
+    padding: 0; /* Dejamos que el height controle el espacio 
     color: var(--text-inverse);
-    position: sticky; /* Mantenlo fijo para que siempre esté arriba */
+    position: sticky;  Mantenlo fijo para que siempre esté arriba 
     top: 0; 
     left: 0;
     width: 100%;
@@ -158,6 +158,7 @@ header {
     display: flex;
     align-items: center;
 }
+*/
 
 .nav-container {
     width: 100%; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 40px;
