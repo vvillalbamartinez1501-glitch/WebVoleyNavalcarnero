@@ -68,30 +68,34 @@ def generar_contenido_ia(caption, es_video):
     print("   🧠 Escribiendo noticia con IA...")
     tipo = "un video" if es_video else "una foto"
     
-    prompt = f"""
-    Actúa como un periodista digital experto.
-    Tengo un post de Instagram que es {tipo}
-    La descripción original del autor es: "{caption}"
+prompt = f"""
+    Actúa como un periodista deportivo de alto nivel para un diario digital. 
+    Tengo un post de Instagram que es {tipo}.
+    La descripción original es: "{caption}"
 
-    Necesito que generes dos cosas separadas por una barra vertical (|):
-    1. Un TÍTULO atractivo y corto (máximo 10 palabras).
-    2. El CUERPO de la noticia en formato HTML (usa <p>, <strong>, etc., pero NO uses <html> ni <body>). 
-       El texto debe ser profesional, ampliando la información de la descripción para que parezca una noticia real.
-    
+    Necesito una noticia EXTENSA y profesional. Sigue esta estructura:
+    1. Un TITULO impactante (máximo 10 palabras).
+    2. Un CUERPO en formato HTML que incluya:
+       - Una entradilla (párrafo corto en negrita).
+       - Al menos 3 o 4 párrafos detallados desarrollando la información.
+       - Inventa detalles realistas basados en el contexto del Voleibol si es necesario para dar cuerpo (clima, ambiente en la grada, esfuerzo del equipo).
+       - Usa <strong> para resaltar puntos clave.
+       - Termina con una conclusión motivadora.
+
     Formato de respuesta: TITULO | CUERPO_HTML
     """
     
-    try:
-        response = model.generate_content(prompt)
-        texto = response.text
-        if "|" in texto:
-            parts = texto.split("|", 1)
-            return parts[0].strip(), parts[1].strip()
-        else:
-            return "Nueva Publicación", texto
-    except Exception as e:
-        print(f"Error IA: {e}")
-        return "Noticia de Instagram", f"<p>{caption}</p>"
+try:
+    response = model.generate_content(prompt)
+    texto = response.text
+    if "|" in texto:
+        parts = texto.split("|", 1)
+        return parts[0].strip(), parts[1].strip()
+    else:
+        return "Nueva Publicación", texto
+except Exception as e:
+    print(f"Error IA: {e}")
+    return "Noticia de Instagram", f"<p>{caption}</p>"
 
 def main():
     print("--- 🚀 INICIANDO ROBOT PERIODISTA ---")
@@ -154,29 +158,49 @@ def main():
     fecha_final = post.date.strftime("%d/%m/%Y") 
     
     if post.is_video:
-        print("   🎥 Es un video. Usaremos Embed.")
+        # ... (Mantén tu código de video igual)
         bloque_media_html = f'<div class="video-container"><iframe src="https://www.instagram.com/p/{shortcode}/embed" width="400" height="480" frameborder="0" scrolling="no" allowtransparency="true"></iframe></div>'
     else:
-        print("   📸 Es una imagen. Descargando...")
+        print(f"   📸 Descargando galería de imágenes en carpeta: {shortcode}...")
         try:
-            L.download_post(post, target="temp_downloads")
-            archivos = os.listdir("temp_downloads")
-            jpg_file = next((f for f in archivos if f.endswith(".jpg")), None)
+            # 1. Creamos la subcarpeta específica para esta noticia
+            ruta_carpeta_especifica = os.path.join(CARPETA_IMAGENES, shortcode)
+            os.makedirs(ruta_carpeta_especifica, exist_ok=True)
             
-            if jpg_file:
-                nombre_foto = f"{shortcode}.jpg"
-                origen = os.path.join("temp_downloads", jpg_file)
-                destino = os.path.join(CARPETA_IMAGENES, nombre_foto)
-                shutil.move(origen, destino)
-                shutil.rmtree("temp_downloads", ignore_errors=True)
-                
-                ruta_media_web = f"/imagenes/{nombre_foto}"
-                bloque_media_html = f'<img src="{ruta_media_web}" alt="Foto noticia">'
-                fecha_final = obtener_fecha_de_imagen(destino, post.date)
-            else:
-                shutil.rmtree("temp_downloads", ignore_errors=True)
+            # 2. Descargamos el post completo
+            L.download_post(post, target="temp_downloads")
+            
+            # 3. Movemos todos los archivos .jpg encontrados
+            archivos = sorted(os.listdir("temp_downloads"))
+            imagenes_html = []
+            contador = 1
+            
+            for f in archivos:
+                if f.endswith(".jpg"):
+                    nombre_foto = f"{contador}.jpg"
+                    origen = os.path.join("temp_downloads", f)
+                    destino = os.path.join(ruta_carpeta_especifica, nombre_foto)
+                    shutil.move(origen, destino)
+                    
+                    # Guardamos la ruta para el HTML
+                    url_foto = f"/imagenes/{shortcode}/{nombre_foto}"
+                    imagenes_html.append(f'<img src="{url_foto}" alt="Imagen {contador} de la noticia" class="news-gallery-img">')
+                    
+                    # Analizamos la fecha solo de la primera imagen para ahorrar tiempo
+                    if contador == 1:
+                        fecha_final = obtener_fecha_de_imagen(destino, post.date)
+                        ruta_media_web = url_foto # Para el JSON (usamos la primera)
+                    
+                    contador += 1
+            
+            # 4. Limpiamos la carpeta temporal
+            shutil.rmtree("temp_downloads", ignore_errors=True)
+            
+            # 5. Creamos el bloque HTML con todas las imágenes
+            bloque_media_html = '<div class="news-gallery">' + "".join(imagenes_html) + '</div>'
+            
         except Exception as e:
-            print(f"⚠️ Error procesando la imagen: {e}")
+            print(f"⚠️ Error procesando la galería: {e}")
 
     # B. Generar Texto con IA
     caption = post.caption if post.caption else "Sin descripción"

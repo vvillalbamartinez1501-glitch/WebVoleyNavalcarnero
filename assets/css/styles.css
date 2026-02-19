@@ -1512,3 +1512,16 @@ header {
     background: transparent;
 }
 
+.news-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.news-gallery-img {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: var(--shadow-soft);
+    display: block;
+}
