@@ -138,10 +138,10 @@ header {
     background: var(--nav-bg);
     padding: 15px 0;
     color: var(--text-inverse);
-    position: fixed; /* 1. CAMBIA 'sticky' a 'fixed' */
+    position: fixed; /* <-- Cambiado de sticky a fixed */
     top: 0; 
-    left: 0;         /* 2. AÑADE para fijar a la izquierda */
-    width: 100%;     /* 3. AÑADE para que ocupe todo el ancho */
+    left: 0;
+    width: 100%;
     z-index: 1000;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     height: 70px;
@@ -176,6 +176,7 @@ header {
 
 /* MAIN CONTENT (Contenedor Central) */
 .main-content {
+    overflow-x: hidden;
     margin-left: var(--ancho-sidebar);
     margin-right: var(--ancho-sidebar);
     width: auto;
