@@ -1010,6 +1010,10 @@ header {
     height: 70px; /* Altura fija para controlar mejor el layout */
 }
 
+.header-main{
+    margin-left:var(--ancho-sidebar);
+}
+
 .nav-container {
     width: 100%; 
     max-width: 100%; /* Ocupar todo el ancho */
