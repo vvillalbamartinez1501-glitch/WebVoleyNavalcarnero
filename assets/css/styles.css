@@ -132,11 +132,12 @@ header {
     position: sticky; top: 0; z-index: 1000;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     transition: background-color 0.3s ease;
-}
+}*/
 header {
     background: var(--nav-bg);
     padding: 15px 0;
     color: var(--text-inverse);
+    position: fixed; /* <-- Cambiado de sticky a fixed */
     top: 0; 
     left: 0;
     width: 100%;
@@ -144,21 +145,6 @@ header {
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     height: 70px;
 }
-header {
-    background: var(--nav-bg);
-    padding: 0; /* Dejamos que el height controle el espacio 
-    color: var(--text-inverse);
-    position: sticky;  Mantenlo fijo para que siempre esté arriba 
-    top: 0; 
-    left: 0;
-    width: 100%;
-    z-index: 1000;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    height: 70px;
-    display: flex;
-    align-items: center;
-}
-*/
 
 .nav-container {
     width: 100%; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 40px;
@@ -1014,7 +1000,7 @@ body.cookies-accepted .cookie-overlay-msg {
 /* =========================================
    REEMPLAZO DEL HEADER (ESTILO HAMBURGUESA GLOBAL)
    ========================================= */
-
+/*
 header {
     background: var(--nav-bg);
     padding: 15px 0;
@@ -1022,9 +1008,9 @@ header {
     position: sticky;
     top: 0;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    height: 70px; /* Altura fija para controlar mejor el layout */
+    height: 70px; 
 }
-
+*/
 
 
 .nav-container {
