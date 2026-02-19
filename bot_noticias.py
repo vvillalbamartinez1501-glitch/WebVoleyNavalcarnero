@@ -78,8 +78,8 @@ def generar_contenido_ia(caption, es_video):
     1. Un TITULO impactante (máximo 10 palabras).
     2. Un CUERPO en formato HTML puro (usa <p>, <strong>, etc., pero NO uses <html> ni <body> ni bloques de código). 
        - Debe incluir una entradilla (párrafo corto en negrita).
-       - Al menos 3 o 4 párrafos detallados desarrollando la información.
-       - Inventa detalles realistas basados en el contexto del Voleibol si es necesario para dar cuerpo (clima, ambiente en la grada, esfuerzo del equipo).
+       - Al menos 2 o 3 o 4 párrafos detallados desarrollando la información.
+       - Incluye algo negativo si ha habido alguna derrota, especificando el esfuerzo, las ganas de mejorar, el camino por recorrer o algo parecido
        - Usa <strong> para resaltar puntos clave.
        - Termina con una conclusión motivadora.
 
@@ -171,19 +171,24 @@ def main():
             # 2. Descargamos el post temporalmente
             L.download_post(post, target="temp_downloads")
             
-            # 3. Procesamos los archivos JPG de Instaloader
+            # 3. Procesamos los archivos de imagen de Instaloader
             archivos = sorted(os.listdir("temp_downloads"))
             imagenes_html = []
             contador = 1
             
             for f in archivos:
-                if f.endswith(".jpg"):
+                # ⚠️ MODIFICACIÓN: Ahora acepta tanto .jpg, .jpeg como .png
+                if f.lower().endswith(('.jpg', '.jpeg', '.png')):
                     # MAGIA: Convertimos a WebP y lo guardamos en la carpeta final
                     origen = os.path.join("temp_downloads", f)
                     nombre_webp = f"{contador}.webp"
                     destino = os.path.join(ruta_carpeta_especifica, nombre_webp)
                     
                     img = Image.open(origen)
+                    # Convertimos a formato estándar si es necesario para evitar errores con PNGs transparentes al pasar a WebP
+                    if img.mode in ("RGBA", "P"):
+                        img = img.convert("RGBA")
+                        
                     img.save(destino, "WEBP", quality=80) # Calidad alta, peso bajo
                     
                     # URL para el HTML
