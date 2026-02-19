@@ -189,6 +189,7 @@ header {
    4. HERO SECTION (HÍBRIDO)
    ========================================= */
 .hero {
+    margin-top:70px;
     position: relative;
     height: 90vh; /* Altura original */
     width: 100%;
