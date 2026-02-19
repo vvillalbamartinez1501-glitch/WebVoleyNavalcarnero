@@ -357,29 +357,29 @@ async function cargarNoticiasDinámicas() {
 
         // 3. Función para crear el diseño HTML de la tarjeta "Chikitin"
         const crearTarjeta = (noticia) => {
-            // Si la noticia no tiene imagen, ponemos una del club por defecto
-            const imagenSegura = noticia.imagen ? noticia.imagen : '/assets/img/equipo1.png';
-            
-            return `
-                <div class="event-card">
-                    <div class="card-image">
-                        <img src="${imagenSegura}" alt="${noticia.titulo}">
-                        <span class="event-date">${noticia.fecha}</span>
-                    </div>
-                    <div class="card-content" style="display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
-                        <div>
-                            <h3 style="font-size: 1.2rem; margin-bottom: 10px; line-height: 1.3;">${noticia.titulo}</h3>
-                            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">
-                                ${noticia.resumen}
-                            </p>
-                        </div>
-                        <div style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
-                            <a href="/noticias/${noticia.archivo}" class="link-text">Leer noticia completa <i class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
+    const imagenSegura = noticia.imagen ? noticia.imagen : '/assets/img/equipo1.png';
+    
+    // Ahora el contenedor principal es un enlace <a>
+    return `
+        <a href="/noticias/${noticia.archivo}" class="event-card">
+            <div class="card-image">
+                <img src="${imagenSegura}" alt="${noticia.titulo}">
+                <span class="event-date">${noticia.fecha}</span>
+            </div>
+            <div class="card-content" style="display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1;">
+                <div>
+                    <h3 style="font-size: 1.2rem; margin-bottom: 10px; line-height: 1.3;">${noticia.titulo}</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">
+                        ${noticia.resumen}
+                    </p>
                 </div>
-            `;
-        };
+                <div style="margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                    <span class="link-text">Leer noticia completa <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </div>
+        </a>
+    `;
+};
 
         // 4. Inyectar en el INDEX (Solo las 3 últimas)
         const gridIndex = document.getElementById('ultimas-noticias-grid');

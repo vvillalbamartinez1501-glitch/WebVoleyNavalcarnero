@@ -1525,3 +1525,31 @@ header {
     box-shadow: var(--shadow-soft);
     display: block;
 }
+
+/* --- ESTILOS SOLO PARA TARJETAS DE NOTICIAS --- */
+
+/* 1. Limitar ancho y centrar si hay pocas */
+#ultimas-noticias-grid .event-card, 
+#todas-noticias-grid .event-card {
+    max-width: 400px;
+    width: 100%;
+    margin: 0 auto; /* Centra la tarjeta en su columna */
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* 2. Hacer que toda la tarjeta parezca un link */
+#ultimas-noticias-grid .event-card:hover, 
+#todas-noticias-grid .event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+    background-color: var(--bg-alt); /* Un ligero cambio de fondo al pasar el ratón */
+}
+
+/* 3. Ajuste del texto para que no herede subrayados de link */
+#ultimas-noticias-grid .event-card, 
+#todas-noticias-grid .event-card {
+    text-decoration: none !important;
+    color: inherit !important;
+}
