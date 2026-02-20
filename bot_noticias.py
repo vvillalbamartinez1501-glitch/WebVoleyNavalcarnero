@@ -3,53 +3,44 @@ import json
 import instaloader
 import google.generativeai as genai
 from datetime import datetime
-import shutil # Para mover archivos de forma segura
-from PIL import Image # Librería para manejar y convertir imágenes
+import shutil 
+from PIL import Image 
 
 # --- CONFIGURACIÓN ---
-# 1. ¿A quién vamos a espiar? (El perfil público del club)
 TARGET_USERNAME = "clubvoleibolnavalcarnero" 
+LOGIN_USERNAME = "vvillalbamartinez1501" 
 
-# 2. ¿Quién soy yo? (Tu usuario)
-LOGIN_USERNAME = "vvillalbamartinez1501"  # <--- ¡PON AQUÍ EL TUYO!
-
-# Rutas de carpetas
 CARPETA_IMAGENES = "imagenes"
 CARPETA_NOTICIAS = "noticias"
 ARCHIVO_JSON = "noticias.json"
 PLANTILLA_HTML = "plantilla.html"
 
-# Aseguramos que las carpetas existan
 os.makedirs(CARPETA_IMAGENES, exist_ok=True)
 os.makedirs(CARPETA_NOTICIAS, exist_ok=True)
 
-# Configuración de la IA (Gemini)
 api_key = os.environ.get("GENAI_API_KEY")
 
-# Verificación de seguridad de la API Key
 if not api_key:
     print("\n❌ ERROR CRÍTICO: No se encontró la API Key.")
     print("👉 En la terminal, antes de ejecutar el script, debes escribir:")
     print('   Windows: $env:GENAI_API_KEY="TU_CLAVE_AQUI"')
-    print('   Mac/Linux: export GENAI_API_KEY="TU_CLAVE_AQUI"')
     exit()
 
 genai.configure(api_key=api_key)
-model = genai.GenerativeModel('gemini-1.5-flash')
+# Usamos el modelo estable
+model = genai.GenerativeModel('gemini-pro')
 
 def obtener_fecha_de_imagen(ruta_imagen, fecha_post_original):
-    """
-    Usa la IA para leer la fecha en la foto. Si no hay fecha, usa la del post.
-    """
     print("   👁️  Analizando imagen en busca de fecha...")
     try:
+        modelo_vision = genai.GenerativeModel('gemini-1.5-flash')
         myfile = genai.upload_file(ruta_imagen)
         prompt = """
         Mira esta imagen. ¿Hay una fecha escrita en ella (texto superpuesto o en un cartel)?
         Si ves una fecha, devuélvela en formato DD/MM/YYYY.
         Si NO ves ninguna fecha, responde exactamente: NO_DATE
         """
-        result = model.generate_content([myfile, prompt])
+        result = modelo_vision.generate_content([myfile, prompt])
         texto = result.text.strip()
         
         if "NO_DATE" in texto:
@@ -59,13 +50,10 @@ def obtener_fecha_de_imagen(ruta_imagen, fecha_post_original):
         print(f"      -> Fecha encontrada en imagen: {texto}")
         return texto
     except Exception as e:
-        print(f"      -> Error analizando imagen: {e}. Usando fecha original.")
+        print(f"      -> Error analizando imagen visualmente. Usando fecha del post.")
         return fecha_post_original.strftime("%d/%m/%Y")
 
 def generar_contenido_ia(caption, es_video):
-    """
-    Genera el título y el cuerpo de la noticia de forma EXTENSA.
-    """
     print("   🧠 Escribiendo noticia EXTENSA con IA...")
     tipo = "un video" if es_video else "una galería de fotos"
     
@@ -79,7 +67,7 @@ def generar_contenido_ia(caption, es_video):
     2. Un CUERPO en formato HTML puro (usa <p>, <strong>, etc., pero NO uses <html> ni <body> ni bloques de código). 
         - Debe incluir una entradilla (párrafo corto en negrita).
         - Al menos 2 o 3 o 4 párrafos detallados desarrollando la información.
-        - Incluye algo negativo si ha habido alguna derrota, especificando el esfuerzo, las ganas de mejorar, el camino por recorrer o algo parecido
+        - Incluye algo negativo si ha habido alguna derrota, especificando el esfuerzo.
         - Usa <strong> para resaltar puntos clave.
         - Termina con una conclusión motivadora.
 
@@ -101,20 +89,22 @@ def generar_contenido_ia(caption, es_video):
 def main():
     print("--- 🚀 INICIANDO ROBOT PERIODISTA (Modo Automático) ---")
     
-    # 1. Preparar Instaloader
     L = instaloader.Instaloader()
     
-    # A. Intentamos cargar TU sesión
+    # Inyectamos la cookie de sesión maestra
     try:
-        print(f"🔑 Intentando cargar sesión de {LOGIN_USERNAME}...")
-        L.load_session_from_file(LOGIN_USERNAME, filename=f"session-{LOGIN_USERNAME}")
-        print("✅ ¡Sesión cargada! Entramos identificados.")
-    except FileNotFoundError:
-        print("⚠️ No tienes archivo de sesión. Instagram podría bloquearte (Error 429).")
-        print(f"👉 Solución: Ejecuta en terminal: python -m instaloader --login={LOGIN_USERNAME}")
-        pass 
+        print(f"🔑 Inyectando cookie de sesión maestra...")
+        
+        # --- ¡ATENCIÓN! Pega aquí tu session_id de Chrome ---
+        session_id = 'PEGA_AQUI_TU_SESSION_ID' 
+        
+        L.context._session.cookies.set('sessionid', session_id, domain='.instagram.com')
+        L.context.get_json('graphql/query', params={}) 
+        print("✅ ¡Cookie aceptada! Entramos identificados.")
+    except Exception as e:
+        print(f"⚠️ Error inyectando cookie: {e}")
+        print("👉 Revisa que hayas puesto tu session_id correcto entre las comillas simples.")
 
-    # B. Conectamos con el perfil OBJETIVO (El Club)
     try:
         print(f"🔎 Buscando perfil objetivo: {TARGET_USERNAME}...")
         profile = instaloader.Profile.from_username(L.context, TARGET_USERNAME)
@@ -122,7 +112,6 @@ def main():
         print(f"❌ Error al encontrar al club: {e}")
         return
 
-    # 2. Cargar base de datos actual (JSON)
     noticias_existentes = []
     if os.path.exists(ARCHIVO_JSON):
         try:
@@ -136,10 +125,9 @@ def main():
     
     ids_procesados = [n.get('id') for n in noticias_existentes]
 
-    # 3. Revisar el ÚLTIMO post
     try:
         posts = profile.get_posts()
-        post = next(posts) # Tomamos solo el primero
+        post = next(posts) 
     except Exception as e:
         print(f"❌ Error descargando posts: {e}")
         return
@@ -151,7 +139,6 @@ def main():
         print("✅ Este post ya existe en la web. Nada que hacer.")
         return
 
-    # --- PROCESANDO NUEVO POST ---
     print("🆕 ¡Noticia nueva detectada! Procesando...")
 
     ruta_media_web = ""
@@ -164,57 +151,44 @@ def main():
     else:
         print(f"   📸 Descargando galería de imágenes y procesando a PNG: {shortcode}...")
         try:
-            # 1. Creamos la subcarpeta
             ruta_carpeta_especifica = os.path.join(CARPETA_IMAGENES, shortcode)
             os.makedirs(ruta_carpeta_especifica, exist_ok=True)
             
-            # 2. Descargamos el post temporalmente
             L.download_post(post, target="temp_downloads")
             
-            # 3. Procesamos los archivos de imagen de Instaloader
             archivos = sorted(os.listdir("temp_downloads"))
             imagenes_html = []
             contador = 1
             
             for f in archivos:
                 if f.lower().endswith(('.jpg', '.jpeg', '.png')):
-                    # MAGIA: Convertimos a PNG de forma segura
                     origen = os.path.join("temp_downloads", f)
                     nombre_png = f"{contador}.png" 
                     destino = os.path.join(ruta_carpeta_especifica, nombre_png)
                     
                     img = Image.open(origen)
-                    # Convertimos a modo estándar si es necesario para evitar problemas
                     if img.mode in ("RGBA", "P"):
                         img = img.convert("RGBA")
-                        
                     img.save(destino, "PNG") 
                     
-                    # URL para el HTML
                     url_foto = f"/imagenes/{shortcode}/{nombre_png}" 
                     imagenes_html.append(f'<img src="{url_foto}" alt="Imagen {contador} de la noticia" class="news-gallery-img">')
                     
-                    # Fecha de la IA solo en la primera foto para ahorrar tiempo
                     if contador == 1:
                         fecha_final = obtener_fecha_de_imagen(destino, post.date)
                         ruta_media_web = url_foto
                     
                     contador += 1
             
-            # 4. Limpiamos la basura temporal
             shutil.rmtree("temp_downloads", ignore_errors=True)
-            
-            # 5. Unimos todas las fotos en el bloque HTML
             bloque_media_html = '<div class="news-gallery">' + "".join(imagenes_html) + '</div>'
             
         except Exception as e:
             print(f"⚠️ Error procesando la galería: {e}")
 
-    # B. Generar Texto con IA
     caption = post.caption if post.caption else "Sin descripción"
     titulo_ia, cuerpo_ia = generar_contenido_ia(caption, post.is_video)
 
-    # ✨ NUEVO: Convertimos la fecha (DD/MM/YYYY) al estándar informático (YYYY-MM-DD)
     try:
         fecha_obj = datetime.strptime(fecha_final, "%d/%m/%Y")
         fecha_iso = fecha_obj.strftime("%Y-%m-%d")
@@ -222,7 +196,6 @@ def main():
         fecha_iso = post.date.strftime("%Y-%m-%d")
         fecha_final = post.date.strftime("%d/%m/%Y")
 
-    # C. Crear el archivo HTML de la noticia (Ahora usa la fecha ISO correcta)
     nombre_archivo_html = f"{fecha_iso}-noticia-{shortcode}.html"
     
     if os.path.exists(PLANTILLA_HTML):
@@ -244,12 +217,11 @@ def main():
         print(f"❌ ERROR: No se encuentra {PLANTILLA_HTML}. Crea ese archivo primero.")
         return
 
-    # D. Actualizar el índice JSON
     nueva_entrada = {
         "id": shortcode,
         "titulo": titulo_ia,
-        "fecha": fecha_final,          # Formato lectura humana: DD/MM/YYYY
-        "fecha_iso": fecha_iso,        # ✨ NUEVO: Formato máquina para ordenar: YYYY-MM-DD
+        "fecha": fecha_final,          
+        "fecha_iso": fecha_iso,        
         "archivo": nombre_archivo_html,
         "imagen": ruta_media_web,
         "resumen": cuerpo_ia[:120].replace("<p>", "").replace("<strong>", "").replace("</p>", "").replace("</strong>", "") + "..."

@@ -27,18 +27,21 @@ if not api_key:
     exit()
 
 genai.configure(api_key=api_key)
-model = genai.GenerativeModel('gemini-1.5-flash')
+# Usamos un modelo universal estable para evitar errores de versión 404
+model = genai.GenerativeModel('gemini-pro')
 
 def obtener_fecha_de_imagen(ruta_imagen, fecha_post_original):
     print("   👁️  Analizando imagen en busca de fecha...")
     try:
+        # El modelo de visión específico lo aislamos para que si falla, no rompa el programa
+        modelo_vision = genai.GenerativeModel('gemini-1.5-flash')
         myfile = genai.upload_file(ruta_imagen)
         prompt = """
         Mira esta imagen. ¿Hay una fecha escrita en ella (texto superpuesto o en un cartel)?
         Si ves una fecha, devuélvela en formato DD/MM/YYYY.
         Si NO ves ninguna fecha, responde exactamente: NO_DATE
         """
-        result = model.generate_content([myfile, prompt])
+        result = modelo_vision.generate_content([myfile, prompt])
         texto = result.text.strip()
         
         if "NO_DATE" in texto:
@@ -48,7 +51,7 @@ def obtener_fecha_de_imagen(ruta_imagen, fecha_post_original):
         print(f"      -> Fecha encontrada en imagen: {texto}")
         return texto
     except Exception as e:
-        print(f"      -> Error analizando imagen: {e}. Usando fecha original.")
+        print(f"      -> Error analizando imagen visualmente. Usando fecha del post.")
         return fecha_post_original.strftime("%d/%m/%Y")
 
 def generar_contenido_ia(caption, es_video):
@@ -98,14 +101,21 @@ def generar_noticia_manual(shortcode):
     # 1. Preparar Instaloader
     L = instaloader.Instaloader()
     
-    # A. Intentamos cargar TU sesión
+    # Inyectamos la cookie de sesión de forma manual
     try:
-        print(f"🔑 Intentando cargar sesión de {LOGIN_USERNAME}...")
-        L.load_session_from_file(LOGIN_USERNAME, filename=f"session-{LOGIN_USERNAME}")
-        print("✅ ¡Sesión cargada! Entramos identificados.")
-    except FileNotFoundError:
-        print("⚠️ No tienes archivo de sesión. Instagram podría bloquearte (Error 429).")
-        pass 
+        print(f"🔑 Inyectando cookie de sesión maestra...")
+        
+        # --- ¡ATENCIÓN! ---
+        # Borra PEGA_AQUI_TU_SESSION_ID y pega ahí el código largo que copiaste de Google Chrome
+        # 49224113245%3AFDlHCpOz5k35u3%3A18%3AAYiAGDTFIu4zSnNAHzUDdBN5bYUVMCsGjIGliZD1lQ
+        session_id = '49224113245%3AFDlHCpOz5k35u3%3A18%3AAYiAGDTFIu4zSnNAHzUDdBN5bYUVMCsGjIGliZD1lQ' 
+        
+        L.context._session.cookies.set('sessionid', session_id, domain='.instagram.com')
+        L.context.get_json('graphql/query', params={}) 
+        print("✅ ¡Cookie aceptada! Entramos identificados.")
+    except Exception as e:
+        print(f"⚠️ Error inyectando cookie: {e}")
+        print("👉 Revisa que hayas puesto tu session_id correcto entre las comillas simples.")
 
     # B. OBTENER EL POST ESPECÍFICO
     try:
@@ -125,12 +135,9 @@ def generar_noticia_manual(shortcode):
                     noticias_existentes = json.loads(content)
         except json.JSONDecodeError:
             print("⚠️ El archivo JSON estaba dañado o vacío, se creará uno nuevo.")
-    
-    ids_procesados = [n.get('id') for n in noticias_existentes]
-
-    if shortcode in ids_procesados:
-        print("✅ Este post ya existe en la web. Nada que hacer.")
-        return
+            
+    # Eliminamos cualquier rastro de la prueba anterior para no duplicar datos
+    noticias_existentes = [n for n in noticias_existentes if n.get('id') != shortcode]
 
     # --- PROCESANDO NUEVO POST ---
     print("🆕 Procesando post para generar noticia...")
@@ -184,22 +191,15 @@ def generar_noticia_manual(shortcode):
     caption = post.caption if post.caption else "Sin descripción"
     titulo_ia, cuerpo_ia = generar_contenido_ia(caption, post.is_video)
 
-# B. Generar Texto con IA
-    caption = post.caption if post.caption else "Sin descripción"
-    titulo_ia, cuerpo_ia = generar_contenido_ia(caption, post.is_video)
-
-    # ✨ NUEVO: Convertimos la fecha (DD/MM/YYYY) al estándar informático (YYYY-MM-DD)
+    # ✨ Convertimos la fecha al estándar ISO
     try:
-        # Intentamos convertir la fecha que sacó la IA o el post
         fecha_obj = datetime.strptime(fecha_final, "%d/%m/%Y")
         fecha_iso = fecha_obj.strftime("%Y-%m-%d")
     except ValueError:
-        # Por si la IA se vuelve loca y devuelve un formato raro, usamos la del post
         fecha_iso = post.date.strftime("%Y-%m-%d")
         fecha_final = post.date.strftime("%d/%m/%Y")
 
     # C. Crear el archivo HTML de la noticia
-    # ✨ NUEVO: Ahora el archivo se llama con la fecha real del evento
     nombre_archivo_html = f"{fecha_iso}-noticia-{shortcode}.html"
     
     if os.path.exists(PLANTILLA_HTML):
@@ -207,7 +207,7 @@ def generar_noticia_manual(shortcode):
             plantilla = f.read()
 
         html_final = plantilla.replace("{{TITULO}}", titulo_ia)
-        html_final = html_final.replace("{{FECHA}}", fecha_final) # Se sigue mostrando en español
+        html_final = html_final.replace("{{FECHA}}", fecha_final) 
         html_final = html_final.replace("{{MEDIA}}", bloque_media_html)
         html_final = html_final.replace("{{CONTENIDO}}", cuerpo_ia)
 
@@ -216,7 +216,7 @@ def generar_noticia_manual(shortcode):
         with open(ruta_noticia, 'w', encoding='utf-8') as f:
             f.write(html_final)
         
-        print(f"   📝 Archivo HTML creado: {ruta_noticia}")
+        print(f"   📝 Archivo HTML creado perfectamente: {ruta_noticia}")
     else:
         print(f"❌ ERROR: No se encuentra {PLANTILLA_HTML}. Crea ese archivo primero.")
         return
@@ -225,8 +225,8 @@ def generar_noticia_manual(shortcode):
     nueva_entrada = {
         "id": shortcode,
         "titulo": titulo_ia,
-        "fecha": fecha_final,          # Para mostrar visualmente en la web (ej: 25/10/2023)
-        "fecha_iso": fecha_iso,        # ✨ NUEVO: Para que Javascript pueda filtrar y ordenar (ej: 2023-10-25)
+        "fecha": fecha_final,          
+        "fecha_iso": fecha_iso,        
         "archivo": nombre_archivo_html,
         "imagen": ruta_media_web,
         "resumen": cuerpo_ia[:120].replace("<p>", "").replace("<strong>", "").replace("</p>", "").replace("</strong>", "") + "..."
