@@ -6,5 +6,14 @@
         "archivo": "2026-02-19-noticia-DUxzWm8DTRk.html",
         "imagen": "/imagenes/DUxzWm8DTRk/1.png",
         "resumen": "El Club Voleibol Navalcarnero reafirma su gran estado de forma tras una jornada deportiva marcada por la entrega..."
+    },
+    {
+        "id": "DUfb7FcDaRs",
+        "titulo": "Noticia de Instagram",
+        "fecha": "08/02/2026",
+        "fecha_iso": "2026-02-08",
+        "archivo": "2026-02-08-noticia-DUfb7FcDaRs.html",
+        "imagen": "/imagenes/DUfb7FcDaRs/1.png",
+        "resumen": "Jornada intensa para nuestros equipos.\nEl Alevín vuelve a encontrarse con la derrota, sumando experiencia y aprendiza..."
     }
 ]
