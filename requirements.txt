@@ -1,3 +1,4 @@
-instaloader
+apify-client
+requests
 google-generativeai
-Pillow
+pillow

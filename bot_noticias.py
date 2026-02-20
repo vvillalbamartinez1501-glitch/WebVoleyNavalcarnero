@@ -1,14 +1,14 @@
 import os
 import json
-import instaloader
+import requests
 import google.generativeai as genai
 from datetime import datetime
 import shutil 
 from PIL import Image 
+from apify_client import ApifyClient
 
 # --- CONFIGURACIÓN ---
 TARGET_USERNAME = "clubvoleibolnavalcarnero" 
-LOGIN_USERNAME = "vvillalbamartinez1501" 
 
 CARPETA_IMAGENES = "imagenes"
 CARPETA_NOTICIAS = "noticias"
@@ -18,16 +18,15 @@ PLANTILLA_HTML = "plantilla.html"
 os.makedirs(CARPETA_IMAGENES, exist_ok=True)
 os.makedirs(CARPETA_NOTICIAS, exist_ok=True)
 
+# 🔑 Cargamos las dos llaves maestras
 api_key = os.environ.get("GENAI_API_KEY")
+apify_token = os.environ.get("APIFY_API_TOKEN")
 
-if not api_key:
-    print("\n❌ ERROR CRÍTICO: No se encontró la API Key.")
-    print("👉 En la terminal, antes de ejecutar el script, debes escribir:")
-    print('   Windows: $env:GENAI_API_KEY="TU_CLAVE_AQUI"')
+if not api_key or not apify_token:
+    print("\n❌ ERROR CRÍTICO: Faltan las API Keys (Gemini o Apify).")
     exit()
 
 genai.configure(api_key=api_key)
-# Usamos el modelo estable
 model = genai.GenerativeModel('gemini-pro')
 
 def obtener_fecha_de_imagen(ruta_imagen, fecha_post_original):
@@ -73,7 +72,6 @@ def generar_contenido_ia(caption, es_video):
 
     Formato de respuesta EXACTO: TITULO | CUERPO_HTML
     """
-    
     try:
         response = model.generate_content(prompt)
         texto = response.text
@@ -87,31 +85,51 @@ def generar_contenido_ia(caption, es_video):
         return "Noticia de Instagram", f"<p>{caption}</p>"
 
 def main():
-    print("--- 🚀 INICIANDO ROBOT PERIODISTA (Modo Automático) ---")
+    print("--- 🚀 INICIANDO ROBOT PERIODISTA (Vía APIFY) ---")
     
-    L = instaloader.Instaloader()
+    # 1. Llamamos a Apify para que haga el trabajo sucio en Instagram
+    print(f"🔎 Mandando a los mercenarios de Apify a espiar a {TARGET_USERNAME}...")
+    client = ApifyClient(apify_token)
     
-    # Inyectamos la cookie de sesión maestra
     try:
-        print(f"🔑 Inyectando cookie de sesión maestra...")
+        # Configuramos el robot extractor
+        run_input = {
+            "directUrls": [f"https://www.instagram.com/{TARGET_USERNAME}/"],
+            "resultsType": "posts",
+            "resultsLimit": 1
+        }
         
-        # --- ¡ATENCIÓN! Pega aquí tu session_id de Chrome ---
-        session_id = '49224113245%3AFDlHCpOz5k35u3%3A18%3AAYiAGDTFIu4zSnNAHzUDdBN5bYUVMCsGjIGliZD1lQ' 
+        # Ejecutamos la tarea en los servidores de Apify
+        run = client.actor("apify/instagram-scraper").call(run_input=run_input)
         
-        L.context._session.cookies.set('sessionid', session_id, domain='.instagram.com')
-        L.context.get_json('graphql/query', params={}) 
-        print("✅ ¡Cookie aceptada! Entramos identificados.")
+        # Recogemos la información extraída
+        items = list(client.dataset(run["defaultDatasetId"]).iterate_items())
+        
+        if not items:
+            print("❌ No se encontró ningún post público.")
+            return
+            
+        post = items[0]
+        
     except Exception as e:
-        print(f"⚠️ Error inyectando cookie: {e}")
-        print("👉 Revisa que hayas puesto tu session_id correcto entre las comillas simples.")
-
-    try:
-        print(f"🔎 Buscando perfil objetivo: {TARGET_USERNAME}...")
-        profile = instaloader.Profile.from_username(L.context, TARGET_USERNAME)
-    except Exception as e:
-        print(f"❌ Error al encontrar al club: {e}")
+        print(f"❌ Error al conectar con Apify: {e}")
         return
 
+    # Extraemos los datos del JSON que nos devuelve Apify
+    shortcode = post.get('shortCode')
+    caption = post.get('caption', 'Sin descripción')
+    is_video = post.get('isVideo', False)
+    
+    # Formateamos la fecha
+    timestamp = post.get('timestamp') 
+    if timestamp:
+        fecha_obj_post = datetime.strptime(timestamp[:10], "%Y-%m-%d")
+    else:
+        fecha_obj_post = datetime.now()
+        
+    print(f"✅ ¡Datos interceptados! Analizando post: {shortcode}")
+
+    # Comprobamos si ya lo hemos publicado antes
     noticias_existentes = []
     if os.path.exists(ARCHIVO_JSON):
         try:
@@ -120,49 +138,49 @@ def main():
                 if content.strip():
                     noticias_existentes = json.loads(content)
         except json.JSONDecodeError:
-            print("⚠️ El archivo JSON estaba dañado o vacío, se creará uno nuevo.")
             noticias_existentes = []
     
     ids_procesados = [n.get('id') for n in noticias_existentes]
 
-    try:
-        posts = profile.get_posts()
-        post = next(posts) 
-    except Exception as e:
-        print(f"❌ Error descargando posts: {e}")
-        return
-
-    shortcode = post.shortcode
-    print(f"🔎 Analizando último post: {shortcode}")
-
     if shortcode in ids_procesados:
-        print("✅ Este post ya existe en la web. Nada que hacer.")
+        print("✅ Este post ya existe en la web. Apagando sistemas. Nada que hacer.")
         return
 
-    print("🆕 ¡Noticia nueva detectada! Procesando...")
+    print("🆕 ¡Noticia nueva detectada! Procesando descargas y redacción...")
 
     ruta_media_web = ""
     bloque_media_html = ""
-    fecha_final = post.date.strftime("%d/%m/%Y") 
+    fecha_final = fecha_obj_post.strftime("%d/%m/%Y") 
     
-    if post.is_video:
+    if is_video:
         print("   🎥 Es un video. Usaremos Embed.")
         bloque_media_html = f'<div class="video-container"><iframe src="https://www.instagram.com/p/{shortcode}/embed" width="400" height="480" frameborder="0" scrolling="no" allowtransparency="true"></iframe></div>'
     else:
-        print(f"   📸 Descargando galería de imágenes y procesando a PNG: {shortcode}...")
+        print(f"   📸 Descargando imágenes directamente desde los servidores CDN...")
         try:
             ruta_carpeta_especifica = os.path.join(CARPETA_IMAGENES, shortcode)
             os.makedirs(ruta_carpeta_especifica, exist_ok=True)
+            os.makedirs("temp_downloads", exist_ok=True)
             
-            L.download_post(post, target="temp_downloads")
+            # Recopilamos todas las URLs de las fotos del post
+            urls_imagenes = []
+            if post.get('childPosts'): # Si es una galería de varias fotos
+                urls_imagenes = [child.get('displayUrl') for child in post.get('childPosts') if child.get('displayUrl')]
+            elif post.get('displayUrl'): # Si es solo una foto
+                urls_imagenes = [post.get('displayUrl')]
             
-            archivos = sorted(os.listdir("temp_downloads"))
             imagenes_html = []
             contador = 1
             
-            for f in archivos:
-                if f.lower().endswith(('.jpg', '.jpeg', '.png')):
-                    origen = os.path.join("temp_downloads", f)
+            # Descargamos las fotos una por una
+            for url in urls_imagenes:
+                resp = requests.get(url, stream=True)
+                if resp.status_code == 200:
+                    origen = os.path.join("temp_downloads", f"temp_{contador}.jpg")
+                    with open(origen, 'wb') as f:
+                        shutil.copyfileobj(resp.raw, f)
+                        
+                    # Convertimos a PNG de forma segura
                     nombre_png = f"{contador}.png" 
                     destino = os.path.join(ruta_carpeta_especifica, nombre_png)
                     
@@ -175,7 +193,7 @@ def main():
                     imagenes_html.append(f'<img src="{url_foto}" alt="Imagen {contador} de la noticia" class="news-gallery-img">')
                     
                     if contador == 1:
-                        fecha_final = obtener_fecha_de_imagen(destino, post.date)
+                        fecha_final = obtener_fecha_de_imagen(destino, fecha_obj_post)
                         ruta_media_web = url_foto
                     
                     contador += 1
@@ -186,18 +204,16 @@ def main():
         except Exception as e:
             print(f"⚠️ Error procesando la galería: {e}")
 
-    caption = post.caption if post.caption else "Sin descripción"
-    titulo_ia, cuerpo_ia = generar_contenido_ia(caption, post.is_video)
-
-    # ✨ CREAMOS LA VARIABLE QUE FALTABA
+    # IA al rescate
+    titulo_ia, cuerpo_ia = generar_contenido_ia(caption, is_video)
     resumen_texto = cuerpo_ia[:120].replace("<p>", "").replace("<strong>", "").replace("</p>", "").replace("</strong>", "") + "..."
 
     try:
         fecha_obj = datetime.strptime(fecha_final, "%d/%m/%Y")
         fecha_iso = fecha_obj.strftime("%Y-%m-%d")
     except ValueError:
-        fecha_iso = post.date.strftime("%Y-%m-%d")
-        fecha_final = post.date.strftime("%d/%m/%Y")
+        fecha_iso = fecha_obj_post.strftime("%Y-%m-%d")
+        fecha_final = fecha_obj_post.strftime("%d/%m/%Y")
 
     nombre_archivo_html = f"{fecha_iso}-noticia-{shortcode}.html"
     
