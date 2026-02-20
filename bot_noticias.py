@@ -10,7 +10,7 @@ from PIL import Image # Librería para manejar y convertir imágenes
 # 1. ¿A quién vamos a espiar? (El perfil público del club)
 TARGET_USERNAME = "clubvoleibolnavalcarnero" 
 
-# 2. ¿Quién soy yo? (Tu usuario, el que acabas de usar en la terminal)
+# 2. ¿Quién soy yo? (Tu usuario)
 LOGIN_USERNAME = "vvillalbamartinez1501"  # <--- ¡PON AQUÍ EL TUYO!
 
 # Rutas de carpetas
@@ -77,11 +77,11 @@ def generar_contenido_ia(caption, es_video):
     Necesito una noticia EXTENSA y profesional. Sigue esta estructura estricta separada por una barra vertical (|):
     1. Un TITULO impactante (máximo 10 palabras).
     2. Un CUERPO en formato HTML puro (usa <p>, <strong>, etc., pero NO uses <html> ni <body> ni bloques de código). 
-       - Debe incluir una entradilla (párrafo corto en negrita).
-       - Al menos 2 o 3 o 4 párrafos detallados desarrollando la información.
-       - Incluye algo negativo si ha habido alguna derrota, especificando el esfuerzo, las ganas de mejorar, el camino por recorrer o algo parecido
-       - Usa <strong> para resaltar puntos clave.
-       - Termina con una conclusión motivadora.
+        - Debe incluir una entradilla (párrafo corto en negrita).
+        - Al menos 2 o 3 o 4 párrafos detallados desarrollando la información.
+        - Incluye algo negativo si ha habido alguna derrota, especificando el esfuerzo, las ganas de mejorar, el camino por recorrer o algo parecido
+        - Usa <strong> para resaltar puntos clave.
+        - Termina con una conclusión motivadora.
 
     Formato de respuesta EXACTO: TITULO | CUERPO_HTML
     """
@@ -99,7 +99,7 @@ def generar_contenido_ia(caption, es_video):
         return "Noticia de Instagram", f"<p>{caption}</p>"
 
 def main():
-    print("--- 🚀 INICIANDO ROBOT PERIODISTA (Modo Galería PNG) ---")
+    print("--- 🚀 INICIANDO ROBOT PERIODISTA (Modo Automático) ---")
     
     # 1. Preparar Instaloader
     L = instaloader.Instaloader()
@@ -180,7 +180,7 @@ def main():
                 if f.lower().endswith(('.jpg', '.jpeg', '.png')):
                     # MAGIA: Convertimos a PNG de forma segura
                     origen = os.path.join("temp_downloads", f)
-                    nombre_png = f"{contador}.png" # <-- Cambio aquí
+                    nombre_png = f"{contador}.png" 
                     destino = os.path.join(ruta_carpeta_especifica, nombre_png)
                     
                     img = Image.open(origen)
@@ -188,10 +188,10 @@ def main():
                     if img.mode in ("RGBA", "P"):
                         img = img.convert("RGBA")
                         
-                    img.save(destino, "PNG") # <-- Guardamos como PNG
+                    img.save(destino, "PNG") 
                     
                     # URL para el HTML
-                    url_foto = f"/imagenes/{shortcode}/{nombre_png}" # <-- Cambio aquí
+                    url_foto = f"/imagenes/{shortcode}/{nombre_png}" 
                     imagenes_html.append(f'<img src="{url_foto}" alt="Imagen {contador} de la noticia" class="news-gallery-img">')
                     
                     # Fecha de la IA solo en la primera foto para ahorrar tiempo
@@ -214,9 +214,16 @@ def main():
     caption = post.caption if post.caption else "Sin descripción"
     titulo_ia, cuerpo_ia = generar_contenido_ia(caption, post.is_video)
 
-    # C. Crear el archivo HTML de la noticia
-    fecha_archivo = post.date.strftime("%Y-%m-%d")
-    nombre_archivo_html = f"{fecha_archivo}-noticia-{shortcode}.html"
+    # ✨ NUEVO: Convertimos la fecha (DD/MM/YYYY) al estándar informático (YYYY-MM-DD)
+    try:
+        fecha_obj = datetime.strptime(fecha_final, "%d/%m/%Y")
+        fecha_iso = fecha_obj.strftime("%Y-%m-%d")
+    except ValueError:
+        fecha_iso = post.date.strftime("%Y-%m-%d")
+        fecha_final = post.date.strftime("%d/%m/%Y")
+
+    # C. Crear el archivo HTML de la noticia (Ahora usa la fecha ISO correcta)
+    nombre_archivo_html = f"{fecha_iso}-noticia-{shortcode}.html"
     
     if os.path.exists(PLANTILLA_HTML):
         with open(PLANTILLA_HTML, 'r', encoding='utf-8') as f:
@@ -241,7 +248,8 @@ def main():
     nueva_entrada = {
         "id": shortcode,
         "titulo": titulo_ia,
-        "fecha": fecha_final,
+        "fecha": fecha_final,          # Formato lectura humana: DD/MM/YYYY
+        "fecha_iso": fecha_iso,        # ✨ NUEVO: Formato máquina para ordenar: YYYY-MM-DD
         "archivo": nombre_archivo_html,
         "imagen": ruta_media_web,
         "resumen": cuerpo_ia[:120].replace("<p>", "").replace("<strong>", "").replace("</p>", "").replace("</strong>", "") + "..."
