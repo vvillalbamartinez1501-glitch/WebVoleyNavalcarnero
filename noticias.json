@@ -15,5 +15,50 @@
         "archivo": "2026-02-08-noticia-DUfb7FcDaRs.html",
         "imagen": "/imagenes/DUfb7FcDaRs/1.png",
         "resumen": "Jornada intensa para nuestros equipos.\nEl Alevín vuelve a encontrarse con la derrota, sumando experiencia y aprendiza..."
+    },
+    {
+        "id": "DUN_2gljXr8",
+        "titulo": "Noticia de Instagram",
+        "fecha": "01/02/2026",
+        "fecha_iso": "2026-02-01",
+        "archivo": "2026-02-01-noticia-DUN_2gljXr8.html",
+        "imagen": "/imagenes/DUN_2gljXr8/1.png",
+        "resumen": "Gran jornada para nuestros equipos.\nEl Alevín cae ante un equipo superior, en un partido en el que, aun así, podríamo..."
+    },
+    {
+        "id": "DT700UYjaMR",
+        "titulo": "Noticia de Instagram",
+        "fecha": "25/01/2026",
+        "fecha_iso": "2026-01-25",
+        "archivo": "2026-01-25-noticia-DT700UYjaMR.html",
+        "imagen": "/imagenes/DT700UYjaMR/1.png",
+        "resumen": "¡Jornada redonda para nuestro club! 💪🏐\n\nPleno de victorias en todas las categorías: Alevín, Infantil, Cadete I, Cadet..."
+    },
+    {
+        "id": "DTXjJ9LjTHR",
+        "titulo": "Noticia de Instagram",
+        "fecha": "11/01/2026",
+        "fecha_iso": "2026-01-11",
+        "archivo": "2026-01-11-noticia-DTXjJ9LjTHR.html",
+        "imagen": "/imagenes/DTXjJ9LjTHR/1.png",
+        "resumen": "Finaliza la primera jornada de este nuevo año con cómodas victorias por parte de los equipos cadetes y senior. Al equ..."
+    },
+    {
+        "id": "DSWyG1njQyx",
+        "titulo": "Noticia de Instagram",
+        "fecha": "17/12/2025",
+        "fecha_iso": "2025-12-17",
+        "archivo": "2025-12-17-noticia-DSWyG1njQyx.html",
+        "imagen": "/imagenes/DSWyG1njQyx/1.png",
+        "resumen": "La jornada del Día de las Familias ha sido un reflejo de lo que realmente somos como club. Queremos agradecer a todos..."
+    },
+    {
+        "id": "DSPXJ2XDZe1",
+        "titulo": "Noticia de Instagram",
+        "fecha": "14/12/2025",
+        "fecha_iso": "2025-12-14",
+        "archivo": "2025-12-14-noticia-DSPXJ2XDZe1.html",
+        "imagen": "/imagenes/DSPXJ2XDZe1/1.png",
+        "resumen": "Cerramos la última jornada del año con victorias muy trabajadas en las categorías infantil, juvenil y senior.\nEl equi..."
     }
 ]
