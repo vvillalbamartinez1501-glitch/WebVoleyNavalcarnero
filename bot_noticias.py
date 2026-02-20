@@ -96,7 +96,7 @@ def main():
         print(f"🔑 Inyectando cookie de sesión maestra...")
         
         # --- ¡ATENCIÓN! Pega aquí tu session_id de Chrome ---
-        session_id = 'PEGA_AQUI_TU_SESSION_ID' 
+        session_id = '49224113245%3AFDlHCpOz5k35u3%3A18%3AAYiAGDTFIu4zSnNAHzUDdBN5bYUVMCsGjIGliZD1lQ' 
         
         L.context._session.cookies.set('sessionid', session_id, domain='.instagram.com')
         L.context.get_json('graphql/query', params={}) 
@@ -189,6 +189,9 @@ def main():
     caption = post.caption if post.caption else "Sin descripción"
     titulo_ia, cuerpo_ia = generar_contenido_ia(caption, post.is_video)
 
+    # ✨ CREAMOS LA VARIABLE QUE FALTABA
+    resumen_texto = cuerpo_ia[:120].replace("<p>", "").replace("<strong>", "").replace("</p>", "").replace("</strong>", "") + "..."
+
     try:
         fecha_obj = datetime.strptime(fecha_final, "%d/%m/%Y")
         fecha_iso = fecha_obj.strftime("%Y-%m-%d")
@@ -206,6 +209,8 @@ def main():
         html_final = html_final.replace("{{FECHA}}", fecha_final)
         html_final = html_final.replace("{{MEDIA}}", bloque_media_html)
         html_final = html_final.replace("{{CONTENIDO}}", cuerpo_ia)
+        html_final = html_final.replace("{{RESUMEN}}", resumen_texto)
+        html_final = html_final.replace("{{IMAGEN_OG}}", ruta_media_web)
 
         ruta_noticia = os.path.join(CARPETA_NOTICIAS, nombre_archivo_html)
         
@@ -224,7 +229,7 @@ def main():
         "fecha_iso": fecha_iso,        
         "archivo": nombre_archivo_html,
         "imagen": ruta_media_web,
-        "resumen": cuerpo_ia[:120].replace("<p>", "").replace("<strong>", "").replace("</p>", "").replace("</strong>", "") + "..."
+        "resumen": resumen_texto
     }
     
     noticias_existentes.append(nueva_entrada)
