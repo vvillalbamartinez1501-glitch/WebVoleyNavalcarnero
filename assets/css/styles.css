@@ -1573,6 +1573,22 @@ header {
     transform: scale(1.03);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
+/* ==========================================================================
+   AJUSTE PARA PANTALLAS MUY PEQUEÑAS (MÓVILES)
+   ========================================================================== */
+@media (max-width: 576px) {
+    .news-gallery {
+        column-count: 2; /* Fuerza las 2 columnas en móviles */
+        column-gap: 10px; /* Reduce un poco el espacio entre columnas */
+        margin: 20px 0;
+    }
+
+    .news-gallery-img {
+        max-height: 180px; /* Limita la altura para que ocupen la mitad de espacio */
+        object-fit: cover; /* Recorta la imagen sin deformarla para ajustarse a la altura */
+        margin-bottom: 10px; /* Reduce la separación vertical */
+    }
+}
 
 /* --- ESTILOS SOLO PARA TARJETAS DE NOTICIAS --- */
 
