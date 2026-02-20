@@ -106,8 +106,6 @@ def generar_noticia_manual(shortcode):
         print(f"🔑 Inyectando cookie de sesión maestra...")
         
         # --- ¡ATENCIÓN! ---
-        # Borra PEGA_AQUI_TU_SESSION_ID y pega ahí el código largo que copiaste de Google Chrome
-        # 49224113245%3AFDlHCpOz5k35u3%3A18%3AAYiAGDTFIu4zSnNAHzUDdBN5bYUVMCsGjIGliZD1lQ
         session_id = '49224113245%3AFDlHCpOz5k35u3%3A18%3AAYiAGDTFIu4zSnNAHzUDdBN5bYUVMCsGjIGliZD1lQ' 
         
         L.context._session.cookies.set('sessionid', session_id, domain='.instagram.com')
@@ -191,6 +189,9 @@ def generar_noticia_manual(shortcode):
     caption = post.caption if post.caption else "Sin descripción"
     titulo_ia, cuerpo_ia = generar_contenido_ia(caption, post.is_video)
 
+    # ✨ AQUÍ ESTABA EL ERROR: Faltaba crear esta variable
+    resumen_texto = cuerpo_ia[:120].replace("<p>", "").replace("<strong>", "").replace("</p>", "").replace("</strong>", "") + "..."
+
     # ✨ Convertimos la fecha al estándar ISO
     try:
         fecha_obj = datetime.strptime(fecha_final, "%d/%m/%Y")
@@ -210,6 +211,8 @@ def generar_noticia_manual(shortcode):
         html_final = html_final.replace("{{FECHA}}", fecha_final) 
         html_final = html_final.replace("{{MEDIA}}", bloque_media_html)
         html_final = html_final.replace("{{CONTENIDO}}", cuerpo_ia)
+        html_final = html_final.replace("{{RESUMEN}}", resumen_texto)
+        html_final = html_final.replace("{{IMAGEN_OG}}", ruta_media_web)
 
         ruta_noticia = os.path.join(CARPETA_NOTICIAS, nombre_archivo_html)
         
@@ -229,7 +232,7 @@ def generar_noticia_manual(shortcode):
         "fecha_iso": fecha_iso,        
         "archivo": nombre_archivo_html,
         "imagen": ruta_media_web,
-        "resumen": cuerpo_ia[:120].replace("<p>", "").replace("<strong>", "").replace("</p>", "").replace("</strong>", "") + "..."
+        "resumen": resumen_texto
     }
     
     noticias_existentes.append(nueva_entrada)
