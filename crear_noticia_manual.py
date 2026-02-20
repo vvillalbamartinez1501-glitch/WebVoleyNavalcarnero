@@ -63,28 +63,36 @@ def generar_contenido_ia(caption, es_video):
     Tengo un post de Instagram que es {tipo}.
     La descripción original es: "{caption}"
 
-    Necesito una noticia EXTENSA y profesional. Sigue esta estructura estricta separada por una barra vertical (|):
-    1. Un TITULO impactante (máximo 10 palabras).
-    2. Un CUERPO en formato HTML puro (usa <p>, <strong>, etc., pero NO uses <html> ni <body> ni bloques de código). 
-        - Debe incluir una entradilla (párrafo corto en negrita).
-        - Al menos 2 o 3 o 4 párrafos detallados desarrollando la información.
-        - Incluye algo negativo si ha habido alguna derrota, especificando el esfuerzo, las ganas de mejorar, el camino por recorrer o algo parecido
-        - Usa <strong> para resaltar puntos clave.
-        - Termina con una conclusión motivadora.
+    Necesito una noticia EXTENSA y profesional. 
 
-    Formato de respuesta EXACTO: TITULO | CUERPO_HTML
+    INSTRUCCIONES DE CONTENIDO:
+    - Un TITULO impactante (máximo 10 palabras).
+    - Un CUERPO en formato HTML puro (usa <p>, <strong>, etc., pero NO uses <html> ni <body> ni bloques de código markdown). 
+    - Debe incluir una entradilla (párrafo corto en negrita).
+    - Al menos 2 o 3 o 4 párrafos detallados desarrollando la información.
+    - Incluye algo negativo si ha habido alguna derrota, especificando el esfuerzo, las ganas de mejorar y el camino por recorrer.
+    - Usa <strong> para resaltar puntos clave a lo largo de todo el texto.
+    - Termina con una conclusión motivadora.
+
+    ESTRUCTURA OBLIGATORIA DE LA RESPUESTA (Separa el título del cuerpo EXACTAMENTE con los caracteres ###):
+    TITULO DE LA NOTICIA
+    ###
+    <p><strong>Entradilla corta y potente.</strong></p>
+    <p>Desarrollo detallado...</p>
+
+    (IMPORTANTE: Devuelve SOLO el título, los ### y el HTML. No escribas la palabra "HTML" ni uses bloques de código ```).
     """
-    
     try:
         response = model.generate_content(prompt)
         texto = response.text
-        if "|" in texto:
-            parts = texto.split("|", 1)
+        if "###" in texto:
+            parts = texto.split("###", 1)
             return parts[0].strip(), parts[1].strip()
         else:
-            return "Nueva Publicación", texto
+            print("⚠️ La IA no puso el separador ###. Intentando arreglarlo...")
+            return "Actualidad del Club", texto.replace('```html', '').replace('```', '')
     except Exception as e:
-        print(f"Error IA: {e}")
+        print(f"❌ Error crítico de IA: {e}")
         return "Noticia de Instagram", f"<p>{caption}</p>"
 
 def extraer_shortcode(url):
