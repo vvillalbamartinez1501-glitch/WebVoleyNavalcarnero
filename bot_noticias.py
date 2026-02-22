@@ -27,8 +27,33 @@ if not api_key or not apify_token:
     exit()
 
 genai.configure(api_key=api_key)
-# Usamos el modelo más moderno y rápido
-model = genai.GenerativeModel('gemini-1.5-flash')
+# Volvemos al modelo súper estable que tu cuenta reconoce sin problemas
+model = genai.GenerativeModel('gemini-pro')
+
+def obtener_fecha_de_imagen(ruta_imagen, fecha_post_original):
+    print("   👁️  Analizando imagen en busca de fecha...")
+    try:
+        # Usamos el modelo de visión clásico y le pasamos la foto directamente
+        modelo_vision = genai.GenerativeModel('gemini-pro-vision')
+        img_pil = Image.open(ruta_imagen)
+        
+        prompt = """
+        Mira esta imagen. ¿Hay una fecha escrita en ella (texto superpuesto o en un cartel)?
+        Si ves una fecha, devuélvela en formato DD/MM/YYYY.
+        Si NO ves ninguna fecha, responde exactamente: NO_DATE
+        """
+        result = modelo_vision.generate_content([prompt, img_pil])
+        texto = result.text.strip()
+        
+        if "NO_DATE" in texto:
+            print("      -> No se ve fecha en la foto, usando fecha del post.")
+            return fecha_post_original.strftime("%d/%m/%Y")
+        
+        print(f"      -> Fecha encontrada en imagen: {texto}")
+        return texto
+    except Exception as e:
+        print(f"      -> Error analizando imagen visualmente. Usando fecha del post.")
+        return fecha_post_original.strftime("%d/%m/%Y")
 
 def generar_contenido_ia(caption, es_video):
     print("   🧠 Escribiendo noticia EXTENSA con IA...")
@@ -59,7 +84,7 @@ def generar_contenido_ia(caption, es_video):
     (IMPORTANTE: Devuelve SOLO el título, los ### y el HTML. No escribas la palabra "HTML" ni uses bloques de código).
     """
     try:
-        # Bajamos los filtros de seguridad para que no censure palabras de jerga deportiva (ataque, remate...)
+        # Mantenemos los filtros apagados para que no censure la jerga de voleibol
         safety_settings = [
             {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
             {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
@@ -78,32 +103,8 @@ def generar_contenido_ia(caption, es_video):
             return "Actualidad del Club", texto.replace('```html', '').replace('```', '')
             
     except Exception as e:
-        # Esto imprimirá el error real en la pantalla negra para que sepamos QUÉ le pasa a la IA
         print(f"❌ Error crítico de IA: {e}")
         return "Noticia de Instagram", f"<p>{caption}</p>"
-
-def obtener_fecha_de_imagen(ruta_imagen, fecha_post_original):
-    print("   👁️  Analizando imagen en busca de fecha...")
-    try:
-        modelo_vision = genai.GenerativeModel('gemini-1.5-flash')
-        myfile = genai.upload_file(ruta_imagen)
-        prompt = """
-        Mira esta imagen. ¿Hay una fecha escrita en ella (texto superpuesto o en un cartel)?
-        Si ves una fecha, devuélvela en formato DD/MM/YYYY.
-        Si NO ves ninguna fecha, responde exactamente: NO_DATE
-        """
-        result = modelo_vision.generate_content([myfile, prompt])
-        texto = result.text.strip()
-        
-        if "NO_DATE" in texto:
-            print("      -> No se ve fecha en la foto, usando fecha del post.")
-            return fecha_post_original.strftime("%d/%m/%Y")
-        
-        print(f"      -> Fecha encontrada en imagen: {texto}")
-        return texto
-    except Exception as e:
-        print(f"      -> Error analizando imagen visualmente. Usando fecha del post.")
-        return fecha_post_original.strftime("%d/%m/%Y")
 
 def main():
     print("--- 🚀 INICIANDO ROBOT PERIODISTA (Vía APIFY) ---")
@@ -113,17 +114,13 @@ def main():
     client = ApifyClient(apify_token)
     
     try:
-        # Configuramos el robot extractor
         run_input = {
             "directUrls": [f"https://www.instagram.com/{TARGET_USERNAME}/"],
             "resultsType": "posts",
             "resultsLimit": 1
         }
         
-        # Ejecutamos la tarea en los servidores de Apify
         run = client.actor("apify/instagram-scraper").call(run_input=run_input)
-        
-        # Recogemos la información extraída
         items = list(client.dataset(run["defaultDatasetId"]).iterate_items())
         
         if not items:
@@ -136,12 +133,10 @@ def main():
         print(f"❌ Error al conectar con Apify: {e}")
         return
 
-    # Extraemos los datos del JSON que nos devuelve Apify
     shortcode = post.get('shortCode')
     caption = post.get('caption', 'Sin descripción')
     is_video = post.get('isVideo', False)
     
-    # Formateamos la fecha
     timestamp = post.get('timestamp') 
     if timestamp:
         fecha_obj_post = datetime.strptime(timestamp[:10], "%Y-%m-%d")
@@ -150,7 +145,6 @@ def main():
         
     print(f"✅ ¡Datos interceptados! Analizando post: {shortcode}")
 
-    # Comprobamos si ya lo hemos publicado antes
     noticias_existentes = []
     if os.path.exists(ARCHIVO_JSON):
         try:
@@ -183,17 +177,15 @@ def main():
             os.makedirs(ruta_carpeta_especifica, exist_ok=True)
             os.makedirs("temp_downloads", exist_ok=True)
             
-            # Recopilamos todas las URLs de las fotos del post
             urls_imagenes = []
-            if post.get('childPosts'): # Si es una galería de varias fotos
+            if post.get('childPosts'):
                 urls_imagenes = [child.get('displayUrl') for child in post.get('childPosts') if child.get('displayUrl')]
-            elif post.get('displayUrl'): # Si es solo una foto
+            elif post.get('displayUrl'):
                 urls_imagenes = [post.get('displayUrl')]
             
             imagenes_html = []
             contador = 1
             
-            # Descargamos las fotos una por una
             for url in urls_imagenes:
                 resp = requests.get(url, stream=True)
                 if resp.status_code == 200:
@@ -201,7 +193,6 @@ def main():
                     with open(origen, 'wb') as f:
                         shutil.copyfileobj(resp.raw, f)
                         
-                    # Convertimos a PNG de forma segura
                     nombre_png = f"{contador}.png" 
                     destino = os.path.join(ruta_carpeta_especifica, nombre_png)
                     
@@ -225,7 +216,6 @@ def main():
         except Exception as e:
             print(f"⚠️ Error procesando la galería: {e}")
 
-    # IA al rescate
     titulo_ia, cuerpo_ia = generar_contenido_ia(caption, is_video)
     resumen_texto = cuerpo_ia[:120].replace("<p>", "").replace("<strong>", "").replace("</p>", "").replace("</strong>", "") + "..."
 
