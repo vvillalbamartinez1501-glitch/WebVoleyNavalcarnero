@@ -27,21 +27,57 @@ if not api_key:
     exit()
 
 genai.configure(api_key=api_key)
-# Usamos un modelo universal estable para evitar errores de versión 404
-model = genai.GenerativeModel('gemini-pro')
+
+# --- 🕵️‍♂️ MODO SUPERVIVENCIA: AUTODETECCIÓN FORZADA ---
+modelo_texto = 'gemini-pro' 
+modelo_vision = 'gemini-pro-vision' 
+
+try:
+    print("🔎 Preguntando a Google qué IAs tienes disponibles en tu cuenta...")
+    disponibles = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
+    print(f"   -> IAs Encontradas: {disponibles}")
+    
+    if disponibles:
+        # Forzamos al sistema a usar el primer modelo válido que nos dé Google
+        modelo_texto = disponibles[0] 
+        
+        # Buscamos si hay alguno mejor (los flash suelen ser más rápidos)
+        for m in disponibles:
+            if 'flash' in m:
+                modelo_texto = m
+                break
+        
+        # Para la visión, si el modelo principal es moderno (1.5), sirve para leer fotos. 
+        # Si es viejo, buscamos uno que tenga la palabra "vision"
+        if '1.5' in modelo_texto or '2.0' in modelo_texto:
+            modelo_vision = modelo_texto
+        else:
+            for m in disponibles:
+                if 'vision' in m:
+                    modelo_vision = m
+                    break
+                    
+        print(f"✅ MODO SUPERVIVENCIA ACTIVADO. Usando: {modelo_texto} (Texto) y {modelo_vision} (Visión)")
+    else:
+        print("❌ ATENCIÓN: Google dice que tu API Key no tiene acceso a NINGÚN modelo.")
+except Exception as e:
+    print(f"⚠️ Error en la autodetección: {e}")
+
+# Inicializamos el modelo de texto principal con lo que hemos encontrado
+model = genai.GenerativeModel(modelo_texto)
 
 def obtener_fecha_de_imagen(ruta_imagen, fecha_post_original):
     print("   👁️  Analizando imagen en busca de fecha...")
     try:
-        # El modelo de visión específico lo aislamos para que si falla, no rompa el programa
-        modelo_vision = genai.GenerativeModel('gemini-1.5-flash')
-        myfile = genai.upload_file(ruta_imagen)
+        modelo_v = genai.GenerativeModel(modelo_vision)
+        img_pil = Image.open(ruta_imagen)
+        
         prompt = """
         Mira esta imagen. ¿Hay una fecha escrita en ella (texto superpuesto o en un cartel)?
         Si ves una fecha, devuélvela en formato DD/MM/YYYY.
         Si NO ves ninguna fecha, responde exactamente: NO_DATE
         """
-        result = modelo_vision.generate_content([myfile, prompt])
+        result = modelo_v.generate_content([prompt, img_pil])
         texto = result.text.strip()
         
         if "NO_DATE" in texto:
@@ -80,11 +116,20 @@ def generar_contenido_ia(caption, es_video):
     <p><strong>Entradilla corta y potente.</strong></p>
     <p>Desarrollo detallado...</p>
 
-    (IMPORTANTE: Devuelve SOLO el título, los ### y el HTML. No escribas la palabra "HTML" ni uses bloques de código ```).
+    (IMPORTANTE: Devuelve SOLO el título, los ### y el HTML. No escribas la palabra "HTML" ni uses bloques de código).
     """
     try:
-        response = model.generate_content(prompt)
+        # Bajamos las defensas del filtro de seguridad para que no censure terminología deportiva
+        safety_settings = [
+            {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+            {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+            {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+            {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
+        ]
+        
+        response = model.generate_content(prompt, safety_settings=safety_settings)
         texto = response.text
+        
         if "###" in texto:
             parts = texto.split("###", 1)
             return parts[0].strip(), parts[1].strip()
@@ -113,7 +158,7 @@ def generar_noticia_manual(shortcode):
     try:
         print(f"🔑 Inyectando cookie de sesión maestra...")
         
-        # --- ¡ATENCIÓN! ---
+        # --- ¡ATENCIÓN! --- Revisa que esta cookie siga siendo válida si te da error 401/Login Required
         session_id = '49224113245%3AFDlHCpOz5k35u3%3A18%3AAYiAGDTFIu4zSnNAHzUDdBN5bYUVMCsGjIGliZD1lQ' 
         
         L.context._session.cookies.set('sessionid', session_id, domain='.instagram.com')
@@ -197,10 +242,9 @@ def generar_noticia_manual(shortcode):
     caption = post.caption if post.caption else "Sin descripción"
     titulo_ia, cuerpo_ia = generar_contenido_ia(caption, post.is_video)
 
-    # ✨ AQUÍ ESTABA EL ERROR: Faltaba crear esta variable
     resumen_texto = cuerpo_ia[:120].replace("<p>", "").replace("<strong>", "").replace("</p>", "").replace("</strong>", "") + "..."
 
-    # ✨ Convertimos la fecha al estándar ISO
+    # Convertimos la fecha al estándar ISO
     try:
         fecha_obj = datetime.strptime(fecha_final, "%d/%m/%Y")
         fecha_iso = fecha_obj.strftime("%Y-%m-%d")
