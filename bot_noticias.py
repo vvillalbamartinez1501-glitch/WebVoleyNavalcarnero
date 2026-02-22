@@ -27,14 +27,39 @@ if not api_key or not apify_token:
     exit()
 
 genai.configure(api_key=api_key)
-# Volvemos al modelo súper estable que tu cuenta reconoce sin problemas
-model = genai.GenerativeModel('gemini-pro')
+
+# --- 🕵️‍♂️ AUTODETECCIÓN DE MODELOS DE IA ---
+modelo_texto = 'gemini-1.0-pro' 
+modelo_vision = 'gemini-1.0-pro-vision' 
+
+try:
+    print("🔎 Preguntando a Google qué IAs tienes disponibles...")
+    disponibles = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
+    print(f"   -> Encontradas: {disponibles}")
+    
+    # El robot elige automáticamente la más moderna que tengas
+    if 'models/gemini-1.5-flash' in disponibles:
+        modelo_texto = 'gemini-1.5-flash'
+        modelo_vision = 'gemini-1.5-flash'
+    elif 'models/gemini-1.0-pro' in disponibles:
+        modelo_texto = 'gemini-1.0-pro'
+        
+    if '1.5' not in modelo_vision:
+        if 'models/gemini-pro-vision' in disponibles:
+            modelo_vision = 'gemini-pro-vision'
+        elif 'models/gemini-1.0-pro-vision' in disponibles:
+            modelo_vision = 'gemini-1.0-pro-vision'
+            
+    print(f"✅ Usando para redactar: {modelo_texto}")
+except Exception as e:
+    print("⚠️ No se pudo detectar, usando valores por defecto.")
+
+model = genai.GenerativeModel(modelo_texto)
 
 def obtener_fecha_de_imagen(ruta_imagen, fecha_post_original):
     print("   👁️  Analizando imagen en busca de fecha...")
     try:
-        # Usamos el modelo de visión clásico y le pasamos la foto directamente
-        modelo_vision = genai.GenerativeModel('gemini-pro-vision')
+        modelo_v = genai.GenerativeModel(modelo_vision)
         img_pil = Image.open(ruta_imagen)
         
         prompt = """
@@ -42,7 +67,7 @@ def obtener_fecha_de_imagen(ruta_imagen, fecha_post_original):
         Si ves una fecha, devuélvela en formato DD/MM/YYYY.
         Si NO ves ninguna fecha, responde exactamente: NO_DATE
         """
-        result = modelo_vision.generate_content([prompt, img_pil])
+        result = modelo_v.generate_content([prompt, img_pil])
         texto = result.text.strip()
         
         if "NO_DATE" in texto:
@@ -84,7 +109,6 @@ def generar_contenido_ia(caption, es_video):
     (IMPORTANTE: Devuelve SOLO el título, los ### y el HTML. No escribas la palabra "HTML" ni uses bloques de código).
     """
     try:
-        # Mantenemos los filtros apagados para que no censure la jerga de voleibol
         safety_settings = [
             {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
             {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
@@ -109,7 +133,6 @@ def generar_contenido_ia(caption, es_video):
 def main():
     print("--- 🚀 INICIANDO ROBOT PERIODISTA (Vía APIFY) ---")
     
-    # 1. Llamamos a Apify para que haga el trabajo sucio en Instagram
     print(f"🔎 Mandando a los mercenarios de Apify a espiar a {TARGET_USERNAME}...")
     client = ApifyClient(apify_token)
     
