@@ -28,32 +28,42 @@ if not api_key or not apify_token:
 
 genai.configure(api_key=api_key)
 
-# --- 🕵️‍♂️ AUTODETECCIÓN DE MODELOS DE IA ---
-modelo_texto = 'gemini-1.0-pro' 
-modelo_vision = 'gemini-1.0-pro-vision' 
+# --- 🕵️‍♂️ MODO SUPERVIVENCIA: AUTODETECCIÓN FORZADA ---
+modelo_texto = 'gemini-pro' 
+modelo_vision = 'gemini-pro-vision' 
 
 try:
-    print("🔎 Preguntando a Google qué IAs tienes disponibles...")
+    print("🔎 Preguntando a Google qué IAs tienes disponibles en tu cuenta...")
     disponibles = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-    print(f"   -> Encontradas: {disponibles}")
+    print(f"   -> IAs Encontradas: {disponibles}")
     
-    # El robot elige automáticamente la más moderna que tengas
-    if 'models/gemini-1.5-flash' in disponibles:
-        modelo_texto = 'gemini-1.5-flash'
-        modelo_vision = 'gemini-1.5-flash'
-    elif 'models/gemini-1.0-pro' in disponibles:
-        modelo_texto = 'gemini-1.0-pro'
+    if disponibles:
+        # Forzamos al sistema a usar el primer modelo válido que nos dé Google, se llame como se llame
+        modelo_texto = disponibles[0] 
         
-    if '1.5' not in modelo_vision:
-        if 'models/gemini-pro-vision' in disponibles:
-            modelo_vision = 'gemini-pro-vision'
-        elif 'models/gemini-1.0-pro-vision' in disponibles:
-            modelo_vision = 'gemini-1.0-pro-vision'
-            
-    print(f"✅ Usando para redactar: {modelo_texto}")
+        # Buscamos si hay alguno mejor (los flash suelen ser más rápidos)
+        for m in disponibles:
+            if 'flash' in m:
+                modelo_texto = m
+                break
+        
+        # Para la visión, si el modelo principal es moderno (1.5), sirve para leer fotos. 
+        # Si es viejo, buscamos uno que tenga la palabra "vision"
+        if '1.5' in modelo_texto or '2.0' in modelo_texto:
+            modelo_vision = modelo_texto
+        else:
+            for m in disponibles:
+                if 'vision' in m:
+                    modelo_vision = m
+                    break
+                    
+        print(f"✅ MODO SUPERVIVENCIA ACTIVADO. Obligando a Google a usar: {modelo_texto}")
+    else:
+        print("❌ ATENCIÓN: Google dice que tu API Key no tiene acceso a NINGÚN modelo.")
 except Exception as e:
-    print("⚠️ No se pudo detectar, usando valores por defecto.")
+    print(f"⚠️ Error en la autodetección: {e}")
 
+# Inicializamos las IAs con los nombres exactos que nos ha dado Google
 model = genai.GenerativeModel(modelo_texto)
 
 def obtener_fecha_de_imagen(ruta_imagen, fecha_post_original):
