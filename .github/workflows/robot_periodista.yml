@@ -34,8 +34,8 @@ jobs:
 
       - name: 💾 Guardar y publicar en la web
         run: |
-          git config --global user.name 'vvillalbamartinez1501'
-          git config --global user.email 'vvillalbamartinez1501@gamail.com'
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add .
           git commit -m "🗞️ Nueva noticia generada por IA" || echo "No hay noticias nuevas"
           git push

@@ -27,30 +27,8 @@ if not api_key or not apify_token:
     exit()
 
 genai.configure(api_key=api_key)
-model = genai.GenerativeModel('gemini-pro')
-
-def obtener_fecha_de_imagen(ruta_imagen, fecha_post_original):
-    print("   👁️  Analizando imagen en busca de fecha...")
-    try:
-        modelo_vision = genai.GenerativeModel('gemini-1.5-flash')
-        myfile = genai.upload_file(ruta_imagen)
-        prompt = """
-        Mira esta imagen. ¿Hay una fecha escrita en ella (texto superpuesto o en un cartel)?
-        Si ves una fecha, devuélvela en formato DD/MM/YYYY.
-        Si NO ves ninguna fecha, responde exactamente: NO_DATE
-        """
-        result = modelo_vision.generate_content([myfile, prompt])
-        texto = result.text.strip()
-        
-        if "NO_DATE" in texto:
-            print("      -> No se ve fecha en la foto, usando fecha del post.")
-            return fecha_post_original.strftime("%d/%m/%Y")
-        
-        print(f"      -> Fecha encontrada en imagen: {texto}")
-        return texto
-    except Exception as e:
-        print(f"      -> Error analizando imagen visualmente. Usando fecha del post.")
-        return fecha_post_original.strftime("%d/%m/%Y")
+# Usamos el modelo más moderno y rápido
+model = genai.GenerativeModel('gemini-1.5-flash')
 
 def generar_contenido_ia(caption, es_video):
     print("   🧠 Escribiendo noticia EXTENSA con IA...")
@@ -78,20 +56,54 @@ def generar_contenido_ia(caption, es_video):
     <p><strong>Entradilla corta y potente.</strong></p>
     <p>Desarrollo detallado...</p>
 
-    (IMPORTANTE: Devuelve SOLO el título, los ### y el HTML. No escribas la palabra "HTML" ni uses bloques de código ```).
+    (IMPORTANTE: Devuelve SOLO el título, los ### y el HTML. No escribas la palabra "HTML" ni uses bloques de código).
     """
     try:
-        response = model.generate_content(prompt)
+        # Bajamos los filtros de seguridad para que no censure palabras de jerga deportiva (ataque, remate...)
+        safety_settings = [
+            {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+            {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+            {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+            {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
+        ]
+        
+        response = model.generate_content(prompt, safety_settings=safety_settings)
         texto = response.text
+        
         if "###" in texto:
             parts = texto.split("###", 1)
             return parts[0].strip(), parts[1].strip()
         else:
             print("⚠️ La IA no puso el separador ###. Intentando arreglarlo...")
             return "Actualidad del Club", texto.replace('```html', '').replace('```', '')
+            
     except Exception as e:
+        # Esto imprimirá el error real en la pantalla negra para que sepamos QUÉ le pasa a la IA
         print(f"❌ Error crítico de IA: {e}")
         return "Noticia de Instagram", f"<p>{caption}</p>"
+
+def obtener_fecha_de_imagen(ruta_imagen, fecha_post_original):
+    print("   👁️  Analizando imagen en busca de fecha...")
+    try:
+        modelo_vision = genai.GenerativeModel('gemini-1.5-flash')
+        myfile = genai.upload_file(ruta_imagen)
+        prompt = """
+        Mira esta imagen. ¿Hay una fecha escrita en ella (texto superpuesto o en un cartel)?
+        Si ves una fecha, devuélvela en formato DD/MM/YYYY.
+        Si NO ves ninguna fecha, responde exactamente: NO_DATE
+        """
+        result = modelo_vision.generate_content([myfile, prompt])
+        texto = result.text.strip()
+        
+        if "NO_DATE" in texto:
+            print("      -> No se ve fecha en la foto, usando fecha del post.")
+            return fecha_post_original.strftime("%d/%m/%Y")
+        
+        print(f"      -> Fecha encontrada en imagen: {texto}")
+        return texto
+    except Exception as e:
+        print(f"      -> Error analizando imagen visualmente. Usando fecha del post.")
+        return fecha_post_original.strftime("%d/%m/%Y")
 
 def main():
     print("--- 🚀 INICIANDO ROBOT PERIODISTA (Vía APIFY) ---")
