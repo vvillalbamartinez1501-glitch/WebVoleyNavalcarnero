@@ -321,5 +321,14 @@
         "archivo": "2026-03-22-noticia-DWMsKoZjVR-.html",
         "imagen": "/imagenes/DWMsKoZjVR-/1.png",
         "resumen": "Nuestros equipos de voleibol han protagonizado un fin de semana memorable, desplegando garra, estrategia y un..."
+    },
+    {
+        "id": "DWbVaMrDTDS",
+        "titulo": "¡Victoria Incontestável! Nuestras Guerreras Sellan el Paso a la Siguiente Fase",
+        "fecha": "28/03/2026",
+        "fecha_iso": "2026-03-28",
+        "archivo": "2026-03-28-noticia-DWbVaMrDTDS.html",
+        "imagen": "/imagenes/DWbVaMrDTDS/1.png",
+        "resumen": "En una demostración de garra y talento inquebrantable, el equipo femenino ha asegurado su pase a la siguiente..."
     }
 ]
