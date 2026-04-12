@@ -330,5 +330,14 @@
         "archivo": "2026-03-28-noticia-DWbVaMrDTDS.html",
         "imagen": "/imagenes/DWbVaMrDTDS/1.png",
         "resumen": "En una demostración de garra y talento inquebrantable, el equipo femenino ha asegurado su pase a la siguiente..."
+    },
+    {
+        "id": "DXCyTeGDbEn",
+        "titulo": "Dominio y Éxito: El Club Vuela Hacia la Fase Autonómica",
+        "fecha": "12/04/2026",
+        "fecha_iso": "2026-04-12",
+        "archivo": "2026-04-12-noticia-DXCyTeGDbEn.html",
+        "imagen": "/imagenes/DXCyTeGDbEn/1.png",
+        "resumen": "Fin de semana glorioso para la cantera y el primer equipo, coronado con el brillante pase a la Fase Autonómic..."
     }
 ]
