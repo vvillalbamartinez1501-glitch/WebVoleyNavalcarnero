@@ -339,5 +339,14 @@
         "archivo": "2026-04-12-noticia-DXCyTeGDbEn.html",
         "imagen": "/imagenes/DXCyTeGDbEn/1.png",
         "resumen": "Fin de semana glorioso para la cantera y el primer equipo, coronado con el brillante pase a la Fase Autonómic..."
+    },
+    {
+        "id": "DXXJhDANxo2",
+        "titulo": "Alicante 2026: Forjando Campeones, Superando Obstáculos",
+        "fecha": "20/04/2026",
+        "fecha_iso": "2026-04-20",
+        "archivo": "2026-04-20-noticia-DXXJhDANxo2.html",
+        "imagen": "/imagenes/DXXJhDANxo2/1.png",
+        "resumen": "El reciente viaje a Alicante se consolida como un pilar fundamental en la ambiciosa hoja de ruta de nuestro v..."
     }
 ]
