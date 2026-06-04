@@ -1,11 +1,14 @@
 import os
 import json
 import requests
-import google.generativeai as genai
 from datetime import datetime
 import shutil 
 from PIL import Image 
 from apify_client import ApifyClient
+
+# 🚀 NUEVAS IMPORTACIONES DE GOOGLE GEMINI
+from google import genai
+from google.genai import types
 
 # --- CONFIGURACIÓN ---
 TARGET_USERNAME = "clubvoleibolnavalcarnero" 
@@ -26,19 +29,21 @@ if not api_key or not apify_token:
     print("\n❌ ERROR CRÍTICO: Faltan las API Keys (Gemini o Apify).")
     exit()
 
-genai.configure(api_key=api_key)
+# Inicializamos el NUEVO cliente de Gemini
+gemini_client = genai.Client(api_key=api_key)
 
 # --- 🕵️‍♂️ MODO SUPERVIVENCIA: AUTODETECCIÓN FORZADA ---
-modelo_texto = 'gemini-pro' 
-modelo_vision = 'gemini-pro-vision' 
+modelo_texto = 'gemini-2.5-flash' # Valores por defecto actualizados
+modelo_vision = 'gemini-2.5-flash' 
 
 try:
     print("🔎 Preguntando a Google qué IAs tienes disponibles en tu cuenta...")
-    disponibles = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-    print(f"   -> IAs Encontradas: {disponibles}")
+    # Listamos los modelos usando la nueva sintaxis
+    modelos_info = gemini_client.models.list()
+    disponibles = [m.name for m in modelos_info if 'gemini' in m.name.lower()]
+    print(f"   -> IAs Encontradas (filtradas): {disponibles[:5]} ... (y más)")
     
     if disponibles:
-        # Forzamos al sistema a usar el primer modelo válido que nos dé Google, se llame como se llame
         modelo_texto = disponibles[0] 
         
         # Buscamos si hay alguno mejor (los flash suelen ser más rápidos)
@@ -47,9 +52,8 @@ try:
                 modelo_texto = m
                 break
         
-        # Para la visión, si el modelo principal es moderno (1.5), sirve para leer fotos. 
-        # Si es viejo, buscamos uno que tenga la palabra "vision"
-        if '1.5' in modelo_texto or '2.0' in modelo_texto:
+        # Para visión, los modelos actuales de Gemini (1.5, 2.0, 2.5, 3.0) son todos multimodales
+        if any(v in modelo_texto for v in ['1.5', '2.0', '2.5', '3']):
             modelo_vision = modelo_texto
         else:
             for m in disponibles:
@@ -63,13 +67,10 @@ try:
 except Exception as e:
     print(f"⚠️ Error en la autodetección: {e}")
 
-# Inicializamos las IAs con los nombres exactos que nos ha dado Google
-model = genai.GenerativeModel(modelo_texto)
 
 def obtener_fecha_de_imagen(ruta_imagen, fecha_post_original):
     print("   👁️  Analizando imagen en busca de fecha...")
     try:
-        modelo_v = genai.GenerativeModel(modelo_vision)
         img_pil = Image.open(ruta_imagen)
         
         prompt = """
@@ -77,8 +78,14 @@ def obtener_fecha_de_imagen(ruta_imagen, fecha_post_original):
         Si ves una fecha, devuélvela en formato DD/MM/YYYY.
         Si NO ves ninguna fecha, responde exactamente: NO_DATE
         """
-        result = modelo_v.generate_content([prompt, img_pil])
-        texto = result.text.strip()
+        
+        # Nueva sintaxis multimodal de google-genai
+        response = gemini_client.models.generate_content(
+            model=modelo_vision,
+            contents=[img_pil, prompt]
+        )
+        
+        texto = response.text.strip()
         
         if "NO_DATE" in texto:
             print("      -> No se ve fecha en la foto, usando fecha del post.")
@@ -87,7 +94,7 @@ def obtener_fecha_de_imagen(ruta_imagen, fecha_post_original):
         print(f"      -> Fecha encontrada en imagen: {texto}")
         return texto
     except Exception as e:
-        print(f"      -> Error analizando imagen visualmente. Usando fecha del post.")
+        print(f"      -> Error analizando imagen visualmente: {e}. Usando fecha del post.")
         return fecha_post_original.strftime("%d/%m/%Y")
 
 def generar_contenido_ia(caption, es_video):
@@ -118,15 +125,36 @@ def generar_contenido_ia(caption, es_video):
 
     (IMPORTANTE: Devuelve SOLO el título, los ### y el HTML. No escribas la palabra "HTML" ni uses bloques de código).
     """
+    
     try:
-        safety_settings = [
-            {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-            {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-            {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-            {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
-        ]
+        # Nueva sintaxis de configuración de seguridad de google-genai
+        config = types.GenerateContentConfig(
+            safety_settings=[
+                types.SafetySetting(
+                    category=types.HarmCategory.HARM_CATEGORY_HARASSMENT,
+                    threshold=types.HarmBlockThreshold.BLOCK_NONE,
+                ),
+                types.SafetySetting(
+                    category=types.HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+                    threshold=types.HarmBlockThreshold.BLOCK_NONE,
+                ),
+                types.SafetySetting(
+                    category=types.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+                    threshold=types.HarmBlockThreshold.BLOCK_NONE,
+                ),
+                types.SafetySetting(
+                    category=types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+                    threshold=types.HarmBlockThreshold.BLOCK_NONE,
+                )
+            ]
+        )
         
-        response = model.generate_content(prompt, safety_settings=safety_settings)
+        response = gemini_client.models.generate_content(
+            model=modelo_texto,
+            contents=prompt,
+            config=config
+        )
+        
         texto = response.text
         
         if "###" in texto:
@@ -144,7 +172,7 @@ def main():
     print("--- 🚀 INICIANDO ROBOT PERIODISTA (Vía APIFY) ---")
     
     print(f"🔎 Mandando a los mercenarios de Apify a espiar a {TARGET_USERNAME}...")
-    client = ApifyClient(apify_token)
+    apify_client = ApifyClient(apify_token)
     
     try:
         run_input = {
@@ -153,8 +181,10 @@ def main():
             "resultsLimit": 1
         }
         
-        run = client.actor("apify/instagram-scraper").call(run_input=run_input)
-        items = list(client.dataset(run["defaultDatasetId"]).iterate_items())
+        run = apify_client.actor("apify/instagram-scraper").call(run_input=run_input)
+        
+        # ⚠️ AQUÍ ESTÁ EL PARCHE DEL ERROR DE APIFY (run.default_dataset_id)
+        items = list(apify_client.dataset(run.default_dataset_id).iterate_items())
         
         if not items:
             print("❌ No se encontró ningún post público.")

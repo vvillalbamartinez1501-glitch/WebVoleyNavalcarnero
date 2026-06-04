@@ -1,10 +1,13 @@
 import os
 import json
 import instaloader
-import google.generativeai as genai
 from datetime import datetime
 import shutil 
 from PIL import Image 
+
+# 🚀 NUEVAS IMPORTACIONES DE GOOGLE GEMINI
+from google import genai
+from google.genai import types
 
 # --- CONFIGURACIÓN ---
 LOGIN_USERNAME = "vvillalbamartinez1501"  # <--- ¡ASEGÚRATE DE QUE SEA EL TUYO!
@@ -26,30 +29,28 @@ if not api_key:
     print("👉 En la terminal, antes de ejecutar el script, debes configurarla.")
     exit()
 
-genai.configure(api_key=api_key)
+# Inicializamos el NUEVO cliente de Gemini
+gemini_client = genai.Client(api_key=api_key)
 
 # --- 🕵️‍♂️ MODO SUPERVIVENCIA: AUTODETECCIÓN FORZADA ---
-modelo_texto = 'gemini-pro' 
-modelo_vision = 'gemini-pro-vision' 
+modelo_texto = 'gemini-2.5-flash' 
+modelo_vision = 'gemini-2.5-flash' 
 
 try:
     print("🔎 Preguntando a Google qué IAs tienes disponibles en tu cuenta...")
-    disponibles = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-    print(f"   -> IAs Encontradas: {disponibles}")
+    modelos_info = gemini_client.models.list()
+    disponibles = [m.name for m in modelos_info if 'gemini' in m.name.lower()]
+    print(f"   -> IAs Encontradas (filtradas): {disponibles[:5]} ...")
     
     if disponibles:
-        # Forzamos al sistema a usar el primer modelo válido que nos dé Google
         modelo_texto = disponibles[0] 
         
-        # Buscamos si hay alguno mejor (los flash suelen ser más rápidos)
         for m in disponibles:
             if 'flash' in m:
                 modelo_texto = m
                 break
         
-        # Para la visión, si el modelo principal es moderno (1.5), sirve para leer fotos. 
-        # Si es viejo, buscamos uno que tenga la palabra "vision"
-        if '1.5' in modelo_texto or '2.0' in modelo_texto:
+        if any(v in modelo_texto for v in ['1.5', '2.0', '2.5', '3']):
             modelo_vision = modelo_texto
         else:
             for m in disponibles:
@@ -63,13 +64,9 @@ try:
 except Exception as e:
     print(f"⚠️ Error en la autodetección: {e}")
 
-# Inicializamos el modelo de texto principal con lo que hemos encontrado
-model = genai.GenerativeModel(modelo_texto)
-
 def obtener_fecha_de_imagen(ruta_imagen, fecha_post_original):
     print("   👁️  Analizando imagen en busca de fecha...")
     try:
-        modelo_v = genai.GenerativeModel(modelo_vision)
         img_pil = Image.open(ruta_imagen)
         
         prompt = """
@@ -77,8 +74,14 @@ def obtener_fecha_de_imagen(ruta_imagen, fecha_post_original):
         Si ves una fecha, devuélvela en formato DD/MM/YYYY.
         Si NO ves ninguna fecha, responde exactamente: NO_DATE
         """
-        result = modelo_v.generate_content([prompt, img_pil])
-        texto = result.text.strip()
+        
+        # Nueva sintaxis multimodal de google-genai
+        response = gemini_client.models.generate_content(
+            model=modelo_vision,
+            contents=[img_pil, prompt]
+        )
+        
+        texto = response.text.strip()
         
         if "NO_DATE" in texto:
             print("      -> No se ve fecha en la foto, usando fecha del post.")
@@ -87,7 +90,7 @@ def obtener_fecha_de_imagen(ruta_imagen, fecha_post_original):
         print(f"      -> Fecha encontrada en imagen: {texto}")
         return texto
     except Exception as e:
-        print(f"      -> Error analizando imagen visualmente. Usando fecha del post.")
+        print(f"      -> Error analizando imagen visualmente: {e}. Usando fecha del post.")
         return fecha_post_original.strftime("%d/%m/%Y")
 
 def generar_contenido_ia(caption, es_video):
@@ -118,16 +121,24 @@ def generar_contenido_ia(caption, es_video):
 
     (IMPORTANTE: Devuelve SOLO el título, los ### y el HTML. No escribas la palabra "HTML" ni uses bloques de código).
     """
+    
     try:
-        # Bajamos las defensas del filtro de seguridad para que no censure terminología deportiva
-        safety_settings = [
-            {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-            {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-            {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-            {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
-        ]
+        # Nueva sintaxis de configuración de seguridad
+        config = types.GenerateContentConfig(
+            safety_settings=[
+                types.SafetySetting(category=types.HarmCategory.HARM_CATEGORY_HARASSMENT, threshold=types.HarmBlockThreshold.BLOCK_NONE),
+                types.SafetySetting(category=types.HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold=types.HarmBlockThreshold.BLOCK_NONE),
+                types.SafetySetting(category=types.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold=types.HarmBlockThreshold.BLOCK_NONE),
+                types.SafetySetting(category=types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold=types.HarmBlockThreshold.BLOCK_NONE)
+            ]
+        )
         
-        response = model.generate_content(prompt, safety_settings=safety_settings)
+        response = gemini_client.models.generate_content(
+            model=modelo_texto,
+            contents=prompt,
+            config=config
+        )
+        
         texto = response.text
         
         if "###" in texto:
@@ -158,7 +169,8 @@ def generar_noticia_manual(shortcode):
     try:
         print(f"🔑 Inyectando cookie de sesión maestra...")
         
-        # --- ¡ATENCIÓN! --- Revisa que esta cookie siga siendo válida si te da error 401/Login Required
+        # --- ¡ATENCIÓN! --- Esta cookie caduca cada ciertos meses. 
+        # Si de repente el script lanza error 401, tendrás que actualizar este valor.
         session_id = '49224113245%3AFDlHCpOz5k35u3%3A18%3AAYiAGDTFIu4zSnNAHzUDdBN5bYUVMCsGjIGliZD1lQ' 
         
         L.context._session.cookies.set('sessionid', session_id, domain='.instagram.com')
@@ -166,7 +178,7 @@ def generar_noticia_manual(shortcode):
         print("✅ ¡Cookie aceptada! Entramos identificados.")
     except Exception as e:
         print(f"⚠️ Error inyectando cookie: {e}")
-        print("👉 Revisa que hayas puesto tu session_id correcto entre las comillas simples.")
+        print("👉 Revisa que hayas puesto tu session_id correcto entre las comillas simples o si ha caducado.")
 
     # B. OBTENER EL POST ESPECÍFICO
     try:
