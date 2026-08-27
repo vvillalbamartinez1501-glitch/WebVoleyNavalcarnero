@@ -112,7 +112,7 @@ def generar_contenido_ia(caption, es_video):
     - Un TITULO impactante (máximo 10 palabras).
     - Un CUERPO en formato HTML puro (usa <p>, <strong>, etc., pero NO uses <html> ni <body> ni bloques de código markdown). 
     - Debe incluir una entradilla (párrafo corto en negrita).
-    - Al menos 2 o 3 o 4 párrafos detallados desarrollando la información.
+    - Al menos 1 o 2  párrafos detallados desarrollando la información.
     - Incluye algo negativo si ha habido alguna derrota, especificando el esfuerzo, las ganas de mejorar y el camino por recorrer.
     - Usa <strong> para resaltar puntos clave a lo largo de todo el texto.
     - Termina con una conclusión motivadora.
