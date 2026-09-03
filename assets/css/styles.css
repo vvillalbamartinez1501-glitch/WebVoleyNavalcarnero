@@ -242,6 +242,20 @@ header {
 .hero-content h1 { font-size: 3.5rem; margin-bottom: 15px; color: white; line-height: 1; }
 .hero-subtitle { font-size: 1.5rem; color: #ddd; margin-bottom: 20px; font-weight: 400; font-family: 'Oswald', sans-serif; }
 .hero-content p { font-size: 1rem; color: #aaa; margin-bottom: 30px; }
+.hero-contact-email {
+    display: flex; flex-direction: column; gap: 5px;
+    margin-top: 22px; color: #ddd;
+}
+.hero-contact-label {
+    color: var(--color-rojo-club); font-size: 0.8rem;
+    font-weight: bold; letter-spacing: 1px;
+}
+.hero-contact-email a {
+    color: white; font-size: 0.95rem;
+    border-bottom: 1px solid rgba(255,255,255,0.45);
+    padding-bottom: 3px;
+}
+.hero-contact-email a:hover { color: var(--color-rojo-club); border-color: currentColor; }
 
 /* =========================================
    5. COMPONENTES UI
