@@ -456,5 +456,14 @@
         "archivo": "1994-01-01-noticia-Dcx5sZ1DYAn.html",
         "imagen": "/imagenes/Dcx5sZ1DYAn/1.png",
         "resumen": "La emoción del voleibol inundó ayer las pistas de Navalcarnero, reuniendo a la comunidad en un torneo festivo..."
+    },
+    {
+        "id": "DdCTWjTRhI4",
+        "titulo": "Navalcarnero Despliega Red: ¡La Cantera Llama a Nuevas Estrellas!",
+        "fecha": "08/09/2026",
+        "fecha_iso": "2026-09-08",
+        "archivo": "2026-09-08-noticia-DdCTWjTRhI4.html",
+        "imagen": "/imagenes/DdCTWjTRhI4/1.png",
+        "resumen": "El C.D. Navalcarnero abre sus puertas a la juventud, invitando a chicos y chicas con experiencia y pasión por..."
     }
 ]
