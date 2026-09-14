@@ -184,6 +184,60 @@ document.addEventListener('componentesCargados', () => {
 // ==========================================================================
 document.addEventListener('DOMContentLoaded', () => {
 
+    // --- VISOR A PANTALLA COMPLETA PARA FOTOS DE NOTICIAS ---
+    const galleryImages = document.querySelectorAll('.news-gallery-img');
+    if (galleryImages.length > 0) {
+        const lightbox = document.createElement('div');
+        lightbox.className = 'news-lightbox';
+        lightbox.setAttribute('role', 'dialog');
+        lightbox.setAttribute('aria-modal', 'true');
+        lightbox.setAttribute('aria-label', 'Imagen ampliada');
+        lightbox.innerHTML = `
+            <button class="news-lightbox-close" type="button" aria-label="Cerrar imagen">&times;</button>
+            <img class="news-lightbox-image" alt="">
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImage = lightbox.querySelector('.news-lightbox-image');
+        const closeButton = lightbox.querySelector('.news-lightbox-close');
+        let previouslyFocusedElement = null;
+
+        const closeLightbox = () => {
+            lightbox.classList.remove('is-open');
+            document.body.style.overflow = '';
+            lightboxImage.removeAttribute('src');
+            if (previouslyFocusedElement) previouslyFocusedElement.focus();
+        };
+
+        const openLightbox = (image) => {
+            previouslyFocusedElement = document.activeElement;
+            lightboxImage.src = image.src;
+            lightboxImage.alt = image.alt;
+            lightbox.classList.add('is-open');
+            document.body.style.overflow = 'hidden';
+            closeButton.focus();
+        };
+
+        galleryImages.forEach(image => {
+            image.setAttribute('tabindex', '0');
+            image.addEventListener('click', () => openLightbox(image));
+            image.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    openLightbox(image);
+                }
+            });
+        });
+
+        closeButton.addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', (event) => {
+            if (event.target === lightbox) closeLightbox();
+        });
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && lightbox.classList.contains('is-open')) closeLightbox();
+        });
+    }
+
     // --- GESTIÓN DE COOKIES Y CONTENIDO BLOQUEADO ---
     const banner = document.getElementById('cookie-banner');
     const acceptBtnBanner = document.getElementById('btn-accept-cookies'); 

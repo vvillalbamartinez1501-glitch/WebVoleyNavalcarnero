@@ -1587,6 +1587,60 @@ header {
     transform: scale(1.03);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
+
+.news-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    background: rgba(0, 0, 0, 0.92);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.news-lightbox.is-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.news-lightbox-image {
+    max-width: 95vw;
+    max-height: 90vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.news-lightbox-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.15);
+    font-size: 2rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.news-lightbox-close:hover,
+.news-lightbox-close:focus-visible {
+    background: var(--color-rojo-club);
+}
+
+.news-gallery-img {
+    cursor: zoom-in;
+}
+
 /* ==========================================================================
    AJUSTE PARA PANTALLAS MUY PEQUEÑAS (MÓVILES)
    ========================================================================== */
