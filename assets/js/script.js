@@ -26,6 +26,25 @@ async function cargarComponentes() {
 // Ejecutamos la carga nada más leer el script
 cargarComponentes();
 
+// ==========================================================================
+// 0. VERCEL SPEED INSIGHTS (solo en producción y en Vercel)
+// ==========================================================================
+(function initVercelSpeedInsights() {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+
+    const hostname = window.location.hostname;
+    const protocol = window.location.protocol;
+
+    if (protocol === 'file:' || hostname === 'localhost' || hostname === '127.0.0.1') return;
+    if (document.querySelector('script[src*="/_vercel/speed-insights/script.js"], script[data-vsi="true"]')) return;
+
+    const script = document.createElement('script');
+    script.src = '/_vercel/speed-insights/script.js';
+    script.defer = true;
+    script.dataset.vsi = 'true';
+    script.dataset.route = `${window.location.pathname}${window.location.search}`;
+    document.head.appendChild(script);
+})();
 
 // ==========================================================================
 // 2. LÓGICA QUE DEPENDE DEL HEADER Y FOOTER (Espera al evento mágico)

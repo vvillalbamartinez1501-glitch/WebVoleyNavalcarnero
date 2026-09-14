@@ -1,0 +1,19 @@
+{
+  "name": "vercel-speed-insights-implementation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sitio estático con integración de Vercel Speed Insights para monitorizar rendimiento y Core Web Vitals.",
+  "main": "sw.js",
+  "scripts": {
+    "check:speed-insights": "node -e \"const { injectSpeedInsights } = require('@vercel/speed-insights'); console.log(typeof injectSpeedInsights);\""
+  },
+  "keywords": [
+    "vercel",
+    "speed-insights",
+    "web-vitals"
+  ],
+  "type": "commonjs",
+  "dependencies": {
+    "@vercel/speed-insights": "^2.0.0"
+  }
+}
