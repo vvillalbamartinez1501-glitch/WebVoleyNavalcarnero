@@ -242,7 +242,8 @@ def main():
             
             urls_imagenes = []
             if post.get('childPosts'):
-                urls_imagenes = [child.get('displayUrl') for child in post.get('childPosts') if child.get('displayUrl')][:1]
+                urls_disponibles = [child.get('displayUrl') for child in post.get('childPosts') if child.get('displayUrl')]
+                urls_imagenes = urls_disponibles if len(urls_disponibles) >= 12 else urls_disponibles[:1]
             elif post.get('displayUrl'):
                 urls_imagenes = [post.get('displayUrl')]
             
