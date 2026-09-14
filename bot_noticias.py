@@ -242,7 +242,7 @@ def main():
             
             urls_imagenes = []
             if post.get('childPosts'):
-                urls_imagenes = [child.get('displayUrl') for child in post.get('childPosts') if child.get('displayUrl')]
+                urls_imagenes = [child.get('displayUrl') for child in post.get('childPosts') if child.get('displayUrl')][:1]
             elif post.get('displayUrl'):
                 urls_imagenes = [post.get('displayUrl')]
             
