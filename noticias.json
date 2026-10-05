@@ -465,5 +465,14 @@
         "archivo": "2026-09-08-noticia-DdCTWjTRhI4.html",
         "imagen": "/imagenes/DdCTWjTRhI4/1.png",
         "resumen": "El C.D. Navalcarnero abre sus puertas a la juventud, invitando a chicos y chicas con experiencia y pasión por..."
+    },
+    {
+        "id": "DeEW_kTo6-0",
+        "titulo": "Victoria Senior: El Despertar de un Equipo Unido y Ambicioso",
+        "fecha": "03/10/2026",
+        "fecha_iso": "2026-10-03",
+        "archivo": "2026-10-03-noticia-DeEW_kTo6-0.html",
+        "imagen": "/imagenes/DeEW_kTo6-0/1.png",
+        "resumen": "El equipo Senior ha logrado su primera victoria de la temporada, un triunfo que no solo suma tres puntos, sin..."
     }
 ]
