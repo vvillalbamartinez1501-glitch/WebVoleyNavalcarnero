@@ -23,7 +23,7 @@
    ========================================= */
 :root {
     /* Identidad Corporativa */
-    --color-rojo-club: #c8102e;
+    --color-rojo-club: #8d303e;
     --color-azul-club: #1d3557;
     --color-azul-oscuro: #14243b; /* Para footer y contrastes */
     
@@ -265,10 +265,10 @@ header {
     background: var(--color-rojo-club); color: white;
     padding: 12px 30px; font-weight: bold; font-family: 'Oswald', sans-serif;
     border-radius: 4px; display: inline-block; letter-spacing: 1px;
-    box-shadow: 0 4px 10px rgba(200, 16, 46, 0.3);
+    box-shadow: 0 4px 10px rgba(141, 48, 62, 0.3);
     transition: background 0.3s, transform 0.2s;
 }
-.btn-cta:hover { background: #a00d25; transform: translateY(-2px); }
+.btn-cta:hover { background: #712632; transform: translateY(-2px); }
 
 .btn-white { background: white; color: var(--color-azul-club); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 
@@ -494,13 +494,13 @@ header {
 .toc-link.active {
     color: var(--color-rojo-club); font-weight: bold;
     border-left: 3px solid var(--color-rojo-club);
-    background-color: rgba(200, 16, 46, 0.05); border-radius: 0 5px 5px 0;
+    background-color: rgba(141, 48, 62, 0.05); border-radius: 0 5px 5px 0;
 }
 
 [data-theme="dark"] .sidebar-left.toc-container { background-color: #1a1a1a; border-right: 1px solid #333; }
 [data-theme="dark"] .toc-link { color: #888; }
 [data-theme="dark"] .toc-link:hover { color: white; background-color: rgba(255,255,255,0.05); }
-[data-theme="dark"] .toc-link.active { color: var(--color-rojo-club); background-color: rgba(200, 16, 46, 0.1); }
+[data-theme="dark"] .toc-link.active { color: var(--color-rojo-club); background-color: rgba(141, 48, 62, 0.1); }
 
 /* =========================================
    9. SECCIÓN RESEÑAS
@@ -700,11 +700,11 @@ header {
     .card-content h3, 
     .sponsor-body h3,
     .result-item h4 { 
-        color: #ff334b !important; 
+        color: #c45359 !important;
     }
 
     .hero-subtitle, .category-desc, .sponsor-description, .review-text { color: #cccccc; }
-    #search-input { color: white; border-bottom-color: #ff334b; }
+    #search-input { color: white; border-bottom-color: #c45359; }
 
     /* Sidebars */
     .sidebar-left { background-color: var(--bg-container); border-right: 1px solid var(--border-color); }
@@ -718,22 +718,22 @@ header {
     .team-card, .event-card, .review-card { box-shadow: 0 4px 10px rgba(0,0,0,0.5); border: 1px solid #333; }
     
     /* Variables redefinidas para dark mode */
-    --color-azul-club: #c8102e; 
+    --color-azul-club: #8d303e;
     --nav-bg: #1a0205; 
     --color-azul-oscuro: #0f0102;
 
     .section-title { color: #ffffff; }
-    .section-title::after { background: #c8102e; }
+    .section-title::after { background: #8d303e; }
 
-    .social-btn { color: #c8102e; }
-    .social-btn:hover { background: #c8102e; color: white; }
+    .social-btn { color: #8d303e; }
+    .social-btn:hover { background: #8d303e; color: white; }
 
-    .sidebar-sponsor { background-color: #0a0a0a; border-left: 2px solid #c8102e; border-right: 2px solid #c8102e; }
+    .sidebar-sponsor { background-color: #0a0a0a; border-left: 2px solid #8d303e; border-right: 2px solid #8d303e; }
     
     .toc-link:hover, .toc-link.active {
-        color: #ff334b;
-        border-left-color: #ff334b;
-        background: linear-gradient(90deg, rgba(200, 16, 46, 0.1) 0%, transparent 100%);
+        color: #c45359;
+        border-left-color: #c45359;
+        background: linear-gradient(90deg, rgba(141, 48, 62, 0.1) 0%, transparent 100%);
     }
 }
 /* =========================================
@@ -937,7 +937,7 @@ body.cookies-accepted .cookie-overlay-msg {
 .btn-map:hover { text-decoration: underline; }
 
 /* 6. Dossier Patrocinio */
-.sponsorship-cta { background: linear-gradient(135deg, var(--color-rojo-club), #a00d25); color: white; padding: 60px 20px; border-radius: 0; }
+.sponsorship-cta { background: linear-gradient(135deg, var(--color-rojo-club), #712632); color: white; padding: 60px 20px; border-radius: 0; }
 .cta-box { max-width: 800px; margin: 0 auto; }
 .cta-features { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 20px 0; }
 .cta-features span { display: flex; align-items: center; gap: 8px; font-weight: 500; }
@@ -1153,7 +1153,7 @@ header {
     letter-spacing: 1px;
     border-radius: 50px; /* Redondeado */
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(200, 16, 46, 0.3);
+    box-shadow: 0 4px 10px rgba(141, 48, 62, 0.3);
     transition: all 0.3s ease;
     text-transform: uppercase;
 }
@@ -1488,7 +1488,7 @@ header {
 
 .news-date {
     display: inline-block;
-    background: rgba(200, 16, 46, 0.1);
+    background: rgba(141, 48, 62, 0.1);
     color: var(--color-rojo-club);
     padding: 5px 15px;
     border-radius: 20px;
@@ -1545,7 +1545,7 @@ header {
 
 /* Ajustes Modo Oscuro para la noticia */
 [data-theme="dark"] .news-article-section {
-    border-top: 5px solid #ff334b;
+    border-top: 5px solid #c45359;
 }
 [data-theme="dark"] .news-body strong {
     color: #5dade2;
